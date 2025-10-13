@@ -1,0 +1,7 @@
+Hearn, Baker -> Chapter 14
+Computer Graphics with OpenGL -> Chapter 15
+
+Blinn-Phong: https://dl.acm.org/doi/abs/10.1145/563858.563893
+Phong: https://dl.acm.org/doi/abs/10.1145/280811.280980
+Gouraud: https://dl.acm.org/doi/abs/10.1145/280811.280979
+NeRF: https://dl.acm.org/doi/abs/10.1145/3503250
