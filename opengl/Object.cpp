@@ -24,18 +24,32 @@ std::vector<float> Cylinder::vertices = std::vector<float>();
 std::vector<unsigned int> Cylinder::indices = std::vector<unsigned int>();
 bool Cylinder::initialized = false;
 
+// abstract Object class
+// ---------------------
 
 Object::Object(Shader& shader, const std::string& diffusePath, const std::string& specularPath, const std::string& emssionPath) 
 	: shader(shader), diffusePath(diffusePath), specularPath(specularPath), emissionPath(emssionPath)
 {
-	diffuseMap = createTexture(diffusePath.c_str());
-	specularMap = createTexture(specularPath.c_str());
-	emissionMap = createTexture(emssionPath.c_str());
+	if (!diffusePath.empty()) {
+		diffuseMap = createTexture(diffusePath.c_str());
+	}
+	else {
+		diffuseMap = 0;
+	}
 
-	// temp
-	//diffuseMap = 0;
-	//specularMap = 0;
-	//emissionMap = 0;
+	if (!specularPath.empty()) {
+		specularMap = createTexture(specularPath.c_str());
+	}
+	else {
+		specularMap = 0;
+	}
+
+	if (!emssionPath.empty()) {
+		emissionMap = createTexture(emssionPath.c_str());
+	}
+	else {
+		emissionMap = 0;
+	}
 
 	// default
 	position = glm::vec3(0.0f);
@@ -63,6 +77,10 @@ void Object::draw(const glm::mat4& view, const glm::mat4& projection, const glm:
 	shader.setMat4fv("verticalRotate", verticalRotate);
 	shader.setMat4fv("model", model);
 	
+	shader.setInt("material.diffuse", 0);
+	shader.setInt("material.specular", 1);
+	shader.setInt("material.emission", 2);
+
 	glBindVertexArray(getVAO());
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, diffuseMap);
@@ -102,6 +120,8 @@ void Object::setModelMatrix() {
 GLenum Object::getDrawMode() const {
 	return GL_TRIANGLES;
 }
+
+Object::~Object() {}
 
 // Cube class
 // ----------

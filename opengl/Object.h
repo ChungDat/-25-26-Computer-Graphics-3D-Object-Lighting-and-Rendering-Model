@@ -36,6 +36,8 @@ protected:
     virtual unsigned int getVAO() const = 0;
     virtual unsigned int getVertexCount() const = 0;
     virtual GLenum getDrawMode() const;
+
+    virtual ~Object();
 };
 
 class Cube : public Object {

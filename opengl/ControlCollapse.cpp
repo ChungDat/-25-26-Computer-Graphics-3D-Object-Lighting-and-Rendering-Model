@@ -4,18 +4,15 @@
 // Base constructors (definitions required by the linker)
 ControlCollapse::ControlCollapse()
 	: label(nullptr)
-{
-}
+{}
 
 ControlCollapse::ControlCollapse(const char* _label)
 	: label(_label)
-{
-}
+{}
 
 PresetScenesCollapse::PresetScenesCollapse(const char* _label)
 	: ControlCollapse(_label)
-{
-}
+{}
 
 void PresetScenesCollapse::show() {
 	if (ImGui::CollapsingHeader(label ? label : "Preset Scenes")) {
