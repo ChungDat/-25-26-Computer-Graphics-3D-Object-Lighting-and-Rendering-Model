@@ -1,13 +1,29 @@
+#define _CRT_SECURE_NO_WARNINGS
+
+// openGL libraries
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <iostream>
-#include "Shader.h"
-#include "Camera.h"
-#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
+// ImGui libraries
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+
+// custom headers
+#include "Shader.h"
+#include "Camera.h"
+#include "Model.h"
+#include "ControlCollapse.h"
+#include "utils.h"
+#include "Object.h"
+
+// standard
+#include <string>
+#include <iostream>
 
 const int WIDTH = 800;
 const int HEIGHT = 600;
@@ -39,29 +55,26 @@ glm::vec3 lightColor = glm::vec3(1.0f);
 
 // create camera
 Camera camera = Camera(cameraPos, yaw, pitch);
-
+//
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 // ---------------------------------------------------------------------------------------------
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
+
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // --------------------------------------------------------------------------------------------------------
 void keyboardInputControl(GLFWwindow* window);
-
+//
 // control camera view with right click
 void mouseControl(GLFWwindow* window, double xpos, double ypos);
 
 // control fov for zooming
 void mouseScrollControl(GLFWwindow* window, double xoffset, double yoffset);
 
-unsigned int createTexture(const char* texturePath);
-
-GLFWwindow* initWindow();
-
 int main() {
 	// set up
 	// ------
-	GLFWwindow* window = initWindow();
+	GLFWwindow* window = initWindow(WIDTH, HEIGHT);
 	if (window == NULL)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
@@ -69,7 +82,7 @@ int main() {
 	}
 	glfwMakeContextCurrent(window);
 
-	// glad: load all OpenGL function pointers
+	// glad: load all OpenGL function pointerss
 	// ---------------------------------------
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
@@ -81,8 +94,23 @@ int main() {
 	glfwSetCursorPosCallback(window, mouseControl);
 	glfwSetScrollCallback(window, mouseScrollControl);
 	glEnable(GL_DEPTH_TEST);
+	//glEnable(GL_CULL_FACE);
+
+	stbi_set_flip_vertically_on_load(true);
 	// wireframe mode
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	// Setup Dear ImGui context
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+
+	// Setup Platform/Renderer backends
+	ImGui_ImplGlfw_InitForOpenGL(window, true);          // Second param install_callback=true will install GLFW callbacks and chain to existing ones.
+	ImGui_ImplOpenGL3_Init();
+
 
 	// vertex data
 	// -----------
@@ -137,7 +165,7 @@ int main() {
 	//	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
 	//};
 
-	float vertices[] = {
+	std::vector<float> vertices = {
 		// positions          // normal vectors		// texture coords
 		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,	0.0f, 0.0f,
 		 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,	1.0f, 0.0f,
@@ -221,23 +249,23 @@ int main() {
 
 	// copy our vertices array in a buffer for OpenGL to use
 	glBindBuffer(GL_ARRAY_BUFFER, VBO); // bind the buffer to the GL_ARRAY_BUFFER target
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW); // copy the vertex data to the buffer
-	
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW); // copy the vertex data to the buffer
+
 	// copy our index array in a element buffer for OpenGL to use
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO); // bind the buffer to the GL_ELEMENT_ARRAY_BUFFER target
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW); // copy the index data to the buffer
-	
+
 	// set the vertex attributes pointers
 	// position attribute
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
-	// texture coordinate attribute
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	// normal attribute
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
-	// normal attribute
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	// texture coordinate attribute
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
 
 	// unbind VBO, VAO for safety
@@ -272,6 +300,9 @@ int main() {
 	// light source
 	Shader lightShader = Shader("lightSourceVertexShader.vert", "lightSourceFragmentShader.frag");
 
+	// model
+	Model backpackModel((char*)"backpack/backpack.obj");
+
 	lightShader.use();
 	lightShader.setVec3fv("lightColor", lightColor);
 
@@ -292,9 +323,43 @@ int main() {
 	myShader.setFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
 	myShader.setFloat("light.outerCutOff", glm::cos(glm::radians(17.5f)));
 
+	// ImGui Settings
+	bool controlWindowOpened = true;
+	int redValue = 25;
+	int greenValue = 25;
+	int blueValue = 25;
+
+	PresetScenesCollapse presetScenesCollapse = PresetScenesCollapse("Preset Scenes");
+	LightCollapse lightCollapse = LightCollapse("Light");
+	ObjectCollapse objectCollapse = ObjectCollapse("Add Object");
+
+	Pyramid myObject1 = Pyramid(myShader, "container2.png", "container2_specular.png", "matrix.jpg");
+
 	// render loop
 	// -----------
 	while (!glfwWindowShouldClose(window)) {
+		// Start the Dear ImGui frame
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+		//ImGui::ShowDemoWindow(); // Show demo window! :)
+
+		ImVec2 controlWindowPos = ImVec2(WIDTH, 0);
+		ImVec2 controlWindowSize = ImVec2(200, HEIGHT);
+		ImVec2 viewportSize = ImGui::GetMainViewport()->Size;
+		 
+		ImGui::SetNextWindowPos(
+			ImVec2(viewportSize.x - controlWindowSize.x, 0),
+			ImGuiCond_Always
+		);
+		ImGui::SetNextWindowSize(controlWindowSize);		
+		ImGui::Begin("Control Window", &controlWindowOpened, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
+		presetScenesCollapse.show();
+		lightCollapse.show();
+		objectCollapse.show();
+
+		ImGui::End();
+
 		// calculate delta time
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
@@ -326,13 +391,13 @@ int main() {
 		// draw
 		glBindVertexArray(lightVAO);
 
-		//glm::mat4 lightModel = glm::mat4(1.0);
-		//lightModel = glm::rotate(lightModel, (float)sin(glfwGetTime()), glm::vec3(0.0f, 1.0f, 0.0f));
-		//lightModel = glm::translate(lightModel, lightPos);
-		//lightModel = glm::scale(lightModel, glm::vec3(0.2f));
-		//lightShader.setMat4fv("model", lightModel);
-		//lightShader.setVec3fv("lightColor", glm::vec3(1.0, 1.0, 1.0));
-		//glDrawArrays(GL_TRIANGLES, 0, 36);
+		glm::mat4 lightModel = glm::mat4(1.0);
+		lightModel = glm::rotate(lightModel, (float)sin(glfwGetTime()), glm::vec3(0.0f, 1.0f, 0.0f));
+		lightModel = glm::translate(lightModel, lightPos);
+		lightModel = glm::scale(lightModel, glm::vec3(0.2f));
+		lightShader.setMat4fv("model", lightModel);
+		lightShader.setVec3fv("lightColor", glm::vec3(1.0, 1.0, 1.0));
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		for (int i = 0; i < 4; i++) {
 			glm::mat4 lightModel = glm::mat4(1.0);
@@ -348,17 +413,18 @@ int main() {
 		myShader.use();
 
 		// extract world-space light position and upload to myShader
-		myShader.setVec3fv("viewPos", camera.Position);
+		glm::vec3 viewPos = camera.Position;
+		/*myShader.setVec3fv("viewPos", viewPos);
 		myShader.setMat4fv("projection", projection);
-		myShader.setMat4fv("view", view);
+		myShader.setMat4fv("view", view);*/
 		myShader.setMat4fv("horizontalRotate", horizontalRotate);
 		myShader.setMat4fv("verticalRotate", verticalRotate);
 
-		// Directional light
-		glUniform3f(glGetUniformLocation(myShader.getID(), "dirLight.direction"), -0.2f, -1.0f, -0.3f);
-		glUniform3f(glGetUniformLocation(myShader.getID(), "dirLight.ambient"), 0.3f, 0.24f, 0.14f);
-		glUniform3f(glGetUniformLocation(myShader.getID(), "dirLight.diffuse"), 0.7f, 0.42f, 0.26f);
-		glUniform3f(glGetUniformLocation(myShader.getID(), "dirLight.specular"), 0.5f, 0.5f, 0.5f);
+		// Directional light 1
+		glUniform3f(glGetUniformLocation(myShader.getID(), "dirLight[0].direction"), -0.2f, -1.0f, -0.3f);
+		glUniform3f(glGetUniformLocation(myShader.getID(), "dirLight[0].ambient"), 0.3f, 0.24f, 0.14f);
+		glUniform3f(glGetUniformLocation(myShader.getID(), "dirLight[0].diffuse"), 0.7f, 0.42f, 0.26f);
+		glUniform3f(glGetUniformLocation(myShader.getID(), "dirLight[0].specular"), 0.5f, 0.5f, 0.5f);
 		// Point light 1
 		glUniform3f(glGetUniformLocation(myShader.getID(), "pointLight[0].position"), pointLightPositions[0].x, pointLightPositions[0].y, pointLightPositions[0].z);
 		glUniform3f(glGetUniformLocation(myShader.getID(), "pointLight[0].ambient"), pointLightColors[0].x * 0.1, pointLightColors[0].y * 0.1, pointLightColors[0].z * 0.1);
@@ -367,73 +433,81 @@ int main() {
 		glUniform1f(glGetUniformLocation(myShader.getID(), "pointLight[0].constant"), 1.0f);
 		glUniform1f(glGetUniformLocation(myShader.getID(), "pointLight[0].linear"), 0.09);
 		glUniform1f(glGetUniformLocation(myShader.getID(), "pointLight[0].quadratic"), 0.032);
-		// Point light 2
-		glUniform3f(glGetUniformLocation(myShader.getID(), "pointLight[1].position"), pointLightPositions[1].x, pointLightPositions[1].y, pointLightPositions[1].z);
-		glUniform3f(glGetUniformLocation(myShader.getID(), "pointLight[1].ambient"), pointLightColors[1].x * 0.1, pointLightColors[1].y * 0.1, pointLightColors[1].z * 0.1);
-		glUniform3f(glGetUniformLocation(myShader.getID(), "pointLight[1].diffuse"), pointLightColors[1].x, pointLightColors[1].y, pointLightColors[1].z);
-		glUniform3f(glGetUniformLocation(myShader.getID(), "pointLight[1].specular"), pointLightColors[1].x, pointLightColors[1].y, pointLightColors[1].z);
-		glUniform1f(glGetUniformLocation(myShader.getID(), "pointLight[1].constant"), 1.0f);
-		glUniform1f(glGetUniformLocation(myShader.getID(), "pointLight[1].linear"), 0.09);
-		glUniform1f(glGetUniformLocation(myShader.getID(), "pointLight[1].quadratic"), 0.032);
-		// Point light 3
-		glUniform3f(glGetUniformLocation(myShader.getID(), "pointLight[2].position"), pointLightPositions[2].x, pointLightPositions[2].y, pointLightPositions[2].z);
-		glUniform3f(glGetUniformLocation(myShader.getID(), "pointLight[2].ambient"), pointLightColors[2].x * 0.1, pointLightColors[2].y * 0.1, pointLightColors[2].z * 0.1);
-		glUniform3f(glGetUniformLocation(myShader.getID(), "pointLight[2].diffuse"), pointLightColors[2].x, pointLightColors[2].y, pointLightColors[2].z);
-		glUniform3f(glGetUniformLocation(myShader.getID(), "pointLight[2].specular"), pointLightColors[2].x, pointLightColors[2].y, pointLightColors[2].z);
-		glUniform1f(glGetUniformLocation(myShader.getID(), "pointLight[2].constant"), 1.0f);
-		glUniform1f(glGetUniformLocation(myShader.getID(), "pointLight[2].linear"), 0.09);
-		glUniform1f(glGetUniformLocation(myShader.getID(), "pointLight[2].quadratic"), 0.032);
-		// Point light 4
-		glUniform3f(glGetUniformLocation(myShader.getID(), "pointLight[3].position"), pointLightPositions[3].x, pointLightPositions[3].y, pointLightPositions[3].z);
-		glUniform3f(glGetUniformLocation(myShader.getID(), "pointLight[3].ambient"), pointLightColors[3].x * 0.1, pointLightColors[3].y * 0.1, pointLightColors[3].z * 0.1);
-		glUniform3f(glGetUniformLocation(myShader.getID(), "pointLight[3].diffuse"), pointLightColors[3].x, pointLightColors[3].y, pointLightColors[3].z);
-		glUniform3f(glGetUniformLocation(myShader.getID(), "pointLight[3].specular"), pointLightColors[3].x, pointLightColors[3].y, pointLightColors[3].z);
-		glUniform1f(glGetUniformLocation(myShader.getID(), "pointLight[3].constant"), 1.0f);
-		glUniform1f(glGetUniformLocation(myShader.getID(), "pointLight[3].linear"), 0.09);
-		glUniform1f(glGetUniformLocation(myShader.getID(), "pointLight[3].quadratic"), 0.032);
-		// Point light 5
-		glUniform3f(glGetUniformLocation(myShader.getID(), "pointLight[4].position"), pointLightPositions[3].x, pointLightPositions[3].y, pointLightPositions[3].z);
-		glUniform3f(glGetUniformLocation(myShader.getID(), "pointLight[4].ambient"), pointLightColors[3].x * 0.1, pointLightColors[3].y * 0.1, pointLightColors[3].z * 0.1);
-		glUniform3f(glGetUniformLocation(myShader.getID(), "pointLight[4].diffuse"), pointLightColors[3].x, pointLightColors[3].y, pointLightColors[3].z);
-		glUniform3f(glGetUniformLocation(myShader.getID(), "pointLight[4].specular"), pointLightColors[3].x, pointLightColors[3].y, pointLightColors[3].z);
-		glUniform1f(glGetUniformLocation(myShader.getID(), "pointLight[4].constant"), 1.0f);
-		glUniform1f(glGetUniformLocation(myShader.getID(), "pointLight[4].linear"), 0.09);
-		glUniform1f(glGetUniformLocation(myShader.getID(), "pointLight[4].quadratic"), 0.032);
-		// SpotLight
-		glUniform3f(glGetUniformLocation(myShader.getID(), "spotLight.position"), camera.Position.x, camera.Position.y, camera.Position.z);
-		glUniform3f(glGetUniformLocation(myShader.getID(), "spotLight.direction"), camera.Front.x, camera.Front.y, camera.Front.z);
-		glUniform3f(glGetUniformLocation(myShader.getID(), "spotLight.ambient"), 0.0f, 0.0f, 0.0f);
-		glUniform3f(glGetUniformLocation(myShader.getID(), "spotLight.diffuse"), 0.8f, 0.8f, 0.0f);
-		glUniform3f(glGetUniformLocation(myShader.getID(), "spotLight.specular"), 0.8f, 0.8f, 0.0f);
-		glUniform1f(glGetUniformLocation(myShader.getID(), "spotLight.constant"), 1.0f);
-		glUniform1f(glGetUniformLocation(myShader.getID(), "spotLight.linear"), 0.09);
-		glUniform1f(glGetUniformLocation(myShader.getID(), "spotLight.quadratic"), 0.032);
-		glUniform1f(glGetUniformLocation(myShader.getID(), "spotLight.innerCutOff"), glm::cos(glm::radians(12.5f)));
-		glUniform1f(glGetUniformLocation(myShader.getID(), "spotLight.outerCutOff"), glm::cos(glm::radians(17.0f)));
-		// draw
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, diffuseMap);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, specularMap);
+		//// Point light 2
+		//glUniform3f(glGetUniformLocation(myShader.getID(), "pointLight[1].position"), pointLightPositions[1].x, pointLightPositions[1].y, pointLightPositions[1].z);
+		//glUniform3f(glGetUniformLocation(myShader.getID(), "pointLight[1].ambient"), pointLightColors[1].x * 0.1, pointLightColors[1].y * 0.1, pointLightColors[1].z * 0.1);
+		//glUniform3f(glGetUniformLocation(myShader.getID(), "pointLight[1].diffuse"), pointLightColors[1].x, pointLightColors[1].y, pointLightColors[1].z);
+		//glUniform3f(glGetUniformLocation(myShader.getID(), "pointLight[1].specular"), pointLightColors[1].x, pointLightColors[1].y, pointLightColors[1].z);
+		//glUniform1f(glGetUniformLocation(myShader.getID(), "pointLight[1].constant"), 1.0f);
+		//glUniform1f(glGetUniformLocation(myShader.getID(), "pointLight[1].linear"), 0.09);
+		//glUniform1f(glGetUniformLocation(myShader.getID(), "pointLight[1].quadratic"), 0.032);
+		//// Point light 3
+		//glUniform3f(glGetUniformLocation(myShader.getID(), "pointLight[2].position"), pointLightPositions[2].x, pointLightPositions[2].y, pointLightPositions[2].z);
+		//glUniform3f(glGetUniformLocation(myShader.getID(), "pointLight[2].ambient"), pointLightColors[2].x * 0.1, pointLightColors[2].y * 0.1, pointLightColors[2].z * 0.1);
+		//glUniform3f(glGetUniformLocation(myShader.getID(), "pointLight[2].diffuse"), pointLightColors[2].x, pointLightColors[2].y, pointLightColors[2].z);
+		//glUniform3f(glGetUniformLocation(myShader.getID(), "pointLight[2].specular"), pointLightColors[2].x, pointLightColors[2].y, pointLightColors[2].z);
+		//glUniform1f(glGetUniformLocation(myShader.getID(), "pointLight[2].constant"), 1.0f);
+		//glUniform1f(glGetUniformLocation(myShader.getID(), "pointLight[2].linear"), 0.09);
+		//glUniform1f(glGetUniformLocation(myShader.getID(), "pointLight[2].quadratic"), 0.032);
+		//// Point light 4
+		//glUniform3f(glGetUniformLocation(myShader.getID(), "pointLight[3].position"), pointLightPositions[3].x, pointLightPositions[3].y, pointLightPositions[3].z);
+		//glUniform3f(glGetUniformLocation(myShader.getID(), "pointLight[3].ambient"), pointLightColors[3].x * 0.1, pointLightColors[3].y * 0.1, pointLightColors[3].z * 0.1);
+		//glUniform3f(glGetUniformLocation(myShader.getID(), "pointLight[3].diffuse"), pointLightColors[3].x, pointLightColors[3].y, pointLightColors[3].z);
+		//glUniform3f(glGetUniformLocation(myShader.getID(), "pointLight[3].specular"), pointLightColors[3].x, pointLightColors[3].y, pointLightColors[3].z);
+		//glUniform1f(glGetUniformLocation(myShader.getID(), "pointLight[3].constant"), 1.0f);
+		//glUniform1f(glGetUniformLocation(myShader.getID(), "pointLight[3].linear"), 0.09);
+		//glUniform1f(glGetUniformLocation(myShader.getID(), "pointLight[3].quadratic"), 0.032);
+		//// Spot light 1
+		//glUniform3f(glGetUniformLocation(myShader.getID(), "spotLight[0].position"), camera.Position.x, camera.Position.y, camera.Position.z);
+		//glUniform3f(glGetUniformLocation(myShader.getID(), "spotLight[0].direction"), camera.Front.x, camera.Front.y, camera.Front.z);
+		//glUniform3f(glGetUniformLocation(myShader.getID(), "spotLight[0].ambient"), 0.5f, 0.5f, 0.5f);
+		//glUniform3f(glGetUniformLocation(myShader.getID(), "spotLight[0].diffuse"), 0.8f, 0.8f, 0.0f);
+		//glUniform3f(glGetUniformLocation(myShader.getID(), "spotLight[0].specular"), 0.8f, 0.8f, 0.0f);
+		//glUniform1f(glGetUniformLocation(myShader.getID(), "spotLight[0].constant"), 1.0f);
+		//glUniform1f(glGetUniformLocation(myShader.getID(), "spotLight[0].linear"), 0.09);
+		//glUniform1f(glGetUniformLocation(myShader.getID(), "spotLight[0].quadratic"), 0.032);
+		//glUniform1f(glGetUniformLocation(myShader.getID(), "spotLight[0].innerCutOff"), glm::cos(glm::radians(12.5f)));
+		//glUniform1f(glGetUniformLocation(myShader.getID(), "spotLight[0].outerCutOff"), glm::cos(glm::radians(17.0f)));
+
+		//// draw
+		//glActiveTexture(GL_TEXTURE0);
+		//glBindTexture(GL_TEXTURE_2D, diffuseMap);
+		//glActiveTexture(GL_TEXTURE1);
+		//glBindTexture(GL_TEXTURE_2D, specularMap);
 		//glActiveTexture(GL_TEXTURE2);
 		//glBindTexture(GL_TEXTURE_2D, emissionMap);
-		glBindVertexArray(cubeVAO);
-		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		for (unsigned int i = 0; i < 10; i++) {
-			glm::mat4 model = glm::mat4(1.0f);
-			model = glm::translate(model, cubePositions[i]);
-			float angle = 20.0f * i;
-			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-			myShader.setMat4fv("model", model);
+		//glBindVertexArray(cubeVAO);
+		////glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		//for (unsigned int i = 0; i < 10; i++) {
+		//	glm::mat4 model = glm::mat4(1.0f);
+		//	model = glm::translate(model, cubePositions[i]);
+		//	float angle = 20.0f * i;
+		//	model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+		//	myShader.setMat4fv("model", model);
 
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
+		//	glDrawArrays(GL_TRIANGLES, 0, 36);
+		//}
+
+		// draw custom objects
+		myObject1.setPosition(glm::vec3(-2.0f, 1.0f, -3.0f));
+		myObject1.setScale(glm::vec3(0.5f, 0.5f, 0.5f));
+		myObject1.setRotation(glm::vec3(10.0f, 10.0f, 10.0f));
+		myObject1.draw(view, projection, viewPos, horizontalRotate, verticalRotate);
+
+		// loaded model
+		glm::mat4 model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(0.0, -1.0, 0.0));
+		model = glm::scale(model, glm::vec3(0.5, 0.5, 0.5));
+		myShader.setMat4fv("model", model);
+		//backpackModel.Draw(myShader);
+
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
-
 	// optional: de-allocate all resources once they've outlived their purpose:
 	// ------------------------------------------------------------------------
 	glDeleteVertexArrays(1, &cubeVAO);
@@ -447,11 +521,13 @@ int main() {
 	// glfw: terminate, clearing all previously allocated GLFW resources.
 	// ------------------------------------------------------------------
 	glfwTerminate();
-	return 0;
-}
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
-	glViewport(0, 0, width, height);
+	// ImGui terminate
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
+
+	return 0;
 }
 
 void keyboardInputControl(GLFWwindow* window) {
@@ -523,49 +599,6 @@ void mouseScrollControl(GLFWwindow* window, double xoffset, double yoffset) {
 	camera.ProcessMouseScroll(yoffset);
 }
 
-GLFWwindow* initWindow() {
-	// glfw: initialize and configure
-	// ------------------------------
-	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-	// glfw window creation
-	// ---------------------
-	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "LearnOpenGL", NULL, NULL);
-	return window;
-}
-
-unsigned int createTexture(const char* texturePath) {
-	unsigned int texture;
-	glGenTextures(1, &texture);
-	
-	// load and generate the texture
-	int width, height, nrChannels;
-	unsigned char* data = stbi_load(texturePath, &width, &height, &nrChannels, 0);
-	if (data) {
-		GLenum format;
-		if (nrChannels == 1)
-			format = GL_RED;
-		else if (nrChannels == 3)
-			format = GL_RGB;
-		else if (nrChannels == 4)
-			format = GL_RGBA;
-
-		glBindTexture(GL_TEXTURE_2D, texture);
-		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-
-		// set the texture wrapping/filtering options
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	}
-	else {
-		std::cout << "Failed to load texture" << std::endl;
-	}
-	stbi_image_free(data);
-	return texture;
+void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+	glViewport(0, 0, width, height);
 }

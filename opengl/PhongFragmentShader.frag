@@ -1,5 +1,6 @@
 #version 330 core
 struct Material {
+	// ambient is usually set to the same as diffuse
 	sampler2D diffuse;
 	sampler2D specular;
 	sampler2D emission;
@@ -43,6 +44,11 @@ struct SpotLight {
 	float quadratic;
 };
 
+#define NR_DIR_LIGHTS 1
+#define NR_POINT_LIGHTS 1
+#define NR_SPOT_LIGHTS 1
+
+
 // in vec3 outColor;
 in vec2 texCoord;
 in vec3 normal;
@@ -50,9 +56,9 @@ in vec3 fragPos;
 
 uniform vec3 viewPos;
 uniform Material material;
-uniform DirectionalLight dirLight;
-uniform PointLight pointLight[5];
-uniform SpotLight spotLight;
+uniform DirectionalLight dirLight[NR_DIR_LIGHTS];
+uniform PointLight pointLight[NR_POINT_LIGHTS];
+uniform SpotLight spotLight[NR_SPOT_LIGHTS];
 
 out vec4 FragColor;
 
@@ -66,11 +72,15 @@ void main() {
 
 	vec3 result = vec3(0.0);
 
-	result += CalcDirLight(dirLight, norm, viewDir);
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < NR_DIR_LIGHTS; i++) {
+		result += CalcDirLight(dirLight[i], norm, viewDir);
+	}
+	for (int i = 0; i < NR_POINT_LIGHTS; i++) {
 		result += CalcPointLight(pointLight[i], norm, fragPos, viewDir);
 	}
-	result += CalcSpotLight(spotLight, norm, viewDir);
+	for (int i = 0; i < NR_SPOT_LIGHTS; i++) {
+		result += CalcSpotLight(spotLight[i], norm, viewDir);
+	}
 
 	FragColor = vec4(result, 1.0);
 }

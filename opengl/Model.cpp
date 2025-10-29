@@ -66,15 +66,15 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
 			vec.y = mesh->mTextureCoords[0][i].y;
 			vertex.TexCoords = vec;
 			// tangent
-			vector.x = mesh->mTangents[i].x;
+			/*vector.x = mesh->mTangents[i].x;
 			vector.y = mesh->mTangents[i].y;
 			vector.z = mesh->mTangents[i].z;
-			vertex.Tangent = vector;
+			vertex.Tangent = vector;*/
 			// bitangent
-			vector.x = mesh->mBitangents[i].x;
+			/*vector.x = mesh->mBitangents[i].x;
 			vector.y = mesh->mBitangents[i].y;
 			vector.z = mesh->mBitangents[i].z;
-			vertex.Bitangent = vector;
+			vertex.Bitangent = vector;*/
 		}
 		else {
 			vertex.TexCoords = glm::vec2(0.0, 0.0);
@@ -142,7 +142,7 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType 
 	return textures;
 }
 
-unsigned int TextureFromFile(const char* path, const std::string& directory, bool gamma)
+unsigned int Model::TextureFromFile(const char* path, const std::string& directory, bool gamma)
 {
 	std::string filename = std::string(path);
 	filename = directory + '/' + filename;

@@ -11,8 +11,11 @@ class Shader
 {
 protected:
 	unsigned int ID;
+	const char* vertexPath;
+	const char* fragmentPath;
 public:
 	Shader(const char*, const char*);
+	Shader(const Shader*);
 	// use/activate the shader
 	void use();
 	// utility uniform functions
@@ -23,6 +26,7 @@ public:
 	void setMat4fv(const std::string&, glm::mat4) const;
 	void setVec4fv(const std::string&, glm::vec4) const;
 	void setVec3fv(const std::string&, glm::vec3) const;
+	Shader copy();
 	unsigned int getID();
 	virtual ~Shader();
 };
