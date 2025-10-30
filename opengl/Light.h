@@ -26,8 +26,6 @@ public:
 	virtual void setDirection(const glm::vec3& _dir) {};
 	void setColor(const glm::vec3& _color);
 	static void initBuffers();
-	virtual void getPosition() {};
-	virtual void getDirection() {};
 	unsigned int getVAO() const;
 	unsigned int getVertexCount() const;
 
@@ -35,7 +33,8 @@ public:
 	void disable();
 	bool isEnabled() const;
 
-	glm::vec3 getPosition() const;
+	virtual glm::vec3 getPosition() const;
+	virtual glm::vec3 getDirection() const;
 	glm::vec3 getAmbient() const;
 	glm::vec3 getDiffuse() const;
 	glm::vec3 getSpecular() const;
@@ -55,12 +54,12 @@ public:
 	void draw(const glm::mat4& view, const glm::mat4& projection) const override {};
 	void setDirection(const glm::vec3& _dir);
 
-	glm::vec3 getDirection() const;
+	glm::vec3 getDirection() const override;
 
 	void updateObjectShader(Shader& shader, unsigned int typeCount) const;
 };
 
-class PointLight :public Light {
+class PointLight : public Light {
 protected:
 	glm::vec3 position;
 	float constant;
@@ -83,6 +82,7 @@ public:
 	float getConstant() const;
 	float getLinear() const;
 	float getQuadratic() const;
+	glm::vec3 getPosition() const override;
 
 	void updateObjectShader(Shader& objectShader, unsigned int typeCount) const;
 };
@@ -101,6 +101,7 @@ public:
 
 	float getInnerCutOff() const;
 	float getOuterCutOff() const;
+	glm::vec3 getDirection() const override;
 
 	void updateObjectShader(Shader& shader, unsigned int typeCount) const;
 };

@@ -17,7 +17,7 @@ class Model
 {
 public:
 	Model(char*);
-	void Draw(Shader&);
+	void draw(Shader&);
 private:
 	// model data
 	std::vector<Mesh> meshes;

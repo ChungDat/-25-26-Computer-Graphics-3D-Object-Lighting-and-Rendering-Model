@@ -117,8 +117,16 @@ glm::vec3 Light::getSpecular() const {
 	return specular;
 }
 
+glm::vec3 Light::getDirection() const {
+	return glm::vec3(0.0f);
+}
+
+glm::vec3 Light::getPosition() const {
+	return glm::vec3(0.0f);
+}
+
 void Light::enable() {
-	if (!enabled && color != glm::vec3(0.0f)) {
+	if (!enabled) {
 		setColor(storedColor);
 		enabled = true;
 	}
@@ -228,6 +236,11 @@ float PointLight::getQuadratic() const {
 	return quadratic;
 }
 
+glm::vec3 PointLight::getPosition() const
+{
+	return position;
+}
+
 void PointLight::updateObjectShader(Shader& objectShader, unsigned int typeCount) const {
 	objectShader.use();
 	objectShader.setVec3fv("pointLight[" + std::to_string(typeCount) + "].position", position);
@@ -266,6 +279,11 @@ float SpotLight::getInnerCutOff() const {
 
 float SpotLight::getOuterCutOff() const {
 	return outerCutOff;
+}
+
+glm::vec3 SpotLight::getDirection() const
+{
+	return direction;
 }
 
 void SpotLight::updateObjectShader(Shader& objectShader, unsigned int typeCount) const {

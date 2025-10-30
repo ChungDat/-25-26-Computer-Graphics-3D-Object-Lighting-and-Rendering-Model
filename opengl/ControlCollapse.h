@@ -4,6 +4,8 @@
 #include "imgui_impl_opengl3.h"
 #include <vector>
 #include <string>
+#include "Light.h"
+#include "Object.h"
 
 class ControlCollapse
 {
@@ -26,19 +28,23 @@ public:
 
 class LightCollapse : public ControlCollapse {
 protected:
-	std::vector<const char*> lightType = { "Directional", "Spot", "Point" };
-	unsigned int addLight(const char*);
+	std::vector<const char*> lightType = { "Directional Light", "Point Light", "Spot Light" };
+	std::vector<Light*>& lightList;
+	Shader& shader;
+	void addLight(const char*);
 public:
-	LightCollapse(const char*);
+	LightCollapse(const char*, std::vector<Light*>&, Shader&);
 	void show();
 };
 
 class ObjectCollapse : public ControlCollapse {
 protected:
 	std::vector<const char*> object = { "Cube", "Sphere", "Pyramid", "Cylinder", "Lamp", "Flower Pot", "Glass" };
-	unsigned int addObject(const char*);
+	std::vector<Object*>& objectList;
+	Shader& shader;
+	void addObject(const char*);
 public:
-	ObjectCollapse(const char*);
+	ObjectCollapse(const char*, std::vector<Object*>&, Shader&);
 	void show();
 };
 

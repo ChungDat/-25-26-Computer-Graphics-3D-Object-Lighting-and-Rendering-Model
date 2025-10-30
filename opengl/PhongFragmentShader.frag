@@ -80,9 +80,9 @@ void main() {
 	for (int i = 0; i < NR_POINT_LIGHTS; i++) {
 		result += CalcPointLight(pointLight[i], norm, fragPos, viewDir);
 	}
-	//for (int i = 0; i < NR_SPOT_LIGHTS; i++) {
-	//	result += CalcSpotLight(spotLight[i], norm, viewDir);
-	//}
+	for (int i = 0; i < NR_SPOT_LIGHTS; i++) {
+		result += CalcSpotLight(spotLight[i], norm, viewDir);
+	}
 
 	FragColor = vec4(result, 1.0);
 }

@@ -23,6 +23,8 @@ public:
     void setPosition(const glm::vec3 _pos);
     void setScale(const glm::vec3 _scale);
     void setRotation(const glm::vec3 _rotation);
+    
+    virtual ~Object();
 protected:
     Shader& shader;
     unsigned int diffuseMap, specularMap, emissionMap;
@@ -36,8 +38,6 @@ protected:
     virtual unsigned int getVAO() const = 0;
     virtual unsigned int getVertexCount() const = 0;
     virtual GLenum getDrawMode() const;
-
-    virtual ~Object();
 };
 
 class Cube : public Object {

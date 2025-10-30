@@ -3,6 +3,7 @@
 // TINH LAI COLOR
 // ============================
 #define _CRT_SECURE_NO_WARNINGS
+#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 
 // openGL libraries
 #include <glad/glad.h>
@@ -25,6 +26,7 @@
 #include "utils.h"
 #include "Object.h"
 #include "Light.h"
+#include "Axis.h"
 
 // standard
 #include <string>
@@ -158,6 +160,9 @@ int main() {
 	// light source
 	Shader lightShader = Shader("lightSourceVertexShader.vert", "lightSourceFragmentShader.frag");
 
+	// axis shader
+	Shader axisShader = Shader("axis.vert", "axis.frag");
+
 	// model
 	Model backpackModel((char*)"backpack/backpack.obj");
 
@@ -167,6 +172,38 @@ int main() {
 	myShader.setInt("material.specular", 1);
 	myShader.setInt("material.emission", 2);
 
+
+	// create objects
+	std::vector<Object*> objectList = {
+		new Cube(myShader, "container2.png", "container2_specular.png", "matrix.jpg"),
+		new Cube(myShader, "container2.png", "container2_specular.png", "matrix.jpg"),
+		new Cube(myShader, "container2.png", "container2_specular.png", "matrix.jpg"),
+		new Cube(myShader, "container2.png", "container2_specular.png", "matrix.jpg"),
+		new Cube(myShader, "container2.png", "container2_specular.png", "matrix.jpg"),
+		new Cube(myShader, "container2.png", "container2_specular.png", "matrix.jpg"),
+		new Cube(myShader, "container2.png", "container2_specular.png", "matrix.jpg"),
+		new Cube(myShader, "container2.png", "container2_specular.png", "matrix.jpg"),
+		new Cube(myShader, "container2.png", "container2_specular.png", "matrix.jpg"),
+		new Cube(myShader, "container2.png", "container2_specular.png", "matrix.jpg"),
+	};
+
+	//create lights
+	std::vector<Light*> lightList = {
+		new SpotLight(lightShader),       // 0: Flashlight
+		new PointLight(lightShader),      // 1: White orbiting light
+		new DirectionalLight(lightShader),// 2: Main directional light
+		new PointLight(lightShader),      // 3: Orange point light
+		new PointLight(lightShader),      // 4: Red point light
+		new PointLight(lightShader),      // 5: Yellow point light
+		new PointLight(lightShader),      // 6: Blue point light
+	};
+
+	// create axis
+	Axis axis = Axis(axisShader);
+
+	lightList[0]->setColor(glm::vec3(1.0f));
+	lightList[1]->setCircularMotion(true);
+
 	// ImGui Settings
 	bool controlWindowOpened = true;
 	int redValue = 25;
@@ -174,36 +211,8 @@ int main() {
 	int blueValue = 25;
 
 	PresetScenesCollapse presetScenesCollapse = PresetScenesCollapse("Preset Scenes");
-	LightCollapse lightCollapse = LightCollapse("Light");
-	ObjectCollapse objectCollapse = ObjectCollapse("Add Object");
-
-	// Create objects
-
-	Pyramid myObject1 = Pyramid(myShader, "container2.png", "container2_specular.png", "matrix.jpg");
-	Cube cubeList[10] = {
-		Cube(myShader, "container2.png", "container2_specular.png", "matrix.jpg"),
-		Cube(myShader, "container2.png", "container2_specular.png", "matrix.jpg"),
-		Cube(myShader, "container2.png", "container2_specular.png", "matrix.jpg"),
-		Cube(myShader, "container2.png", "container2_specular.png", "matrix.jpg"),
-		Cube(myShader, "container2.png", "container2_specular.png", "matrix.jpg"),
-		Cube(myShader, "container2.png", "container2_specular.png", "matrix.jpg"),
-		Cube(myShader, "container2.png", "container2_specular.png", "matrix.jpg"),
-		Cube(myShader, "container2.png", "container2_specular.png", "matrix.jpg"),
-		Cube(myShader, "container2.png", "container2_specular.png", "matrix.jpg"),
-		Cube(myShader, "container2.png", "container2_specular.png", "matrix.jpg"),
-	};
-
-	std::vector<Light*> lightList = {
-		new PointLight(lightShader),
-		new DirectionalLight(lightShader),
-		new PointLight(lightShader),
-		new PointLight(lightShader),
-		new PointLight(lightShader),
-		new PointLight(lightShader),
-		new SpotLight(lightShader),
-	};
-
-	lightList[0]->setCircularMotion(true);
+	LightCollapse lightCollapse = LightCollapse("Add Light", lightList, lightShader);
+	ObjectCollapse objectCollapse = ObjectCollapse("Add Object", objectList, myShader);
 
 	// render loop
 	// -----------
@@ -214,7 +223,7 @@ int main() {
 		ImGui::NewFrame();
 		//ImGui::ShowDemoWindow(); // Show demo window! :)
 
-		// ========================
+		// ============================================
 		// Start Dear ImGui control
 		ImVec2 controlWindowPos = ImVec2(WIDTH, 0);
 		ImVec2 controlWindowSize = ImVec2(200, HEIGHT);
@@ -230,10 +239,28 @@ int main() {
 		lightCollapse.show();
 		objectCollapse.show();
 
+		if (lightList[0]->isEnabled()) {
+			if (ImGui::Button("Turn off Flash Light"))
+				lightList[0]->disable();
+		}
+		else {
+			if (ImGui::Button("Turn on Flash Light"))
+				lightList[0]->enable();
+		}
+
+		if (axis.isEnabled()) {
+			if (ImGui::Button("Turn off Axis"))
+				axis.disable();
+		}
+		else {
+			if (ImGui::Button("Turn on Axis"))
+				axis.enable();
+		}
+
 		ImGui::End();
 
 		// End Dear ImGui control
-		// ======================
+		// ============================================
 
 		// calculate delta time
 		float currentFrame = glfwGetTime();
@@ -249,9 +276,6 @@ int main() {
 		glClearColor(0.75f, 0.52f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		/*glm::mat4 projection = glm::mat4(1.0f);
-		projection = glm::perspective(glm::radians(camera.Zoom), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);*/
-
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
 		glm::mat4 view = camera.GetViewMatrix();
 		glm::mat4 horizontalRotate = glm::mat4(1.0f);
@@ -262,28 +286,30 @@ int main() {
 		// light source
 		// ------------
 
-		lightList[0]->setPosition(lightPos);
-		lightList[0]->setCircularMotion(true);
-		lightList[0]->update(currentFrame);
+		lightList[1]->setPosition(lightPos);
+		lightList[1]->setCircularMotion(true);
 
-		lightList[1]->setDirection(glm::vec3(-0.2f, -1.0f, -0.3f));
-		lightList[1]->setColor(glm::vec3(1.0f, 1.0f, 1.0f));
+		lightList[2]->setDirection(glm::vec3(-0.2f, -1.0f, -0.3f));
+		if (lightList[2]->isEnabled())
+			lightList[2]->setColor(glm::vec3(1.0f, 1.0f, 1.0f));
 
-		for (int i = 2; i < 6; i++) {
-			lightList[i]->setPosition(pointLightPositions[i - 2]);
-			if (lightList[i]->isEnabled())
-				lightList[i]->setColor(pointLightColors[i - 2]);
+		for (int i = 3; i < lightList.size(); i++) {
+			if (i < 7) {
+				if (lightList[i]->isEnabled())
+					lightList[i]->setColor(pointLightColors[i - 3]);
+				lightList[i]->setPosition(pointLightPositions[i - 3]);
+			}
 		}
 
-		lightList[6]->setColor(glm::vec3(1.0f));
+		// ===================================================================
+		// PER-FRAME LIGHT UPDATES (Only for animated lights)
+		// ===================================================================
+		lightList[1]->update(currentFrame); // Keep updating the orbiting one
 
-		lightList[5]->disable();
-		lightList[4]->disable();
-		lightList[3]->disable();
-		lightList[2]->disable();
+		// draw
 
 		for (int i = 0; i < lightList.size(); i++) {
-			if (i == 6) continue;
+			if (i == 0) continue;
 			if (lightList[i]->isEnabled())
 				lightList[i]->draw(view, projection);
 		}
@@ -292,7 +318,6 @@ int main() {
 		// -------------
 
 		// extract world-space light position and upload to myShader
-		glm::vec3 viewPos = camera.Position;
 		int n_DirLight = 0, n_PointLight = 0, n_SpotLight = 0;
 		for (int i = 0; i < lightList.size(); i++) {
 			if (DirectionalLight* s = dynamic_cast<DirectionalLight*>(lightList[i])) {
@@ -300,8 +325,10 @@ int main() {
 			}
 			// SpotLight is derived from PointLight -> CHECK THIS FIRST
 			else if (SpotLight* s = dynamic_cast<SpotLight*>(lightList[i])) {
-				s->setPosition(camera.Position);
-				s->setDirection(camera.Front);
+				if (i == 0) {
+					s->setPosition(camera.Position);
+					s->setDirection(camera.Front);
+				}
 				s->updateObjectShader(myShader, n_SpotLight++);
 			}
 			else if (PointLight* s = dynamic_cast<PointLight*>(lightList[i])) {
@@ -310,25 +337,23 @@ int main() {
 		}
 
 		// draw
-		for (unsigned int i = 0; i < 10; i++) {
-			float angle = 20.f * i;
-			cubeList[i].setPosition(cubePositions[i]);
+		glm::vec3 viewPos = camera.Position;
+		for (unsigned int i = 0; i < objectList.size(); i++) {
+			//float angle = 20.f * i;
+			objectList[i]->setPosition(cubePositions[i]);
 			//cubeList[i].setRotation(glm::vec3(angle * 0.2f, angle * 0.5f, angle * 0.8f));
-			cubeList[i].draw(view, projection, viewPos, horizontalRotate, verticalRotate);
+			objectList[i]->draw(view, projection, viewPos, horizontalRotate, verticalRotate);
 		}
-
-		// draw custom objects
-		myObject1.setPosition(glm::vec3(-2.0f, 1.0f, -3.0f));
-		myObject1.setScale(glm::vec3(0.5f, 0.5f, 0.5f));
-		myObject1.setRotation(glm::vec3(10.0f, 10.0f, 10.0f));
-		myObject1.draw(view, projection, viewPos, horizontalRotate, verticalRotate);
 
 		// loaded model
 		glm::mat4 model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(0.0, -1.0, 0.0));
 		model = glm::scale(model, glm::vec3(0.5, 0.5, 0.5));
 		myShader.setMat4fv("model", model);
-		backpackModel.Draw(myShader);
+		//backpackModel.draw(myShader);
+
+		if (axis.isEnabled())
+			axis.draw(view, projection);
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -359,6 +384,9 @@ int main() {
 	for (int i = 0; i < lightList.size(); i++) {
 		delete lightList[i];
 	}
+	for (int i = 0; i < objectList.size(); i++) {
+		delete objectList[i];
+	}
 
 	return 0;
 }
@@ -366,7 +394,7 @@ int main() {
 void keyboardInputControl(GLFWwindow* window) {
 	const float rotateSpeed = 200.0f * deltaTime;
 	// terminate program
-	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS or glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+	if ( glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 
 	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
