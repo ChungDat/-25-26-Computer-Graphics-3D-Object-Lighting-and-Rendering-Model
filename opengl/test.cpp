@@ -53,7 +53,7 @@ glm::vec3 cameraPos = glm::vec3(0.0f, 1.0f, 3.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
-
+// white light cube
 glm::vec3 lightPos = glm::vec3(0.0f, 0.0f, 2.0f);
 glm::vec3 lightColor = glm::vec3(1.0f);
 
@@ -161,11 +161,8 @@ int main() {
 	// model
 	Model backpackModel((char*)"backpack/backpack.obj");
 
-	lightShader.use();
-	lightShader.setVec3fv("lightColor", lightColor);
-
 	myShader.use();
-	myShader.setFloat("material.shininess", 0.3);
+	myShader.setFloat("material.shininess", 32);
 	myShader.setInt("material.diffuse", 0);
 	myShader.setInt("material.specular", 1);
 	myShader.setInt("material.emission", 2);
@@ -217,6 +214,8 @@ int main() {
 		ImGui::NewFrame();
 		//ImGui::ShowDemoWindow(); // Show demo window! :)
 
+		// ========================
+		// Start Dear ImGui control
 		ImVec2 controlWindowPos = ImVec2(WIDTH, 0);
 		ImVec2 controlWindowSize = ImVec2(200, HEIGHT);
 		ImVec2 viewportSize = ImGui::GetMainViewport()->Size;
@@ -232,6 +231,9 @@ int main() {
 		objectCollapse.show();
 
 		ImGui::End();
+
+		// End Dear ImGui control
+		// ======================
 
 		// calculate delta time
 		float currentFrame = glfwGetTime();
@@ -260,55 +262,54 @@ int main() {
 		// light source
 		// ------------
 
-		lightList[0]->setCircularMotion(true);
 		lightList[0]->setPosition(lightPos);
-		lightList[0]->draw(view, projection);
+		lightList[0]->setCircularMotion(true);
+		lightList[0]->update(currentFrame);
 
-		lightList[1]->setPosition(glm::vec3(-0.2f, -1.0f, -0.3f));
+		lightList[1]->setDirection(glm::vec3(-0.2f, -1.0f, -0.3f));
 		lightList[1]->setColor(glm::vec3(1.0f, 1.0f, 1.0f));
-		lightList[1]->draw(view, projection);
 
 		for (int i = 2; i < 6; i++) {
 			lightList[i]->setPosition(pointLightPositions[i - 2]);
-			lightList[i]->setColor(pointLightColors[i - 2]);
-			lightList[i]->draw(view, projection);
+			if (lightList[i]->isEnabled())
+				lightList[i]->setColor(pointLightColors[i - 2]);
+		}
+
+		lightList[6]->setColor(glm::vec3(1.0f));
+
+		lightList[5]->disable();
+		lightList[4]->disable();
+		lightList[3]->disable();
+		lightList[2]->disable();
+
+		for (int i = 0; i < lightList.size(); i++) {
+			if (i == 6) continue;
+			if (lightList[i]->isEnabled())
+				lightList[i]->draw(view, projection);
 		}
 
 		// normal object
 		// -------------
-		myShader.use();
 
 		// extract world-space light position and upload to myShader
 		glm::vec3 viewPos = camera.Position;
-		myShader.setMat4fv("horizontalRotate", horizontalRotate);
-		myShader.setMat4fv("verticalRotate", verticalRotate);
-
-		float currentTime = static_cast<float>(glfwGetTime());
-		for (auto& L : lightList) {
-			L->update(currentTime);   // update logical position for lights that orbit
-		}
-
-		// now populate object shader with updated light positions
 		int n_DirLight = 0, n_PointLight = 0, n_SpotLight = 0;
-		for (int i = 0; i < lightList.size(); ++i) {
+		for (int i = 0; i < lightList.size(); i++) {
 			if (DirectionalLight* s = dynamic_cast<DirectionalLight*>(lightList[i])) {
 				s->updateObjectShader(myShader, n_DirLight++);
-			} else if (PointLight* s = dynamic_cast<PointLight*>(lightList[i])) {
-				s->updateObjectShader(myShader, n_PointLight++);
-			} else if (SpotLight* s = dynamic_cast<SpotLight*>(lightList[i])) {
+			}
+			// SpotLight is derived from PointLight -> CHECK THIS FIRST
+			else if (SpotLight* s = dynamic_cast<SpotLight*>(lightList[i])) {
 				s->setPosition(camera.Position);
 				s->setDirection(camera.Front);
 				s->updateObjectShader(myShader, n_SpotLight++);
 			}
+			else if (PointLight* s = dynamic_cast<PointLight*>(lightList[i])) {
+				s->updateObjectShader(myShader, n_PointLight++);
+			}
 		}
 
 		// draw
-		//glActiveTexture(GL_TEXTURE0);
-		//glBindTexture(GL_TEXTURE_2D, diffuseMap);
-		//glActiveTexture(GL_TEXTURE1);
-		//glBindTexture(GL_TEXTURE_2D, specularMap);
-		//glActiveTexture(GL_TEXTURE2);
-		//glBindTexture(GL_TEXTURE_2D, emissionMap);
 		for (unsigned int i = 0; i < 10; i++) {
 			float angle = 20.f * i;
 			cubeList[i].setPosition(cubePositions[i]);
@@ -323,11 +324,11 @@ int main() {
 		myObject1.draw(view, projection, viewPos, horizontalRotate, verticalRotate);
 
 		// loaded model
-		//glm::mat4 model = glm::mat4(1.0);
-		//model = glm::translate(model, glm::vec3(0.0, -1.0, 0.0));
-		//model = glm::scale(model, glm::vec3(0.5, 0.5, 0.5));
-		//myShader.setMat4fv("model", model);
-		//backpackModel.Draw(myShader);
+		glm::mat4 model = glm::mat4(1.0);
+		model = glm::translate(model, glm::vec3(0.0, -1.0, 0.0));
+		model = glm::scale(model, glm::vec3(0.5, 0.5, 0.5));
+		myShader.setMat4fv("model", model);
+		backpackModel.Draw(myShader);
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

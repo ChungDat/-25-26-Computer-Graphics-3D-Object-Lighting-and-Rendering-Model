@@ -9,7 +9,6 @@
 class Light
 {
 protected:
-	glm::vec3 position;
 	glm::vec3 color;
 
 	glm::vec3 ambient;
@@ -18,21 +17,30 @@ protected:
 
 	static unsigned int VAO, VBO, EBO;
 	static bool initialized;
+	bool enabled;
+	glm::vec3 storedColor; // To remember the color when disabled
 	Shader& shader;
 public:
 	Light(Shader& shader);
-	void setPosition(const glm::vec3& _pos);
+	virtual void setPosition(const glm::vec3& _pos) {};
+	virtual void setDirection(const glm::vec3& _dir) {};
 	void setColor(const glm::vec3& _color);
 	static void initBuffers();
+	virtual void getPosition() {};
+	virtual void getDirection() {};
 	unsigned int getVAO() const;
 	unsigned int getVertexCount() const;
+
+	void enable();
+	void disable();
+	bool isEnabled() const;
 
 	glm::vec3 getPosition() const;
 	glm::vec3 getAmbient() const;
 	glm::vec3 getDiffuse() const;
 	glm::vec3 getSpecular() const;
 
-	virtual void draw(const glm::mat4& view, const glm::mat4& projection) const = 0;
+	virtual void draw(const glm::mat4& view, const glm::mat4& projection) const {};
 	virtual void update(float time) {};                      // <- new
 	virtual void updateObjectShader(Shader& shader, unsigned int typeCount) const = 0;
 	virtual void setCircularMotion(bool _circularMotion) {};
@@ -54,6 +62,7 @@ public:
 
 class PointLight :public Light {
 protected:
+	glm::vec3 position;
 	float constant;
 	float linear;
 	float quadratic;
@@ -66,6 +75,7 @@ public:
 	PointLight(Shader& shader);
 	void draw(const glm::mat4& view, const glm::mat4& projection) const override;
 	void update(float time) override;                     // <- new override
+	void setPosition(const glm::vec3& _pos) override;
 	void setRadius(float _radius);
 	void setRotationalFreq(float _freq);
 	void setCircularMotion(bool _circularMotion) override;
