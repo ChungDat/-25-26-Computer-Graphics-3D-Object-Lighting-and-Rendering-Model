@@ -50,16 +50,18 @@ public:
 
 class ObjectProperties : public ControlCollapse {
 protected:
-	unsigned int objectID;
+	std::vector<Object*>& objectList;
+	int currentSelect = 0;
 public:
-	ObjectProperties(const char*);
-	void show(unsigned int);
+	ObjectProperties(const char*, std::vector<Object*>&);
+	void show();
 };
 
 class LightProperties : public ControlCollapse {
 protected:
-	unsigned int lightID;
+	std::vector<Light*>& lightList;
+	int currentSelect = 0;
 public:
-	LightProperties(const char*);
+	LightProperties(const char*, std::vector<Light*>&);
 	void show();
 };

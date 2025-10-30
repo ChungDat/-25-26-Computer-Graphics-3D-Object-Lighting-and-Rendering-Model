@@ -1,9 +1,13 @@
 // ============================
-// TINH LAI NORMAL CUA CAC HINH
-// TINH LAI COLOR
+// TINH LAI ORBITAL MOTION GUI
+// TODO:	THEM CHUC NANG XOA
+//			THEM PRESET SCENE
+//			THEM CHUC NANG WIREFRAME
+//			THEM BLINN PHONG
+//			THEM GOURAUD
+//			THEM 3D OBJJECT LIGHTING
 // ============================
 #define _CRT_SECURE_NO_WARNINGS
-#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
 
 // openGL libraries
 #include <glad/glad.h>
@@ -201,8 +205,32 @@ int main() {
 	// create axis
 	Axis axis = Axis(axisShader);
 
+	// set object
+	for (unsigned int i = 0; i < objectList.size(); i++) {
+		//float angle = 20.f * i;
+		if (i < 10)
+			objectList[i]->setPosition(cubePositions[i]);
+	}
+
+	// set light
 	lightList[0]->setColor(glm::vec3(1.0f));
+
 	lightList[1]->setCircularMotion(true);
+	lightList[1]->setPosition(lightPos);
+	lightList[1]->setCircularMotion(true);
+
+	lightList[2]->setDirection(glm::vec3(-0.2f, -1.0f, -0.3f));
+	if (lightList[2]->isEnabled())
+		lightList[2]->setColor(glm::vec3(1.0f, 1.0f, 1.0f));
+
+	for (int i = 3; i < lightList.size(); i++) {
+		if (i < 7) {
+			if (lightList[i]->isEnabled())
+				lightList[i]->setColor(pointLightColors[i - 3]);
+			lightList[i]->setPosition(pointLightPositions[i - 3]);
+		}
+	}
+
 
 	// ImGui Settings
 	bool controlWindowOpened = true;
@@ -213,7 +241,8 @@ int main() {
 	PresetScenesCollapse presetScenesCollapse = PresetScenesCollapse("Preset Scenes");
 	LightCollapse lightCollapse = LightCollapse("Add Light", lightList, lightShader);
 	ObjectCollapse objectCollapse = ObjectCollapse("Add Object", objectList, myShader);
-
+	ObjectProperties objectProperties = ObjectProperties("Object Properties", objectList);
+	LightProperties lightProperties = LightProperties("Light Properties", lightList);
 	// render loop
 	// -----------
 	while (!glfwWindowShouldClose(window)) {
@@ -234,26 +263,30 @@ int main() {
 			ImGuiCond_Always
 		);
 		ImGui::SetNextWindowSize(controlWindowSize);		
-		ImGui::Begin("Control Window", &controlWindowOpened, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
+		ImGui::Begin("Control Window", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
 		presetScenesCollapse.show();
 		lightCollapse.show();
 		objectCollapse.show();
+		objectProperties.show();
+		lightProperties.show();
+
+		ImGui::Separator();
 
 		if (lightList[0]->isEnabled()) {
-			if (ImGui::Button("Turn off Flash Light"))
+			if (ImGui::Button("Hide Flash Light"))
 				lightList[0]->disable();
 		}
 		else {
-			if (ImGui::Button("Turn on Flash Light"))
+			if (ImGui::Button("Show Flash Light"))
 				lightList[0]->enable();
 		}
 
 		if (axis.isEnabled()) {
-			if (ImGui::Button("Turn off Axis"))
+			if (ImGui::Button("Hide Axis"))
 				axis.disable();
 		}
 		else {
-			if (ImGui::Button("Turn on Axis"))
+			if (ImGui::Button("Show Axis"))
 				axis.enable();
 		}
 
@@ -285,21 +318,6 @@ int main() {
 
 		// light source
 		// ------------
-
-		lightList[1]->setPosition(lightPos);
-		lightList[1]->setCircularMotion(true);
-
-		lightList[2]->setDirection(glm::vec3(-0.2f, -1.0f, -0.3f));
-		if (lightList[2]->isEnabled())
-			lightList[2]->setColor(glm::vec3(1.0f, 1.0f, 1.0f));
-
-		for (int i = 3; i < lightList.size(); i++) {
-			if (i < 7) {
-				if (lightList[i]->isEnabled())
-					lightList[i]->setColor(pointLightColors[i - 3]);
-				lightList[i]->setPosition(pointLightPositions[i - 3]);
-			}
-		}
 
 		// ===================================================================
 		// PER-FRAME LIGHT UPDATES (Only for animated lights)
@@ -340,7 +358,6 @@ int main() {
 		glm::vec3 viewPos = camera.Position;
 		for (unsigned int i = 0; i < objectList.size(); i++) {
 			//float angle = 20.f * i;
-			objectList[i]->setPosition(cubePositions[i]);
 			//cubeList[i].setRotation(glm::vec3(angle * 0.2f, angle * 0.5f, angle * 0.8f));
 			objectList[i]->draw(view, projection, viewPos, horizontalRotate, verticalRotate);
 		}

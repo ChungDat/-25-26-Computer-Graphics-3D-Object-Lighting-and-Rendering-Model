@@ -117,6 +117,26 @@ void Object::setModelMatrix() {
 	shader.setMat4fv("model", model);
 }
 
+glm::vec3 Object::getPosition() const {
+	return position;
+}
+
+glm::vec3& Object::getPosition_Ref() {
+	return this->position;
+}
+
+float Object::getX() const {
+	return position.x;
+}
+
+float Object::getY() const {
+	return position.y;
+}
+
+float Object::getZ() const {
+	return position.z;
+}
+
 GLenum Object::getDrawMode() const {
 	return GL_TRIANGLES;
 }
@@ -222,6 +242,11 @@ unsigned int Cube::getVertexCount() const {
 	return 36; // 6 faces * 2 triangles * 3 vertices
 }
 
+std::string Cube::getType() const
+{
+	return "Cube";
+}
+
 // Pyramid class
 // -------------
 
@@ -317,6 +342,10 @@ unsigned int Pyramid::getVertexCount() const {
 	return 18; // 4 faces * 1 triangles * 3 vertices + base * 2 triangles * 3 vertices
 }
 
+std::string Pyramid::getType() const {
+	return "Pyramid";
+}
+
 // Sphere class
 // ------------
 
@@ -376,6 +405,10 @@ unsigned int Sphere::getVAO() const {
 
 unsigned int Sphere::getVertexCount() const {
 	return static_cast<unsigned int>(indices.size());
+}
+
+std::string Sphere::getType() const {
+	return "Sphere";
 }
 
 void Sphere::generateSphere(float radius, unsigned int sectorCount, unsigned int stackCount,
@@ -531,6 +564,10 @@ unsigned int Cylinder::getVAO() const {
 
 unsigned int Cylinder::getVertexCount() const {
 	return static_cast<unsigned int>(indices.size());
+}
+
+std::string Cylinder::getType() const {
+	return "Cylinder";
 }
 
 void Cylinder::generateCylinder(float radius, float height, unsigned int sectorCount,

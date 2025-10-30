@@ -23,6 +23,14 @@ public:
     void setPosition(const glm::vec3 _pos);
     void setScale(const glm::vec3 _scale);
     void setRotation(const glm::vec3 _rotation);
+
+    glm::vec3 getPosition() const;
+    glm::vec3& getPosition_Ref();
+    float getX() const;
+    float getY() const;
+    float getZ() const;
+
+    virtual std::string getType() const = 0;
     
     virtual ~Object();
 protected:
@@ -47,6 +55,7 @@ protected:
     static void initBuffers();
     unsigned int getVAO() const;
     unsigned int getVertexCount() const;
+    std::string getType() const;
 public:
     Cube(Shader& shader);
     Cube(Shader& shader, const std::string& diffusePath);
@@ -63,6 +72,7 @@ protected:
     static void initBuffers();
     unsigned int getVAO() const;
     unsigned int getVertexCount() const;
+    std::string getType() const;
     static void generateSphere(float radius, unsigned int sectorCount, unsigned int stackCount,
         std::vector<float>& vertices, std::vector<unsigned int>& indices);
 public:
@@ -80,6 +90,7 @@ protected:
     static void initBuffers();
     unsigned int getVAO() const;
     unsigned int getVertexCount() const;
+    std::string getType() const;
 public:
     Pyramid(Shader& shader);
     Pyramid(Shader& shader, const std::string& diffusePath);
@@ -96,6 +107,7 @@ protected:
     static void initBuffers();
     unsigned int getVAO() const;
     unsigned int getVertexCount() const;
+    std::string getType() const;
     static void generateCylinder(float radius, float height, unsigned int sectorCount,
         std::vector<float>& vertices, std::vector<unsigned int>& indices);
 public:

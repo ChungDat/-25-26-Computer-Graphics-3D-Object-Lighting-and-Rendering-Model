@@ -18,7 +18,16 @@ Light::Light(Shader& shader) : shader(shader) {
 }
 
 void Light::setColor(const glm::vec3& _color) {
-	color = _color;
+	if (isEnabled()) {
+		color = _color;
+		updateAttribute();
+	}
+	else {
+		storedColor = _color;
+	}
+}
+
+void Light::updateAttribute() {
 	ambient = color * 0.1f;
 	diffuse = color;
 	specular = color;
@@ -125,10 +134,49 @@ glm::vec3 Light::getPosition() const {
 	return glm::vec3(0.0f);
 }
 
+float Light::getX() const {
+	return 0.0f;
+}
+
+float Light::getY() const {
+	return 0.0f;
+}
+
+float Light::getZ() const {
+	return 0.0f;
+}
+
+glm::vec3 Light::getColor() const
+{
+	return color;
+}
+
+glm::vec3& Light::getColor_Ref()
+{
+	return this->color;
+}
+
+glm::vec3 Light::getStoredColor() const
+{
+	return storedColor;
+}
+
+float Light::getRadius() const {
+	return 0.0f;
+}
+
+float Light::getInnerCutOff() const {
+	return 0.0f;
+}
+
+float Light::getOuterCutOff() const {
+	return 0.0f;
+}
+
 void Light::enable() {
 	if (!enabled) {
-		setColor(storedColor);
 		enabled = true;
+		setColor(storedColor);
 	}
 }
 
@@ -161,6 +209,10 @@ glm::vec3 DirectionalLight::getDirection() const {
 	return direction;
 }
 
+std::string DirectionalLight::getType() const {
+	return "Directional";
+}
+
 void DirectionalLight::updateObjectShader(Shader& objectShader, unsigned int typeCount) const {
 	objectShader.use();
 	objectShader.setVec3fv("dirLight[" + std::to_string(typeCount) + "].direction", direction);
@@ -178,7 +230,7 @@ PointLight::PointLight(Shader& shader) : Light(shader) {
 	linear = 0.045f;
 	quadratic = 0.0075f;
 	orbitCenter = position;
-	circularMotion = false;
+	orbitalMotion = false;
 }
 
 void PointLight::draw(const glm::mat4& view, const glm::mat4& projection) const {
@@ -196,7 +248,7 @@ void PointLight::draw(const glm::mat4& view, const glm::mat4& projection) const 
 }
 
 void PointLight::update(float time) {
-	if (!circularMotion) return;
+	if (!orbitalMotion) return;
 
 	// compute angle in radians
 	float angle = time * glm::radians(rotationalFreq);
@@ -213,7 +265,7 @@ void PointLight::setPosition(const glm::vec3& _pos) {
 }
 
 void PointLight::setCircularMotion(bool _circularMotion) {
-	circularMotion = _circularMotion;
+	orbitalMotion = _circularMotion;
 }
 
 void PointLight::setRadius(float _radius) {
@@ -239,6 +291,27 @@ float PointLight::getQuadratic() const {
 glm::vec3 PointLight::getPosition() const
 {
 	return position;
+}
+
+float PointLight::getX() const {
+	return position.x;
+}
+
+float PointLight::getY() const {
+	return position.y;
+}
+
+float PointLight::getZ() const {
+	return position.z;
+}
+
+float PointLight::getRadius() const
+{
+	return radius;
+}
+
+std::string PointLight::getType() const {
+	return "Point";
 }
 
 void PointLight::updateObjectShader(Shader& objectShader, unsigned int typeCount) const {
@@ -284,6 +357,10 @@ float SpotLight::getOuterCutOff() const {
 glm::vec3 SpotLight::getDirection() const
 {
 	return direction;
+}
+
+std::string SpotLight::getType() const {
+	return "Spot";
 }
 
 void SpotLight::updateObjectShader(Shader& objectShader, unsigned int typeCount) const {
