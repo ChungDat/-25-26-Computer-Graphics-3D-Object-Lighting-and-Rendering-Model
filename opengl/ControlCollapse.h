@@ -41,10 +41,9 @@ class ObjectCollapse : public ControlCollapse {
 protected:
 	std::vector<const char*> object = { "Cube", "Sphere", "Pyramid", "Cylinder", "Lamp", "Flower Pot", "Glass" };
 	std::vector<Object*>& objectList;
-	Shader& shader;
 	void addObject(const char*);
 public:
-	ObjectCollapse(const char*, std::vector<Object*>&, Shader&);
+	ObjectCollapse(const char*, std::vector<Object*>&);
 	void show();
 };
 

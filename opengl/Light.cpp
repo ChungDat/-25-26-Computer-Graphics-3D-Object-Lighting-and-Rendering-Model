@@ -3,15 +3,17 @@
 // static definitions
 unsigned int Light::VAO = 0;
 unsigned int Light::VBO = 0;
+int Light::nextID = 0;
 bool Light::initialized = false;
 
 // abstract Light class
 // --------------------
 
-Light::Light(Shader& shader) : shader(shader) {
+Light::Light(Shader& shader) : shader(shader), ID(nextID++) {
 	color = glm::vec3(1.0f);
 	storedColor = color; // Initialize storedColor
 	enabled = true;      // Lights are enabled by default
+
 	ambient = color * 0.1f;
 	diffuse = color;
 	specular = color;
@@ -171,6 +173,10 @@ float Light::getInnerCutOff() const {
 
 float Light::getOuterCutOff() const {
 	return 0.0f;
+}
+
+int Light::getID() const {
+	return ID;
 }
 
 void Light::enable() {

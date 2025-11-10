@@ -13,34 +13,42 @@
 class Object
 {
 public:
-    Object(Shader& shader);
-	Object(Shader& shader, const std::string& diffusePath);
-	Object(Shader& shader, const std::string& diffusePath, const std::string& specularPath);
-	Object(Shader& shader, const std::string& diffusePath, const std::string& specularPath, const std::string& emssionPath);
+    Object();
+	Object(const std::string& diffusePath);
+	Object(const std::string& diffusePath, const std::string& specularPath);
+	Object(const std::string& diffusePath, const std::string& specularPath, const std::string& emssionPath);
     //Object(const Object& other);
 
-    virtual void draw(const glm::mat4& view, const glm::mat4& projection, const glm::vec3& viewPos, const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate);
+    virtual void draw(Shader& shader, const glm::mat4& view, const glm::mat4& projection, const glm::vec3& viewPos, const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate);
     void setPosition(const glm::vec3 _pos);
     void setScale(const glm::vec3 _scale);
     void setRotation(const glm::vec3 _rotation);
+    void disable();
+    void enable();
+    bool isEnabled() const;
 
     glm::vec3 getPosition() const;
     glm::vec3& getPosition_Ref();
     float getX() const;
     float getY() const;
     float getZ() const;
+    int getID() const;
+
 
     virtual std::string getType() const = 0;
     
     virtual ~Object();
 protected:
-    Shader& shader;
     unsigned int diffuseMap, specularMap, emissionMap;
     std::string diffusePath, specularPath, emissionPath;
     glm::mat4 model;
     glm::vec3 position;
     glm::vec3 scale;
 	glm::vec3 rotation; // a vector representing rotation angles around x, y, z axes in degrees
+    bool enabled;
+
+    static int nextID;
+    int ID;
 
     void setModelMatrix();
     virtual unsigned int getVAO() const = 0;
@@ -57,10 +65,10 @@ protected:
     unsigned int getVertexCount() const;
     std::string getType() const;
 public:
-    Cube(Shader& shader);
-    Cube(Shader& shader, const std::string& diffusePath);
-    Cube(Shader& shader, const std::string& diffusePath, const std::string& specularPath);
-    Cube(Shader& shader, const std::string& diffusePath, const std::string& specularPath, const std::string& emssionPath);
+    Cube();
+    Cube(const std::string& diffusePath);
+    Cube(const std::string& diffusePath, const std::string& specularPath);
+    Cube(const std::string& diffusePath, const std::string& specularPath, const std::string& emssionPath);
 };
 
 class Sphere : public Object {
@@ -76,11 +84,11 @@ protected:
     static void generateSphere(float radius, unsigned int sectorCount, unsigned int stackCount,
         std::vector<float>& vertices, std::vector<unsigned int>& indices);
 public:
-    Sphere(Shader& shader);
-    Sphere(Shader& shader, const std::string& diffusePath);
-    Sphere(Shader& shader, const std::string& diffusePath, const std::string& specularPath);
-    Sphere(Shader& shader, const std::string& diffusePath, const std::string& specularPath, const std::string& emssionPath);
-    void draw(const glm::mat4& view, const glm::mat4& projection, const glm::vec3& viewPos, const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) override;
+    Sphere();
+    Sphere(const std::string& diffusePath);
+    Sphere(const std::string& diffusePath, const std::string& specularPath);
+    Sphere(const std::string& diffusePath, const std::string& specularPath, const std::string& emssionPath);
+    void draw(Shader& shader, const glm::mat4& view, const glm::mat4& projection, const glm::vec3& viewPos, const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) override;
 };
 
 class Pyramid : public Object {
@@ -92,10 +100,10 @@ protected:
     unsigned int getVertexCount() const;
     std::string getType() const;
 public:
-    Pyramid(Shader& shader);
-    Pyramid(Shader& shader, const std::string& diffusePath);
-    Pyramid(Shader& shader, const std::string& diffusePath, const std::string& specularPath);
-    Pyramid(Shader& shader, const std::string& diffusePath, const std::string& specularPath, const std::string& emssionPath);
+    Pyramid();
+    Pyramid(const std::string& diffusePath);
+    Pyramid(const std::string& diffusePath, const std::string& specularPath);
+    Pyramid(const std::string& diffusePath, const std::string& specularPath, const std::string& emssionPath);
 };
 
 class Cylinder : public Object {
@@ -111,9 +119,9 @@ protected:
     static void generateCylinder(float radius, float height, unsigned int sectorCount,
         std::vector<float>& vertices, std::vector<unsigned int>& indices);
 public:
-    Cylinder(Shader& shader);
-    Cylinder(Shader& shader, const std::string& diffusePath);
-    Cylinder(Shader& shader, const std::string& diffusePath, const std::string& specularPath);
-    Cylinder(Shader& shader, const std::string& diffusePath, const std::string& specularPath, const std::string& emssionPath);
-    void draw(const glm::mat4& view, const glm::mat4& projection, const glm::vec3& viewPos, const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) override;
+    Cylinder();
+    Cylinder(const std::string& diffusePath);
+    Cylinder(const std::string& diffusePath, const std::string& specularPath);
+    Cylinder(const std::string& diffusePath, const std::string& specularPath, const std::string& emssionPath);
+    void draw(Shader& shader, const glm::mat4& view, const glm::mat4& projection, const glm::vec3& viewPos, const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) override;
 };

@@ -54,8 +54,8 @@ void LightCollapse::addLight(const char* lightType) {
 		lightList.push_back(new SpotLight(shader));
 }
 
-ObjectCollapse::ObjectCollapse(const char* _label, std::vector<Object*>& _objectList, Shader& _shader) 
-	: ControlCollapse(_label), objectList(_objectList), shader(_shader) {}
+ObjectCollapse::ObjectCollapse(const char* _label, std::vector<Object*>& _objectList) 
+	: ControlCollapse(_label), objectList(_objectList) {}
 
 void ObjectCollapse::show() {
 	if (ImGui::CollapsingHeader(label ? label : "Add object")) {
@@ -70,13 +70,13 @@ void ObjectCollapse::show() {
 
 void ObjectCollapse::addObject(const char* objectType) {
 	if (objectType == "Cube")
-		objectList.push_back(new Cube(shader, "container2.png", "container2_specular.png", "matrix.jpg"));
+		objectList.push_back(new Cube("container2.png", "container2_specular.png", "matrix.jpg"));
 	else if (objectType == "Pyramid")
-		objectList.push_back(new Pyramid(shader, "container2.png", "container2_specular.png", "matrix.jpg"));
+		objectList.push_back(new Pyramid("container2.png", "container2_specular.png", "matrix.jpg"));
 	else if (objectType == "Sphere")
-		objectList.push_back(new Sphere(shader, "container2.png", "container2_specular.png", "matrix.jpg"));
+		objectList.push_back(new Sphere("container2.png", "container2_specular.png", "matrix.jpg"));
 	else if (objectType == "Cylinder")
-		objectList.push_back(new Cylinder(shader, "container2.png", "container2_specular.png", "matrix.jpg"));
+		objectList.push_back(new Cylinder("container2.png", "container2_specular.png", "matrix.jpg"));
 }
 
 ObjectProperties::ObjectProperties(const char* _label, std::vector<Object*>& _objectList) 
@@ -102,11 +102,22 @@ void ObjectProperties::show() {
 		float posY = objectList[currentSelect]->getY();
 		float posZ = objectList[currentSelect]->getZ();
 		bool positionChanged = false;
-		positionChanged = ImGui::SliderFloat("X", &posX, -10.0f, 10.0f, "%.1f") || positionChanged;
-		positionChanged = ImGui::SliderFloat("Y", &posY, -10.0f, 10.0f, "%.1f") || positionChanged;
-		positionChanged = ImGui::SliderFloat("Z", &posZ, -10.0f, 10.0f, "%.1f") || positionChanged;
+		positionChanged = ImGui::SliderFloat("X##o", &posX, -10.0f, 10.0f, "%.1f") || positionChanged;
+		positionChanged = ImGui::SliderFloat("Y##o", &posY, -10.0f, 10.0f, "%.1f") || positionChanged;
+		positionChanged = ImGui::SliderFloat("Z##o", &posZ, -10.0f, 10.0f, "%.1f") || positionChanged;
 		if (positionChanged) {
 			objectList[currentSelect]->setPosition(glm::vec3(posX, posY, posZ));
+		}
+
+		if (objectList[currentSelect]->isEnabled()) {
+			if (ImGui::Button("Hide##o")) {
+				objectList[currentSelect]->disable();
+			}
+		}
+		else {
+			if (ImGui::Button("Show##o")) {
+				objectList[currentSelect]->enable();
+			}
 		}
 	}
 }
@@ -135,9 +146,9 @@ void LightProperties::show() {
 			float posY = lightList[currentSelect]->getY();
 			float posZ = lightList[currentSelect]->getZ();
 			bool positionChanged = false;
-			positionChanged = ImGui::SliderFloat("X", &posX, -10.0f, 10.0f, "%.1f") || positionChanged;
-			positionChanged = ImGui::SliderFloat("Y", &posY, -10.0f, 10.0f, "%.1f") || positionChanged;
-			positionChanged = ImGui::SliderFloat("Z", &posZ, -10.0f, 10.0f, "%.1f") || positionChanged;
+			positionChanged = ImGui::SliderFloat("X##l", &posX, -10.0f, 10.0f, "%.1f") || positionChanged;
+			positionChanged = ImGui::SliderFloat("Y##l", &posY, -10.0f, 10.0f, "%.1f") || positionChanged;
+			positionChanged = ImGui::SliderFloat("Z##l", &posZ, -10.0f, 10.0f, "%.1f") || positionChanged;
 			if (positionChanged) {
 				lightList[currentSelect]->setPosition(glm::vec3(posX, posY, posZ));
 			}
@@ -184,11 +195,6 @@ void LightProperties::show() {
 		float colorG = _color.y;
 		float colorB = _color.z;
 		float col[3] = {colorR, colorG, colorB};
-		//ImGui::ColorEdit3("Color", col);
-		//bool colorChanged = false;
-		//colorChanged = ImGui::SliderFloat("X", &posX, -10.0f, 10.0f, "%.1f") || positionChanged;
-		//colorChanged = ImGui::SliderFloat("Y", &posY, -10.0f, 10.0f, "%.1f") || positionChanged;
-		//colorChanged = ImGui::SliderFloat("Z", &posZ, -10.0f, 10.0f, "%.1f") || positionChanged;
 
 		glm::vec3& lightColorRef = lightList[currentSelect]->getColor_Ref();
 		if (lightList[currentSelect]->isEnabled()) {
@@ -198,6 +204,16 @@ void LightProperties::show() {
 			}
 		}
 
+		if (lightList[currentSelect]->isEnabled()) {
+			if (ImGui::Button("Hide##l")) {
+				lightList[currentSelect]->disable();
+			}
+		}
+		else {
+			if (ImGui::Button("Show##l")) {
+				lightList[currentSelect]->enable();
+			}
+		}
 	}
 
 }

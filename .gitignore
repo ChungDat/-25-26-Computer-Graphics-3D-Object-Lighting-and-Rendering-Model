@@ -35,3 +35,10 @@
 *.aux
 
 .vs
+\x64
+.gitignore
+*.sln
+*.vcxproj
+*.vcxproj.*
+*.zip
+*.pptx

@@ -2,6 +2,8 @@
 #include "utils.h"
 
 // static definitions
+int Object::nextID = 0;
+
 unsigned int Cube::VAO = 0;
 unsigned int Cube::VBO = 0;
 bool Cube::initialized = false;
@@ -27,8 +29,8 @@ bool Cylinder::initialized = false;
 // abstract Object class
 // ---------------------
 
-Object::Object(Shader& shader, const std::string& diffusePath, const std::string& specularPath, const std::string& emssionPath) 
-	: shader(shader), diffusePath(diffusePath), specularPath(specularPath), emissionPath(emssionPath)
+Object::Object(const std::string& diffusePath, const std::string& specularPath, const std::string& emssionPath) 
+	: diffusePath(diffusePath), specularPath(specularPath), emissionPath(emssionPath), ID(nextID++)
 {
 	if (!diffusePath.empty()) {
 		diffuseMap = createTexture(diffusePath.c_str());
@@ -56,19 +58,21 @@ Object::Object(Shader& shader, const std::string& diffusePath, const std::string
 	scale = glm::vec3(1.0f);
 	rotation = glm::vec3(0.0f);
 
+	enabled = true;
+
 	setModelMatrix();
 }
 
-Object::Object(Shader& shader, const std::string& diffusePath, const std::string& specularPath) 
-	: Object(shader, diffusePath, specularPath, "") {}
+Object::Object(const std::string& diffusePath, const std::string& specularPath) 
+	: Object(diffusePath, specularPath, "") {}
 
-Object::Object(Shader& shader, const std::string& diffusePath) 
-	: Object(shader, diffusePath, "", "") {}
+Object::Object(const std::string& diffusePath) 
+	: Object(diffusePath, "", "") {}
 
-Object::Object(Shader& shader) 
-	: Object(shader, "", "", "") {}
+Object::Object() 
+	: Object("", "", "") {}
 
-void Object::draw(const glm::mat4& view, const glm::mat4& projection, const glm::vec3& viewPos, const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) {
+void Object::draw(Shader& shader, const glm::mat4& view, const glm::mat4& projection, const glm::vec3& viewPos, const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) {
 	shader.use();
 	shader.setMat4fv("view", view);
 	shader.setMat4fv("projection", projection);
@@ -114,7 +118,20 @@ void Object::setModelMatrix() {
 	model = glm::rotate(model, rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
 	model = glm::rotate(model, rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
 	model = glm::scale(model, scale);
-	shader.setMat4fv("model", model);
+}
+
+void Object::disable() {
+	if (enabled)
+		enabled = false;
+}
+
+void Object::enable() {
+	if (!enabled)
+		enabled = true;
+}
+
+bool Object::isEnabled() const {
+	return enabled;
 }
 
 glm::vec3 Object::getPosition() const {
@@ -137,6 +154,10 @@ float Object::getZ() const {
 	return position.z;
 }
 
+int Object::getID() const {
+	return ID;
+}
+
 GLenum Object::getDrawMode() const {
 	return GL_TRIANGLES;
 }
@@ -146,20 +167,20 @@ Object::~Object() {}
 // Cube class
 // ----------
 
-Cube::Cube(Shader& shader, const std::string& diffusePath, const std::string& specularPath, const std::string& emssionPath) 
-	: Object(shader, diffusePath, specularPath, emssionPath)
+Cube::Cube(const std::string& diffusePath, const std::string& specularPath, const std::string& emssionPath) 
+	: Object(diffusePath, specularPath, emssionPath)
 {
 	initBuffers();
 }
 
-Cube::Cube(Shader& shader, const std::string& diffusePath, const std::string& specularPath) 
-	: Cube(shader, diffusePath, specularPath, "") {}
+Cube::Cube(const std::string& diffusePath, const std::string& specularPath) 
+	: Cube(diffusePath, specularPath, "") {}
 
-Cube::Cube(Shader& shader, const std::string& diffusePath)
-	: Cube(shader, diffusePath, "", "") {}
+Cube::Cube(const std::string& diffusePath)
+	: Cube(diffusePath, "", "") {}
 
-Cube::Cube(Shader& shader)
-	: Cube(shader, "", "", "") {}
+Cube::Cube()
+	: Cube("", "", "") {}
 
 void Cube::initBuffers() {
 	if (initialized) return;
@@ -250,20 +271,20 @@ std::string Cube::getType() const
 // Pyramid class
 // -------------
 
-Pyramid::Pyramid(Shader& shader, const std::string& diffusePath, const std::string& specularPath, const std::string& emssionPath)
-	: Object(shader, diffusePath, specularPath, emssionPath)
+Pyramid::Pyramid(const std::string& diffusePath, const std::string& specularPath, const std::string& emssionPath)
+	: Object(diffusePath, specularPath, emssionPath)
 {
 	initBuffers();
 }
 
-Pyramid::Pyramid(Shader& shader, const std::string& diffusePath, const std::string& specularPath)
-	: Pyramid(shader, diffusePath, specularPath, "") {}
+Pyramid::Pyramid(const std::string& diffusePath, const std::string& specularPath)
+	: Pyramid(diffusePath, specularPath, "") {}
 
-Pyramid::Pyramid(Shader& shader, const std::string& diffusePath)
-	: Pyramid(shader, diffusePath, "", "") {}
+Pyramid::Pyramid(const std::string& diffusePath)
+	: Pyramid(diffusePath, "", "") {}
 
-Pyramid::Pyramid(Shader& shader)
-	: Pyramid(shader, "", "", "") {
+Pyramid::Pyramid()
+	: Pyramid("", "", "") {
 }
 
 void Pyramid::initBuffers() {
@@ -349,20 +370,20 @@ std::string Pyramid::getType() const {
 // Sphere class
 // ------------
 
-Sphere::Sphere(Shader& shader, const std::string& diffusePath, const std::string& specularPath, const std::string& emssionPath)
-	: Object(shader, diffusePath, specularPath, emssionPath)
+Sphere::Sphere(const std::string& diffusePath, const std::string& specularPath, const std::string& emssionPath)
+	: Object(diffusePath, specularPath, emssionPath)
 {
 	initBuffers();
 }
 
-Sphere::Sphere(Shader& shader, const std::string& diffusePath, const std::string& specularPath)
-	: Sphere(shader, diffusePath, specularPath, "") {}
+Sphere::Sphere(const std::string& diffusePath, const std::string& specularPath)
+	: Sphere(diffusePath, specularPath, "") {}
 
-Sphere::Sphere(Shader& shader, const std::string& diffusePath)
-	: Sphere(shader, diffusePath, "", "") {}
+Sphere::Sphere(const std::string& diffusePath)
+	: Sphere(diffusePath, "", "") {}
 
-Sphere::Sphere(Shader& shader)
-	: Sphere(shader, "", "", "") {}
+Sphere::Sphere()
+	: Sphere("", "", "") {}
 
 void Sphere::initBuffers() {
 	if (initialized) return;
@@ -482,7 +503,7 @@ void Sphere::generateSphere(float radius, unsigned int sectorCount, unsigned int
 	}
 }
 
-void Sphere::draw(const glm::mat4& view, const glm::mat4& projection, const glm::vec3& viewPos, const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) {
+void Sphere::draw(Shader& shader, const glm::mat4& view, const glm::mat4& projection, const glm::vec3& viewPos, const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) {
 	shader.use();
 	shader.setMat4fv("view", view);
 	shader.setMat4fv("projection", projection);
@@ -505,23 +526,23 @@ void Sphere::draw(const glm::mat4& view, const glm::mat4& projection, const glm:
 // Cylinder class
 // --------------
 
-Cylinder::Cylinder(Shader& shader, const std::string& diffusePath, const std::string& specularPath, const std::string& emssionPath)
-		: Object(shader, diffusePath, specularPath, emssionPath)
-	{
-		initBuffers();
-	}
+Cylinder::Cylinder(const std::string& diffusePath, const std::string& specularPath, const std::string& emssionPath)
+	: Object(diffusePath, specularPath, emssionPath)
+{
+	initBuffers();
+}
 
-Cylinder::Cylinder(Shader& shader, const std::string& diffusePath, const std::string& specularPath)
-		: Cylinder(shader, diffusePath, specularPath, "") {
-	}
+Cylinder::Cylinder(const std::string& diffusePath, const std::string& specularPath)
+	: Cylinder(diffusePath, specularPath, "") {
+}
 
-Cylinder::Cylinder(Shader& shader, const std::string& diffusePath)
-		: Cylinder(shader, diffusePath, "", "") {
-	}
+Cylinder::Cylinder(const std::string& diffusePath)
+	: Cylinder(diffusePath, "", "") {
+}
 
-Cylinder::Cylinder(Shader& shader)
-		: Cylinder(shader, "", "", "") {
-	}
+Cylinder::Cylinder()
+	: Cylinder("", "", "") {
+}
 
 void Cylinder::initBuffers() {
 	if (initialized) return;
@@ -675,7 +696,7 @@ void Cylinder::generateCylinder(float radius, float height, unsigned int sectorC
 	}
 }
 
-void Cylinder::draw(const glm::mat4& view, const glm::mat4& projection, const glm::vec3& viewPos, const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) {
+void Cylinder::draw(Shader& shader, const glm::mat4& view, const glm::mat4& projection, const glm::vec3& viewPos, const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) {
 	shader.use();
 	shader.setMat4fv("view", view);
 	shader.setMat4fv("projection", projection);

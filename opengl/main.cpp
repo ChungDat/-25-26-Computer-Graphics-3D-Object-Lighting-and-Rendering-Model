@@ -2,9 +2,10 @@
 // TINH LAI ORBITAL MOTION GUI
 // TODO:	THEM CHUC NANG XOA
 //			THEM PRESET SCENE
-//			THEM CHUC NANG WIREFRAME
+//			SUA KICH THUOC CONTROL WINDOW
 //			THEM BLINN PHONG
 //			THEM GOURAUD
+//			THEM PBR
 //			THEM 3D OBJJECT LIGHTING
 // ============================
 #define _CRT_SECURE_NO_WARNINGS
@@ -31,10 +32,13 @@
 #include "Object.h"
 #include "Light.h"
 #include "Axis.h"
+#include "Container.h"
 
 // standard
 #include <string>
 #include <iostream>
+#include <vector>
+#include <unordered_map>
 
 const int WIDTH = 800;
 const int HEIGHT = 600;
@@ -159,7 +163,27 @@ int main() {
 	unsigned int emissionMap = createTexture("matrix.jpg");
 
 	// normal object
-	Shader myShader = Shader("myVertexShader.vert", "PhongFragmentShader.frag");
+	Shader PhongShader = Shader("myVertexShader.vert", "PhongFragmentShader.frag");
+	Shader BlinnPhongShader = Shader("myVertexShader.vert", "BlinnPhongFragmentShader.frag");
+	Shader GouraudShader = Shader("GouraudVertexShader.vert", "GouraudFragmentShader.frag");
+
+	PhongShader.use();
+	PhongShader.setFloat("material.shininess", 32.0f); // Phong uses a lower shininess
+	PhongShader.setInt("material.diffuse", 0);
+	PhongShader.setInt("material.specular", 1);
+	PhongShader.setInt("material.emission", 2);
+
+	BlinnPhongShader.use();
+	BlinnPhongShader.setFloat("material.shininess", 128.0f); // Blinn-Phong needs a higher value
+	BlinnPhongShader.setInt("material.diffuse", 0);
+	BlinnPhongShader.setInt("material.specular", 1);
+	BlinnPhongShader.setInt("material.emission", 2);
+
+	GouraudShader.use();
+	GouraudShader.setFloat("material.shininess", 32.0f); // Gouraud uses similar shininess to Phong
+	GouraudShader.setInt("material.diffuse", 0);
+	GouraudShader.setInt("material.specular", 1);
+	GouraudShader.setInt("material0.emission", 2); // emission is not used in this lighting model
 
 	// light source
 	Shader lightShader = Shader("lightSourceVertexShader.vert", "lightSourceFragmentShader.frag");
@@ -170,25 +194,20 @@ int main() {
 	// model
 	Model backpackModel((char*)"backpack/backpack.obj");
 
-	myShader.use();
-	myShader.setFloat("material.shininess", 32);
-	myShader.setInt("material.diffuse", 0);
-	myShader.setInt("material.specular", 1);
-	myShader.setInt("material.emission", 2);
-
+	Shader* objectShader = &PhongShader;
 
 	// create objects
 	std::vector<Object*> objectList = {
-		new Cube(myShader, "container2.png", "container2_specular.png", "matrix.jpg"),
-		new Cube(myShader, "container2.png", "container2_specular.png", "matrix.jpg"),
-		new Cube(myShader, "container2.png", "container2_specular.png", "matrix.jpg"),
-		new Cube(myShader, "container2.png", "container2_specular.png", "matrix.jpg"),
-		new Cube(myShader, "container2.png", "container2_specular.png", "matrix.jpg"),
-		new Cube(myShader, "container2.png", "container2_specular.png", "matrix.jpg"),
-		new Cube(myShader, "container2.png", "container2_specular.png", "matrix.jpg"),
-		new Cube(myShader, "container2.png", "container2_specular.png", "matrix.jpg"),
-		new Cube(myShader, "container2.png", "container2_specular.png", "matrix.jpg"),
-		new Cube(myShader, "container2.png", "container2_specular.png", "matrix.jpg"),
+		new Cube("container2.png", "container2_specular.png", "matrix.jpg"),
+		new Cube("container2.png", "container2_specular.png", "matrix.jpg"),
+		new Cube("container2.png", "container2_specular.png", "matrix.jpg"),
+		new Cube("container2.png", "container2_specular.png", "matrix.jpg"),
+		new Cube("container2.png", "container2_specular.png", "matrix.jpg"),
+		new Cube("container2.png", "container2_specular.png", "matrix.jpg"),
+		new Cube("container2.png", "container2_specular.png", "matrix.jpg"),
+		new Cube("container2.png", "container2_specular.png", "matrix.jpg"),
+		new Cube("container2.png", "container2_specular.png", "matrix.jpg"),
+		new Cube("container2.png", "container2_specular.png", "matrix.jpg"),
 	};
 
 	//create lights
@@ -231,16 +250,20 @@ int main() {
 		}
 	}
 
+	// Lighting method
+	std::vector<std::string> lightingMethods = { "Phong", "Gouraud", "Blinn Phong" };
+	int currentLighting = 0;
 
 	// ImGui Settings
 	bool controlWindowOpened = true;
-	int redValue = 25;
+	/*int redValue = 25;
 	int greenValue = 25;
-	int blueValue = 25;
+	int blueValue = 25;*/
+	int currentRasterizationMode = 0;
 
 	PresetScenesCollapse presetScenesCollapse = PresetScenesCollapse("Preset Scenes");
 	LightCollapse lightCollapse = LightCollapse("Add Light", lightList, lightShader);
-	ObjectCollapse objectCollapse = ObjectCollapse("Add Object", objectList, myShader);
+	ObjectCollapse objectCollapse = ObjectCollapse("Add Object", objectList);
 	ObjectProperties objectProperties = ObjectProperties("Object Properties", objectList);
 	LightProperties lightProperties = LightProperties("Light Properties", lightList);
 	// render loop
@@ -255,7 +278,7 @@ int main() {
 		// ============================================
 		// Start Dear ImGui control
 		ImVec2 controlWindowPos = ImVec2(WIDTH, 0);
-		ImVec2 controlWindowSize = ImVec2(200, HEIGHT);
+		ImVec2 controlWindowSize = ImVec2(300, HEIGHT);
 		ImVec2 viewportSize = ImGui::GetMainViewport()->Size;
 		 
 		ImGui::SetNextWindowPos(
@@ -288,6 +311,49 @@ int main() {
 		else {
 			if (ImGui::Button("Show Axis"))
 				axis.enable();
+		}
+		ImGui::RadioButton("Fill", &currentRasterizationMode, 0); ImGui::SameLine();
+		ImGui::RadioButton("Wireframe", &currentRasterizationMode, 1); ImGui::SameLine();
+		ImGui::RadioButton("Point", &currentRasterizationMode, 2);
+
+		switch (currentRasterizationMode) {
+		case 0:
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			break;
+		case 1:
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			break;
+		case 2:
+			glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+			glPointSize(2.0f);
+			break;
+		}
+
+		for (int i = 0; i < lightingMethods.size(); i++) {
+			const char* type = lightingMethods[i].c_str();
+
+			bool is_selected = (currentLighting == i);
+			ImGui::PushID(i);
+			if (ImGui::Selectable(type, is_selected)) {
+				if (currentLighting != i) {
+					currentLighting = i;
+					// The ONLY thing we do now is change where the pointer points!
+					switch (currentLighting) {
+					case 0:
+						objectShader = &PhongShader;
+						break;
+					case 1:
+						objectShader = &GouraudShader;
+						break;
+					case 2:
+						objectShader = &BlinnPhongShader;
+						break;
+					}
+				}
+				printf("Select %s\n", type);
+				std::cout << "Clicked" << std::endl;
+			}
+			ImGui::PopID();
 		}
 
 		ImGui::End();
@@ -335,11 +401,11 @@ int main() {
 		// normal object
 		// -------------
 
-		// extract world-space light position and upload to myShader
+		// extract world-space light position and upload to PhongShader
 		int n_DirLight = 0, n_PointLight = 0, n_SpotLight = 0;
 		for (int i = 0; i < lightList.size(); i++) {
 			if (DirectionalLight* s = dynamic_cast<DirectionalLight*>(lightList[i])) {
-				s->updateObjectShader(myShader, n_DirLight++);
+				s->updateObjectShader(*objectShader, n_DirLight++);
 			}
 			// SpotLight is derived from PointLight -> CHECK THIS FIRST
 			else if (SpotLight* s = dynamic_cast<SpotLight*>(lightList[i])) {
@@ -347,10 +413,10 @@ int main() {
 					s->setPosition(camera.Position);
 					s->setDirection(camera.Front);
 				}
-				s->updateObjectShader(myShader, n_SpotLight++);
+				s->updateObjectShader(*objectShader, n_SpotLight++);
 			}
 			else if (PointLight* s = dynamic_cast<PointLight*>(lightList[i])) {
-				s->updateObjectShader(myShader, n_PointLight++);
+				s->updateObjectShader(*objectShader, n_PointLight++);
 			}
 		}
 
@@ -359,15 +425,16 @@ int main() {
 		for (unsigned int i = 0; i < objectList.size(); i++) {
 			//float angle = 20.f * i;
 			//cubeList[i].setRotation(glm::vec3(angle * 0.2f, angle * 0.5f, angle * 0.8f));
-			objectList[i]->draw(view, projection, viewPos, horizontalRotate, verticalRotate);
+			if (objectList[i]->isEnabled())
+				objectList[i]->draw(*objectShader, view, projection, viewPos, horizontalRotate, verticalRotate);
 		}
 
 		// loaded model
 		glm::mat4 model = glm::mat4(1.0);
 		model = glm::translate(model, glm::vec3(0.0, -1.0, 0.0));
 		model = glm::scale(model, glm::vec3(0.5, 0.5, 0.5));
-		myShader.setMat4fv("model", model);
-		//backpackModel.draw(myShader);
+		objectShader->setMat4fv("model", model);
+		//backpackModel.draw(objectShader);
 
 		if (axis.isEnabled())
 			axis.draw(view, projection);

@@ -15,6 +15,8 @@ protected:
 	glm::vec3 diffuse;
 	glm::vec3 specular;
 
+	static int nextID;
+	int ID;
 	static unsigned int VAO, VBO, EBO;
 	static bool initialized;
 	bool enabled;
@@ -52,6 +54,7 @@ public:
 	virtual float getInnerCutOff() const;
 	virtual float getOuterCutOff() const;
 	virtual std::string getType() const = 0;
+	int getID() const;
 
 	virtual void draw(const glm::mat4& view, const glm::mat4& projection) const {};
 	virtual void update(float time) {};                      // <- new
