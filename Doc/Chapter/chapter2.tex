@@ -5,66 +5,284 @@
 %Nhằm trả lời được 2 câu hỏi:
 %Người ta đã làm gì rồi và mình muốn làm gì.
 
-%Table 1: Papers, Mechanics, Methodology
-\begin{table*}[t]
-	%	\centering
-	\begin{center} % maximum 0.75
-		\caption{Nguyên lý và phương pháp}
-		\begin{tabular}{|>{\centering\arraybackslash}p{0.15\textwidth}|>{\centering\arraybackslash}p{0.15\textwidth}|>{\centering\arraybackslash}p{0.15\textwidth}|>{\centering\arraybackslash}p{0.15\textwidth}|>{\centering\arraybackslash}p{0.15\textwidth}|}
-			\hline
-			\multirow{2}{*}{\textbf{Công trình}} & 
-			\multirow{2}{*}{\textbf{Nguyên lý}} & 
-			\multicolumn{3}{c|}{\textbf{Phương pháp}} \\
-			\cline{3-5} 
-			& &
-			\textbf{\centering\textit{Giai đoạn 1}} & 
-			\textbf{\textit{Giai đoạn 2}} & 
-			\textbf{\textit{Giai đoạn 3}} \\
-			\hline
-			\citetitle{2023_quantum_computing} & More table copy$^{\mathrm{a}}$ & & & \\
-			\hline
-			\multicolumn{5}{l}{$^{\mathrm{a}}$Sample of a Table footnote.}
-		\end{tabular}
-		\label{tab1}
-	\end{center}
-\end{table*}
+\section{Mô hình chiếu sáng}
+Trong thế giới thực, ánh sáng là các photon di chuyển theo tia trong không gian và phân tán trên bề mặt các vật. Sinh vật có thể nhìn thấy một vật do ánh sáng từ các nguồn sáng (Mặt trời, đèn đường, ...) chiếu đến vật, vật hấp thụ một phần ánh sáng và phản xạ phần còn lại vào mắt. Trong mắt có các tế bào thụ cảm ánh sáng (photoreceptors) chuyển đổi ánh sáng thành tín hiệu điện hoá, gửi đến não để tạo ra hình ảnh thị giác.\\
+Trong đồ hoạ máy tính, các mô hình chiếu sáng mô phỏng nguồn sáng thực bằng việc biểu diễn mức độ năng lượng chiếu qua một điểm trong không gian \cite{principles}. Các mô hình phản xạ (reflectance model) sẽ dựa vào các biểu diễn toán học này để tính toán mối quan hệ tương đối giữa các vật liệu và nguồn sáng khác nhau. \cite{1982_a_reflectance_model}.
+\subsection{Nguồn sáng hình học - Geometric Light}
+Một nguồn sáng hình học là nguồn sáng có sự suy giảm độ sáng phụ thuộc khoảng cách với điểm được chiếu \cite{principles}.
 
-% Table 2: Papers, Performance, Contribution, and Limitation
-\begin{table*}[t!]
-	\caption{Đánh giá}
-	\begin{center}
-		\begin{tabular}{|>{\centering\arraybackslash}p{0.3\textwidth}|>{\centering\arraybackslash}p{0.15\textwidth}|>{\centering\arraybackslash}p{0.15\textwidth}|>{\centering\arraybackslash}p{0.15\textwidth}|}
-			\hline
-			\multirow{2}{*}{\textbf{Công trình}} & 
-			\multicolumn{3}{c|}{\textbf{Đánh giá}} \\
-			\cline{2-4}
-			&
-			\textbf{\textit{Dữ liệu}} & 
-			\textbf{\textit{Metric}} &
-			\textbf{\textit{Kết quả}}
-			\\
-			\hline
-			\citetitle{2023_quantum_computing} & & & \\
-			\hline
-			\multicolumn{4}{l}{$^{\mathrm{a}}$Sample of a Table footnote.}
-		\end{tabular}
-		\label{tab2}
-	\end{center}
-\end{table*}
+\subsubsection{Nguồn sáng điểm - Point Light}
+Nguồn sáng điểm được đặt trong cảnh (scene) và chiếu sáng theo mọi hướng. Các nguồn sáng lớn hơn có thể được mô hình hoá bằng một nguồn sáng điểm ở trung tâm, được bao quanh bởi các hình học đại diện (proxy geometry) nhằm đánh lừa người xem \cite{principles}.
+% hình: bóng đèn
 
-\begin{table*}[t!]
-	\caption{Đóng góp và hạn chế}
-	\begin{center}
-		\begin{tabular}{|>{\centering\arraybackslash}p{0.3\textwidth}|>{\centering\arraybackslash}p{0.25\textwidth}|>{\centering\arraybackslash}p{0.2\textwidth}|}
-			\hline
-			\textbf{Công trình} & 
-			\textbf{Đóng góp} & 
-			\textbf{Hạn chế} \\
-			\hline
-			\citetitle{2023_quantum_computing} & & \\
-			\hline
-			\multicolumn{3}{l}{$^{\mathrm{a}}$Sample of a Table footnote.}
-		\end{tabular}
-		\label{tab3}
-	\end{center}
-\end{table*}
+\subsubsection{Nguồn sáng chiếu điểm - Spot Light}
+Nguồn sáng chiếu điểm là nguồn sáng điểm, với giới hạn chiếu nằm trong một hình nón \cite{principles}.
+% hình: máy chiếu, đèn trần
+
+\subsubsection{Nguồn sáng định hướng - Directional Light}
+Nguồn sáng định hướng được mô hình hoá dựa trên một mặt trời ở khoảng cách vô hạn. Các tia sáng từ nguồn sáng này được xem như các tia chiếu song song, với độ suy giảm được xem là như nhau với các điểm được chiếu \cite{principles}.
+% hình: mặt trời
+
+\subsection{Nguồn sáng vô hướng - Nondirectional Light}
+
+\subsubsection{Nguồn sáng môi trường - Ambient Light}
+Nguồn sáng môi trường là một lượng ánh sáng được chiếu lên tất cả bề mặt, không phụ thuộc vào hướng và khoảng cách. Nguồn sáng môi trường giúp mọi bề mặt đều có thể được nhìn thấy, loại bỏ các vùng "thuần tối" (pure black) phi thực tế ở các bề mặt hướng ra xa nguồn sáng. Trong thực tế, các bề mặt hướng ra xa nguồn sáng vẫn được chiếu sáng do sự phản xạ từ các vật lân cận trong không gian \cite{principles}.
+
+\subsubsection{Nguồn sáng phát xạ - Emissive Light}
+Nguồn sáng phát xạ được sử dụng để mô tả các bề mặt có khả năng tự phát sáng nhưng không phải một nguồn sáng đúng nghĩa, cho phép bề mặt "phản xạ" ánh sáng ảo \cite{principles}.
+
+\section{Mô hình kết xuất đối tượng}
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|l|p{6cm}|p{6cm}|}
+		\hline
+		\textbf{Mô hình} & \textbf{Nguyên lý} & \textbf{Phương pháp} \\ \hline
+		Flat & Màu sắc tại đa giác là đồng nhất, dựa trên góc giữa pháp tuyến mặt và hướng sáng. & Tính toán phương trình ánh sáng một lần duy nhất cho một đa giác (thường dùng pháp tuyến tại tâm). \\ \hline
+		Gouraud & Ánh sáng được tính tại các đỉnh đa giác, sau đó màu sắc được nội suy dần vào bên trong. & Tính cường độ sáng tại đỉnh, sau đó nội suy song tuyến tính màu sắc qua các pixel bên trong. \\ \hline
+		Phong & Xấp xỉ ánh sáng phản xạ từ 3 thành phần độc lập: Môi trường (Ambient), Khuếch tán (Diffuse), và Phản xạ gương (Specular). & Nội suy vector pháp tuyến trên từng pixel, sau đó tính toán phương trình ánh sáng cho từng pixel. \\ \hline
+		Blinn-Phong & Biến thể của Phong, sử dụng vector trung gian (Halfway vector) để tối ưu hóa việc tính toán phản xạ gương. & Tính tích vô hướng giữa pháp tuyến ($N$) và vector Halfway ($H$) thay vì vector phản xạ ($R$) và hướng nhìn ($V$). \\ \hline
+		Rendering Equation & Ánh sáng đi ra từ điểm $x$ bằng tổng ánh sáng tự phát ra cộng với tích phân ánh sáng đi tới từ mọi hướng. & Giải phương trình tích phân vô hạn thông qua các thuật toán xác suất như Monte Carlo, Path Tracing. \\ \hline
+		Radiosity & Mô hình hóa cân bằng năng lượng nhiệt/ánh sáng cho các bề mặt phản xạ khuếch tán lý tưởng (Diffuse surfaces only). & Chia nhỏ bề mặt thành các miếng (patches), tính hệ số hình học (Form Factors) và giải hệ phương trình tuyến tính ma trận lớn. \\ \hline
+		PBR & Mô phỏng tương tác ánh sáng dựa trên vật lý vi mô bề mặt (Microfacet Theory), tuân thủ bảo toàn năng lượng và hiệu ứng Fresnel. & Sử dụng các hàm phân bố phản xạ hai chiều (BRDF) phức tạp (như Cook-Torrance) kết hợp với các bản đồ (maps): Albedo, Normal, Roughness, Metalness. \\ \hline
+	\end{tabular}
+\end{table}
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|l|p{6cm}|p{6cm}|}
+		\hline
+		\textbf{Mô hình} & \textbf{Đóng góp} & \textbf{Hạn chế} \\ \hline
+		Flat & Chi phí tính toán cực thấp, là nền tảng sơ khai cho đồ họa 3D thời gian thực. & Bề mặt vật thể bị gãy khúc (faceted), nhìn rõ các cạnh đa giác. \\ \hline
+		Gouraud & Tạo ra bề mặt có cảm giác trơn mịn (smooth) với chi phí phần cứng thấp. & Mất chi tiết phản xạ (Specular) nếu điểm sáng nằm giữa đa giác lớn; hiện tượng Mach Band. \\ \hline
+		Phong & Tạo ra điểm sáng phản xạ (highlight) rõ nét, giúp vật thể trông thực và "3D" hơn hẳn so với Gouraud. & Vật thể trông giống "nhựa" (plastic look); là mô hình thực nghiệm không bảo toàn năng lượng. \\ \hline
+		Blinn-Phong & Hiệu quả tính toán cao hơn Phong gốc; điểm sáng (highlight) trông mềm mại và tự nhiên hơn dưới nguồn sáng diện rộng. & Là mô hình thực nghiệm, chưa mô phỏng đúng tính chất vật lý của kim loại hay chất cách điện. \\ \hline
+		Rendering Equation & Là "Thuyết thống nhất" của đồ họa; cơ sở lý thuyết cho mọi kỹ thuật quang thực hiện đại. & Không thể giải chính xác tuyệt đối về mặt toán học; mất rất nhiều thời gian tính toán. \\ \hline
+		Radiosity & Mô phỏng chính xác Global Illumination và bóng đổ mềm tự nhiên lần đầu tiên. & Không xử lý được vật liệu bóng/gương (Specular); tốn bộ nhớ lưu trữ; cần tính toán lại với vật thể động. \\ \hline
+		PBR & Tạo ra hình ảnh nhất quán trong mọi điều kiện ánh sáng; chuẩn hóa quy trình sản xuất (workflow) giữa các phần mềm khác nhau. & Chi phí tính toán cao; đòi hỏi quy trình tạo Texture maps phức tạp và chính xác hơn. \\ \hline
+	\end{tabular}
+\end{table}
+
+\subsection{Mô hình thực nghiệm}
+Đây là các phương pháp được phát triển trong giai đoạn đầu của Đồ họa máy tính, khi tài nguyên tính toán còn rất hạn chế. Mục tiêu chính của chúng không phải là mô phỏng chính xác sự vận chuyển ánh sáng theo các định luật vật lý, mà là tạo ra các hình ảnh "trông có vẻ hợp lý" (plausible) bằng các công thức toán học đơn giản và hiệu quả. Các mô hình này dựa trên sự quan sát các hiện tượng quang học trong thực tế và xấp xỉ chúng bằng các thành phần riêng biệt.
+\begin{enumerate}
+	\item Mô hình kết xuất phẳng
+	\begin{itemize}
+		\item \textbf{Nguyên lý:} Với vật thể được biểu diễn bằng một lưới hình học (mesh), xem mỗi đa giác trong lưới là một mặt phẳng độc lập. Màu sắc tại đa giác là một màu đồng nhất được tính toán dựa trên góc hợp bởi vector pháp tuyến của đa giác và vector hướng tới nguồn sáng\cite{principles}.
+		
+		\item \textbf{Phương pháp:}\\
+		Tại mỗi đa giác, tồn tại một vector pháp tuyến duy nhất $\vec{N} = \vec{a} \times \vec{b}$, với $\vec{a}, \vec{b}$ là hai vector không song song của đa giác.\\
+		Một phép tính chiếu sáng duy nhất được thực hiện cho toàn bộ đa giác, thường chỉ sử dụng thành phần khuếch tán (diffuse) của một mô hình chiếu sáng đơn giản, tỉ lệ với góc hợp bởi vector pháp tuyến và vector hướng tới nguồn sáng.
+%		\begin{math}
+%			I = k * I_l * max(0, \vec{N} \cdot \vec{L})
+%		\end{math}
+%		
+%		Với:\\
+%		- $I$ là cường độ ánh sáng được tính toán.\\
+%		- $k$ là hệ số phản xạ, xác định mức độ hấp thụ ánh sáng của vật thể.\\
+%		- $I_l$ là cường độ và màu sắc nguồn sáng.\\
+%		- $\vec{N}$ là vector pháp tuyến đơn vị của bề mặt đa giác.\\
+%		- $\vec{L}$ là vector đơn vị chỉ hướng từ điểm đang xét trên bề mặt đa giác đến nguồn sáng.\\
+%		Tất cả các pixel thuộc đa giác sẽ được lấp đầy bằng giá trị $I$.
+		\item \textbf{Đóng góp:} Hiệu suất tính toán của kết xuất phẳng rất cao. Vì chỉ có một phép tính chiếu sáng cho mỗi đa giác, đây là phương pháp nhanh nhất có thể, cho phép các hệ thống phần cứng sơ khai có thể kết xuất các cảnh 3D rắn trong thời gian thực.
+		 
+		\item \textbf{Hạn chế:} Vì mỗi đa giác có một màu riêng biệt, các bề mặt cong được xấp xỉ bằng lưới đa giác sẽ có vẻ ngoài "gãy khúc" hoặc "khối cạnh" (faceted).
+	\end{itemize}
+	
+	\item Mô hình của Gouraud
+	\begin{itemize}
+		\item \textbf{Nguyên lý:} Với vật thể được biểu diễn bằng một lưới hình học (mesh), xem mỗi đa giác trong lưới là một mặt phẳng độc lập. Màu sắc tại cạnh đa giác được nội suy từ các đỉnh đa giác, màu sắc tại các pixel bên trong đa giác được nội suy từ giao điểm giữa đường quét và cạnh đa giác\cite{gouraud2}.
+		
+		\item \textbf{Phương pháp:}\\
+		Tại mỗi đỉnh, tồn tại một vector pháp tuyến $\vec{N}$, được tính bằng trung bình của các pháp tuyến của các mặt chung đỉnh.
+%		\begin{math}
+%			\vec{N^*} = \frac{1}{m} \sum_{i=1}^{m} \vec{N_i}\\
+%			\vec{N} = \frac{\vec{N^*}}{||\vec{N^*}||}\\
+%			I_v = k * I_l * max(0, \vec{N} \cdot \vec{L})
+%		\end{math}
+%		
+%		Với:\\
+%		- $\vec{N_i}$ là vector pháp tuyến đơn vị của bề mặt đa giác $i$.\\
+%		- $\vec{N}$ là vector pháp tuyến đơn vị trung bình tại đỉnh đang xét.\\
+%		- $\vec{L}$ là vector đơn vị chỉ hướng từ đỉnh đang xét trên bề mặt đa giác đến nguồn sáng.\\
+%		- $I$ là cường độ ánh sáng được tính toán.\\
+%		- $k$ là hệ số phản xạ, xác định mức độ hấp thụ ánh sáng của vật thể.\\
+%		- $I_l$ là cường độ và màu sắc nguồn sáng.\\
+%		
+%		Tại mỗi dòng quét cắt qua đa giác, cường độ màu tại các giao điểm trên các cạnh của đa giác được nội suy tuyến tính từ màu của các đỉnh tương ứng.\\
+%		\begin{math}
+%			I_i = t * I_A + (1 - t) * I_B \quad t \in [0; 1]
+%		\end{math}
+%		Với:\\
+%		- $I_i$ là cường độ ánh sáng tại một điểm trên cạnh nối giữa đỉnh A và B.\\
+%		- $I_A, I_B$ là cường độ ánh sáng tại hai đỉnh A và B.\\
+%		
+%		Tại mỗi pixel trên dòng quét nằm bên trong đa giác, cường độ màu được nội suy từ màu của các giao điểm trên cạnh.\\
+%		\begin{math}
+%			I_j = t * I_1 + (1 - t) * I_2 \quad t \in [0; 1]
+%		\end{math}
+%		Với:\\
+%		- $I_j$ là cường độ ánh sáng tại một điểm nằm trên dòng quét.\\
+%		- $I_1, I_2$ là cường độ ánh sáng tại hai giao điểm giữa dòng quét và các cạnh đa giác.
+		
+		\item \textbf{Đóng góp:} Đây là một bước đột phá lớn, cho phép các bề mặt đa giác trông mượt mà với chi phí tính toán tăng thêm không đáng kể. Mô hình Gouraud đã giải quyết hiện tượng thay đổi màu sắc đột ngột.
+		
+		\item \textbf{Hạn chế:} Vì chỉ nội suy màu, kết xuất Gouraud không thể tái tạo chính xác các hiệu ứng chiếu sáng có tần số cao, chẳng hạn như các đốm sáng phản xạ gương (specular highlights) nhỏ. Nếu một đốm sáng nằm hoàn toàn bên trong một đa giác, nó sẽ bị "nhòe" đi hoặc biến mất. Hiện tượng Mach bands cũng có thể xuất hiện.
+	\end{itemize}
+	
+	\item Mô hình của Phong
+	\begin{itemize}
+		\item \textbf{Nguyên lý:} Mô hình Phong xấp xỉ ánh sáng phản xạ từ một điểm trên bề mặt thành ba thành phần độc lập: Môi trường (Ambient), Khuếch tán (Diffuse), và Phản xạ gương (Specular)\cite{phong2}.
+		
+		\item \textbf{Phương pháp:}
+		\begin{enumerate}
+			\item Xử lý đỉnh\\
+			Tại mỗi đỉnh, tồn tại một vector pháp tuyến $\vec{N}$, được tính bằng trung bình của các pháp tuyến của các mặt chung đỉnh.
+%			\begin{math}
+%				\vec{N^*} = \frac{1}{m} \sum_{i=1}^{m} \vec{N_i}\\
+%				\vec{N} = \frac{\vec{N^*}}{||\vec{N^*}||}\\
+%				I_v = k * I_l * max(0, \vec{N} \cdot \vec{L})
+%			\end{math}
+%			
+%			Với:\\
+%			- $\vec{N_i}$ là vector pháp tuyến đơn vị của bề mặt đa giác $i$.\\
+%			- $\vec{N}$ là vector pháp tuyến đơn vị trung bình tại đỉnh đang xét.\\
+%			- $\vec{L}$ là vector đơn vị chỉ hướng từ đỉnh đang xét trên bề mặt đa giác đến nguồn sáng.\\
+%			- $I$ là cường độ ánh sáng được tính toán.\\
+%			- $k$ là hệ số phản xạ, xác định mức độ hấp thụ ánh sáng của vật thể.\\
+%			- $I_l$ là cường độ và màu sắc nguồn sáng.
+			
+			\item Tạo lưới và nội suy (Rasterization and Interpolation)\\
+			Tạo lưới nhằm xác định tất cả các pixel trên màn hình được bao phủ bởi đa giác. Các pixel này được gọi là mảnh (fragment) trong quá trình tính toán.\\
+			Vector pháp tuyến của mỗi mảnh được nội suy tuyến tính từ các vector pháp tuyến tại các đỉnh của đa giác.
+			
+			\item Tính toán chiếu sáng\\
+			Tại mỗi mảnh, mô hình Phong được áp dụng và tính toán cường độ sáng.\\
+%			\begin{math}
+%				\vec{R^*} = 2 * (\vec{L} \cdot \vec{N}) * \vec{N} - \vec{L}\\
+%				\vec{R} = \frac{\vec{R^*}}{||\vec{R^*}||}\\
+%				Ambient = k_a * I_a\\
+%				Diffuse = k_d * I_d * max(0, \vec{N} \cdot \vec{L})\\
+%				Specular = k_s * I_s * max(0, \vec{R} \cdot \vec{V})^n\\
+%				I = Ambient + Diffuse + Specular
+%			\end{math}
+%			
+%			Với:\\
+%			- $k_a, k_d, k_s$ là hệ số phản xạ môi trường, khuếch tán, phản xạ gương tương ứng với các thành phần ánh sáng.\\
+%			- $I_a, I_d, I_s$ là cường độ của các thành phần ánh sáng.\\
+%			- $\vec{N}$ là vector pháp tuyến đơn vị của mảnh.\\
+%			- $\vec{L}$ là vector đơn vị chỉ hướng từ mảnh đang xét đến nguồn sáng.\\
+%			- $\vec{R}$ là vector đơn vị phản xạ hướng chiếu sáng.\\
+%			- $\vec{V}$ là vector đơn vị từ vị trí của mảnh đến camera.
+		\end{enumerate}
+		
+		\item \textbf{Đóng góp:} Kết xuất Phong tạo ra các đốm sáng phản xạ gương mượt mà và chính xác hơn nhiều. Mô hình đã trở thành tiêu chuẩn trong nhiều thập kỷ cho cả đồ họa thời gian thực và ngoại tuyến.
+		
+		\item \textbf{Hạn chế:} Chi phí tính toán cao hơn đáng kể so với Gouraud. Mô hình vẫn mang tính thực nghiệm và không tuân thủ các nguyên tắc vật lý.
+	\end{itemize}
+	
+	\item Mô hình của Blinn-Phong
+	\begin{itemize}
+		\item \textbf{Nguyên lý:} Hầu hết tương tự mô hình Phong, với một sự thay đổi hiệu quả trong cách tính toán thành phần phản xạ gương (Specular)\cite{blinn_phong3}.
+		
+		\item \textbf{Phương pháp:}
+		\begin{enumerate}
+			\item Xử lý đỉnh\\
+			Tương tự mô hình của Phong.
+			
+			\item Rời rạc hoá và nội suy (Rasterization and Interpolation)\\
+			Tương tự mô hình của Phong.
+			
+			\item Tính toán chiếu sáng\\
+			Tương tự mô hình của Phong. Tại thành phần phản xạ gương, thay thế vector phản xạ $\vec{R}$ bằng vector nửa góc (Halfway vector) $\vec{H}$.
+%			\begin{math}
+%				\vec{H} = \frac{\vec{L} + \vec{V}}{||\vec{L} + \vec{V}||}\\
+%				Specular = k_s * I_s * max(0, \vec{R} \cdot \vec{V})^n\\
+%				I = Ambient + Diffuse + Specular
+%			\end{math}
+%			
+%			Với:\\
+%			- $k_s$ là hệ số phản xạ gương tương ứng với thành phần ánh sáng.\\
+%			- $I_s$ là cường độ của thành phần ánh sáng.\\
+%			- $\vec{L}$ là vector đơn vị chỉ hướng từ mảnh đang xét đến nguồn sáng.\\
+%			- $\vec{R}$ là vector đơn vị phản xạ hướng chiếu sáng.\\
+%			- $\vec{V}$ là vector đơn vị từ vị trí của mảnh đến camera.\\
+%			- $\vec{H}$ là vector đơn vị nửa góc.
+		\end{enumerate}
+		
+		\item \textbf{Đóng góp:} Việc tính toán $\vec{H}$ thường hiệu quả hơn $\vec{R}$. Mô hình này cũng cho kết quả trông tự nhiên hơn trong một số trường hợp. Do hiệu quả của mô hình, Blinn-Phong đã được sử dụng rộng rãi làm mô hình chiếu sáng mặc định trong các API đồ họa đời đầu như OpenGL và Direct3D.
+		
+		\item \textbf{Hạn chế:} Tương tự như mô hình Phong, đây vẫn là một mô hình thực nghiệm và không có cơ sở vật lý.
+	\end{itemize}
+	
+\end{enumerate}
+\subsection{Mô hình vật lý}
+\begin{enumerate}
+	\item Phương trình kết xuất
+	\begin{itemize}
+		\item \textbf{Nguyên lý:} Phương trình Kết xuất là một biểu thức vật lý mô tả trạng thái cân bằng của bức xạ ánh sáng tại mọi điểm trong một cảnh. Nó phát biểu rằng, ánh sáng đi ra $(L_o)$ từ một điểm x theo một hướng $\omega_o$ bằng tổng của ánh sáng do chính điểm đó phát ra $(L_e)$ và tích phân của tất cả ánh sáng đi tới $(L_i)$ từ mọi hướng $\omega_i$ trên bán cầu $\Omega$ xung quanh điểm đó, được điều chỉnh bởi hàm phân bố tán xạ hai chiều (BRDF) của bề mặt\cite{render_equa2}.
+		
+		\item \textbf{Phương pháp:}\\
+		Phương trình có dạng tích phân Fredholm loại thứ hai:\\
+		\begin{math}
+			L_o(x, \omega_o) = L_e(x, \omega_o) + \int_\Omega f_r(x, \omega_i, \omega_o) * L_i(x, \omega_i)(n \cdot \omega_i) d\omega_i
+		\end{math}
+		
+		Do tính phức tạp và đệ quy, phương trình này không có lời giải giải tích cho các cảnh thông thường. Kajiya đã đề xuất sử dụng các phương pháp Monte Carlo để xấp xỉ giá trị của tích phân.\\
+		Thuật toán thực tế để giải phương trình này được gọi là Dò đường (Path Tracing).
+		%		1. Đối với mỗi pixel, một hoặc nhiều tia sáng được bắn từ camera vào cảnh.\\
+		%		2. Khi một tia chạm vào một bề mặt, một tia mới được tạo ra và bắn đi theo một hướng ngẫu nhiên, được lấy mẫu dựa trên hàm BRDF của bề mặt đó.\\
+		%		3. Tại mỗi điểm giao cắt, thuật toán tính toán sự đóng góp ánh sáng trực tiếp từ các nguồn sáng.\\
+		%		4. Quá trình "nảy bật" ngẫu nhiên này được lặp lại nhiều lần, tạo thành một "đường đi" (path) của ánh sáng.\\
+		%		5. Cường độ sáng của pixel được tính bằng cách lấy trung bình kết quả của nhiều đường đi như vậy.
+		
+		\item \textbf{Đóng góp:}\\
+		Cung cấp một nền tảng lý thuyết thống nhất cho tất cả các thuật toán kết xuất dựa trên vật lý.\\
+		Cho phép mô phỏng một cách tự nhiên và toàn diện tất cả các hiện tượng quang học phức tạp, bao gồm bóng đổ mềm, phản xạ gương và khuếch tán, hiện tượng tụ quang (caustics), chiếu sáng gián tiếp, và độ sâu trường ảnh (depth of field) trong cùng một khuôn khổ.\\
+		Là nền tảng cho hầu hết các trình kết xuất quang thực hiện đại được sử dụng trong sản xuất phim ảnh và hiệu ứng kỹ xảo.
+		
+		\item \textbf{Hạn chế:}\\
+		Chi phí tính toán cực kỳ cao. Các phương pháp Monte Carlo hội tụ rất chậm, đòi hỏi phải lấy hàng trăm hoặc hàng nghìn mẫu (đường đi) cho mỗi pixel để tạo ra một hình ảnh không bị nhiễu (noise).\\
+		Bản chất ngẫu nhiên của thuật toán tạo ra nhiễu trong hình ảnh, đặc biệt là ở các khu vực có các đường đi ánh sáng phức tạp (ví dụ: tụ quang).\\
+		Không phù hợp cho các ứng dụng thời gian thực do tốc độ hội tụ chậm.
+	\end{itemize}
+	
+	\item Phương pháp Radiosity
+	\begin{itemize}
+		\item \textbf{Nguyên lý:} Nguyên lý cốt lõi là sự bảo toàn năng lượng trong một hệ thống khép kín bao gồm các bề mặt phản xạ khuếch tán hoàn hảo (perfectly diffuse). Nó mô hình hóa sự cân bằng năng lượng ánh sáng, trong đó tổng năng lượng ánh sáng rời khỏi một bề mặt (radiosity) bằng tổng năng lượng do chính nó phát ra với năng lượng nó phản xạ lại từ tất cả các bề mặt khác trong cảnh. Đặc điểm quan trọng nhất là nó tính toán sự tương tác ánh sáng gián tiếp giữa các bề mặt, tạo ra các hiệu ứng như chảy máu màu (color bleeding)\cite{radiosity1}.
+		
+		\item \textbf{Phương pháp:}
+		\begin{enumerate}
+			\item Rời rạc hóa (Discretization)\\
+			Toàn bộ các bề mặt trong cảnh được chia nhỏ thành một tập hợp các ô (patches) đa giác phẳng.
+			
+			\item Tính toán Hệ số Hình dạng (Form Factors)\\
+			Đối với mỗi cặp ô (i, j), một "hệ số hình dạng" $F_{ij}$ được tính toán. Giá trị này biểu thị phần trăm năng lượng rời khỏi ô j và chiếu tới được ô i, có tính đến khoảng cách, định hướng và sự che khuất giữa chúng.
+			
+			\item Thiết lập hệ phương trình tuyến tính\\
+			Dựa trên nguyên lý cân bằng năng lượng, thiết lập hệ phương trình tuyến tính.
+%			\begin{math}
+%				B_i = E_i + \rho_i * \sum_{j=1}^{n}B_j * F_{ij}
+%			\end{math}
+%			
+%			Với:\\
+%			- $B_i$ là radiosity của ô $i$ (ẩn số cần tìm).\\
+%			- $E_i$ là năng lượng phát ra của ô $i$.\\
+%			- $\rho_i$ là hệ số phản xạ của ô $i$.
+			
+			\item Giải hệ phương trình\\
+			Hệ phương trình này thường được giải bằng các phương pháp lặp (ví dụ: Gauss-Seidel), mô phỏng quá trình ánh sáng "nảy bật" giữa các bề mặt qua nhiều lần lặp cho đến khi đạt được trạng thái hội tụ.
+			
+		\end{enumerate}
+		
+		\item \textbf{Đóng góp:}\\
+		Đây là phương pháp đầu tiên mô phỏng thành công các hiệu ứng chiếu sáng khuếch tán gián tiếp một cách tinh tế, tạo ra các bóng đổ mềm mại và hiện tượng chảy máu màu cực kỳ chân thực, điều mà các mô hình chiếu sáng cục bộ không thể làm được\cite{radiosity1}.\\
+		Kết quả tính toán độc lập với góc nhìn. Sau khi giải hệ phương trình, các giá trị chiếu sáng được lưu lại trên các ô, cho phép người dùng di chuyển camera và kết xuất cảnh từ các góc nhìn khác nhau trong thời gian thực mà không cần tính toán lại.
+		
+		\item \textbf{Hạn chế:}\\
+		Mô hình giả định tất cả các bề mặt đều là phản xạ khuếch tán hoàn hảo. Do đó, Radiosity không thể mô phỏng các hiện tượng phụ thuộc vào góc nhìn như phản xạ gương, bề mặt bóng loáng, hay các vật liệu trong suốt.\\
+		Chi phí tính toán và lưu trữ rất cao, đặc biệt là ma trận hệ số hình dạng có kích thước $n * n$ với $n$ là số lượng ô.\\
+		Chỉ áp dụng được cho các cảnh tĩnh (static scenes). Bất kỳ sự thay đổi nào về hình học hoặc vật liệu đều đòi hỏi phải tính toán lại toàn bộ.
+	\end{itemize}
+	
+\end{enumerate}

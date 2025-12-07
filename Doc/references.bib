@@ -1,29 +1,4 @@
-@article{2023_quantum_computing,
-	author  = {Doe, John},
-	title   = {A Breakthrough in Quantum Computing},
-	journal = {Journal of Advanced Physics},
-	year    = {2023},
-	doi     = {10.1000/some-random-doi}
-}
-
-@book{2021_latex_guide,
-	author    = {Smith, Jane},
-	title     = {The Ultimate Guide to LaTeX},
-	publisher = {Academic Press},
-	year      = {2021}
-}
-
-@misc{he2025metagsmetalearnedgaussianphongmodel,
-	title={MetaGS: A Meta-Learned Gaussian-Phong Model for Out-of-Distribution 3D Scene Relighting}, 
-	author={Yumeng He and Yunbo Wang and Xiaokang Yang},
-	year={2025},
-	eprint={2405.20791},
-	archivePrefix={arXiv},
-	primaryClass={cs.CV},
-	url={https://arxiv.org/abs/2405.20791}, 
-}
-
-@inbook{10.1145/280811.280980,
+@inbook{phong1,
 	author = {Phong, Bui Tuong},
 	title = {Illumination for computer generated pictures},
 	year = {1998},
@@ -37,7 +12,7 @@
 	numpages = {7}
 }
 
-@article{10.1145/360825.360839,
+@article{phong2,
 	author = {Phong, Bui Tuong},
 	title = {Illumination for computer generated pictures},
 	year = {1975},
@@ -57,7 +32,7 @@
 	keywords = {shading, hidden surface removal, graphic display, computer graphics}
 }
 
-@inbook{10.1145/280811.280979,
+@inbook{gouraud1,
 	author = {Gouraud, Henri},
 	title = {Continuous shading of curved surfaces},
 	year = {1998},
@@ -71,7 +46,7 @@
 	numpages = {7}
 }
 
-@article{10.1109/T-C.1971.223313,
+@article{gouraud2,
 	author = {Gouraud, H.},
 	title = {Continuous Shading of Curved Surfaces},
 	year = {1971},
@@ -91,7 +66,7 @@
 	keywords = {shading., hidden-line removal, halftone, curved surfaces, Coons patches}
 }
 
-@inproceedings{10.1145/563858.563893,
+@inproceedings{blinn_phong1,
 	author = {Blinn, James F.},
 	title = {Models of light reflection for computer synthesized pictures},
 	year = {1977},
@@ -109,7 +84,7 @@
 	series = {SIGGRAPH '77}
 }
 
-@inbook{10.1145/280811.280981,
+@inbook{blinn_phong2,
 	author = {Blinn, James F.},
 	title = {Models of light reflection for computer synthesized pictures},
 	year = {1998},
@@ -123,7 +98,7 @@
 	numpages = {7}
 }
 
-@article{10.1145/965141.563893,
+@article{blinn_phong3,
 	author = {Blinn, James F.},
 	title = {Models of light reflection for computer synthesized pictures},
 	year = {1977},
@@ -143,7 +118,7 @@
 	keywords = {computer graphics, graphic display, hidden surface removal, shading}
 }
 
-@article{10.1145/15886.15902,
+@article{render_equa1,
 	author = {Kajiya, James T.},
 	title = {The rendering equation},
 	year = {1986},
@@ -162,7 +137,7 @@
 	numpages = {8}
 }
 
-@inproceedings{10.1145/15922.15902,
+@inproceedings{render_equa2,
 	author = {Kajiya, James T.},
 	title = {The rendering equation},
 	year = {1986},
@@ -188,3 +163,111 @@
 	pages={150-162},
 	keywords={Light scattering;Data visualization;Clouds;Application software;Optical attenuators;Transfer functions;Perturbation methods;Frequency;Degradation;Robustness},
 	doi={10.1109/TVCG.2003.1196003}}
+
+@book{principles,
+	author = {Foley, James D. and van Dam, Andries and Feiner, Steven K. and Hughes, John F.},
+	title = {Computer graphics: principles and practice (2nd ed.)},
+	year = {1990},
+	isbn = {0201121107},
+	publisher = {Addison-Wesley Longman Publishing Co., Inc.},
+	address = {USA}
+}
+
+@article{radiosity1,
+	author = {Goral, Cindy M. and Torrance, Kenneth E. and Greenberg, Donald P. and Battaile, Bennett},
+	title = {Modeling the interaction of light between diffuse surfaces},
+	year = {1984},
+	issue_date = {July 1984},
+	publisher = {Association for Computing Machinery},
+	address = {New York, NY, USA},
+	volume = {18},
+	number = {3},
+	issn = {0097-8930},
+	url = {https://doi.org/10.1145/964965.808601},
+	doi = {10.1145/964965.808601},
+	abstract = {A method is described which models the interaction of light between diffusely reflecting surfaces. Current light reflection models used in computer graphics do not account for the object-to-object reflection between diffuse surfaces, and thus incorrectly compute the global illumination effects. The new procedure, based on methods used in thermal engineering, includes the effects of diffuse light sources of finite area, as well as the “color-bleeding” effects which are caused by the diffuse reflections. A simple environment is used to illustrate these simulated effects and is presented with photographs of a physical model. The procedure is applicable to environments composed of ideal diffuse reflectors and can account for direct illumination from a variety of light sources. The resultant surface intensities are independent of observer position, and thus environments can be preprocessed for dynamic sequences.},
+	journal = {SIGGRAPH Comput. Graph.},
+	month = jan,
+	pages = {213–222},
+	numpages = {10},
+	keywords = {Shading, Radiosity, Light reflection models, Form factors, Diffuse reflections}
+}
+
+@inproceedings{radiosity2,
+	author = {Goral, Cindy M. and Torrance, Kenneth E. and Greenberg, Donald P. and Battaile, Bennett},
+	title = {Modeling the interaction of light between diffuse surfaces},
+	year = {1984},
+	isbn = {0897911385},
+	publisher = {Association for Computing Machinery},
+	address = {New York, NY, USA},
+	url = {https://doi.org/10.1145/800031.808601},
+	doi = {10.1145/800031.808601},
+	abstract = {A method is described which models the interaction of light between diffusely reflecting surfaces. Current light reflection models used in computer graphics do not account for the object-to-object reflection between diffuse surfaces, and thus incorrectly compute the global illumination effects. The new procedure, based on methods used in thermal engineering, includes the effects of diffuse light sources of finite area, as well as the “color-bleeding” effects which are caused by the diffuse reflections. A simple environment is used to illustrate these simulated effects and is presented with photographs of a physical model. The procedure is applicable to environments composed of ideal diffuse reflectors and can account for direct illumination from a variety of light sources. The resultant surface intensities are independent of observer position, and thus environments can be preprocessed for dynamic sequences.},
+	booktitle = {Proceedings of the 11th Annual Conference on Computer Graphics and Interactive Techniques},
+	pages = {213–222},
+	numpages = {10},
+	keywords = {Shading, Radiosity, Light reflection models, Form factors, Diffuse reflections},
+	series = {SIGGRAPH '84}
+}
+
+@article{1982_a_reflectance_model,
+	author = {Cook, R. L. and Torrance, K. E.},
+	title = {A Reflectance Model for Computer Graphics},
+	year = {1982},
+	issue_date = {Jan. 1982},
+	publisher = {Association for Computing Machinery},
+	address = {New York, NY, USA},
+	volume = {1},
+	number = {1},
+	issn = {0730-0301},
+	url = {https://doi.org/10.1145/357290.357293},
+	doi = {10.1145/357290.357293},
+	journal = {ACM Trans. Graph.},
+	month = jan,
+	pages = {7–24},
+	numpages = {18},
+	keywords = {reflectance, image synthesis}
+}
+
+@article{2009_a_survey_of_brdf_models,
+	author = {Kurt, Murat and Edwards, Dave},
+	year = {2009},
+	month = {05},
+	pages = {1-7},
+	title = {A survey of BRDF models for computer graphics},
+	volume = {43},
+	journal = {ACM SIGGRAPH Computer Graphics},
+	doi = {10.1145/1629216.1629222}
+}
+
+@article{2023_an_overview_of_BRDF_models,
+	author = {Zhou, Yukai},
+	year = {2023},
+	month = {12},
+	pages = {205-210},
+	title = {An overview of BRDF models in computer graphics},
+	volume = {19},
+	journal = {Theoretical and Natural Science},
+	doi = {10.54254/2753-8818/19/20230550}
+}
+
+@book{2014_graphics_shaders,
+	author = {Bailey, Mike and Cunningham, Steve},
+	title = {Graphics Shaders},
+	year = {2014},
+	isbn = {1466587423},
+	publisher = {CRC Press, Inc.},
+	address = {USA},
+	edition = {3rd},
+	abstract = {Intended for a second course in computer graphics at the advanced undergraduate and graduate levels, this highly praised text introduces general shader programming with a focus on the Open GL shading language. It teaches how to write programmable shaders while reinforcing the fundamentals of computer graphics. This third edition incorporates changes in the OpenGL API (versions 4.2 and 4.3) and contains five new chapters that cover major new enhancements by the OpenGL standards group, including storage buffer objects, compute shaders, OpenGL ES, and WebGL.}
+}
+
+@inproceedings{2020_nerf,
+	booktitle = {Proceedings of the European Conference on Computer Vision (ECCV)},
+	author = {Ben Mildenhall and Pratul P. Srinivasan and Matthew Tancik and Jonathan T. Barron and Ravi Ramamoorthi and Ren Ng},
+	title = {NeRF: Representing Scenes as Neural Radiance Fields for View Synthesis},
+	year = {2020},
+	url = {http://arxiv.org/abs/2003.08934v2},
+	entrytype = {inproceedings},
+	id = {mildenhall2020nerf}
+}
