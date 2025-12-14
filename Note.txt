@@ -1,0 +1,3 @@
+Thêm phương pháp chính vào Related Works
+Nói về môi trường do hoa OpenGL, cac ham su dung tu OpenGL, (vẽ, tô màu, glsl), VBO, VAO
+Noi ve các buoc shader (vertex shader, fragment shader) quy trinh hien thi do hoa (model ->world -> eye -> clip -> screen)(sách Graphics Shader), nói về pipeline trong chương trình

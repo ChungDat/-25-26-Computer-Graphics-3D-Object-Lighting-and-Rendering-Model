@@ -7,29 +7,31 @@
 
 \section{Mô hình chiếu sáng}
 Trong thế giới thực, ánh sáng là các photon di chuyển theo tia trong không gian và phân tán trên bề mặt các vật. Sinh vật có thể nhìn thấy một vật do ánh sáng từ các nguồn sáng (Mặt trời, đèn đường, ...) chiếu đến vật, vật hấp thụ một phần ánh sáng và phản xạ phần còn lại vào mắt. Trong mắt có các tế bào thụ cảm ánh sáng (photoreceptors) chuyển đổi ánh sáng thành tín hiệu điện hoá, gửi đến não để tạo ra hình ảnh thị giác.\\
-Trong đồ hoạ máy tính, các mô hình chiếu sáng mô phỏng nguồn sáng thực bằng việc biểu diễn mức độ năng lượng chiếu qua một điểm trong không gian \cite{principles}. Các mô hình phản xạ (reflectance model) sẽ dựa vào các biểu diễn toán học này để tính toán mối quan hệ tương đối giữa các vật liệu và nguồn sáng khác nhau. \cite{1982_a_reflectance_model}.
-\subsection{Nguồn sáng hình học - Geometric Light}
-Một nguồn sáng hình học là nguồn sáng có sự suy giảm độ sáng phụ thuộc khoảng cách với điểm được chiếu \cite{principles}.
+Trong đồ hoạ máy tính, các mô hình chiếu sáng mô phỏng nguồn sáng thực bằng việc biểu diễn mức độ năng lượng chiếu qua một điểm trong không gian \cite{principles_1990}. Các mô hình phản xạ (reflectance model) sẽ dựa vào các biểu diễn toán học này để tính toán mối quan hệ tương đối giữa các vật liệu và nguồn sáng khác nhau. \cite{a_reflectance_model_1982}.
+
+\subsection{Nguồn sáng hình học - Geometric Light Source}
+Nguồn sáng hình học là nguồn sáng được đặt trong cảnh và có sự suy giảm độ sáng phụ thuộc khoảng cách giữa nguồn sáng và mặt phẳng phản chiếu\cite{principles_1990}.
 
 \subsubsection{Nguồn sáng điểm - Point Light}
-Nguồn sáng điểm được đặt trong cảnh (scene) và chiếu sáng theo mọi hướng. Các nguồn sáng lớn hơn có thể được mô hình hoá bằng một nguồn sáng điểm ở trung tâm, được bao quanh bởi các hình học đại diện (proxy geometry) nhằm đánh lừa người xem \cite{principles}.
+Nguồn sáng điểm được đặt trong cảnh và chiếu sáng theo mọi hướng, mô phỏng nguồn sáng như bóng đèn điện \cite{principles_1990}. %Các nguồn sáng lớn hơn có thể được mô hình hoá bằng một nguồn sáng điểm ở trung tâm, được bao quanh bởi các hình học đại diện (proxy geometry) nhằm đánh lừa người xem
 % hình: bóng đèn
 
 \subsubsection{Nguồn sáng chiếu điểm - Spot Light}
-Nguồn sáng chiếu điểm là nguồn sáng điểm, với giới hạn chiếu nằm trong một hình nón \cite{principles}.
+Nguồn sáng chiếu điểm là nguồn sáng điểm, với giới hạn chiếu nằm trong một hình nón, mô phỏng nguồn sáng như đèn pha \cite{principles_1990}.
 % hình: máy chiếu, đèn trần
 
+\subsection{Nguồn sáng phi hình học - Non-Geometry Light Source}
+Nguồn sáng phi hình học là nguồn sáng không có vị trí trong cảnh, ánh sáng phát ra không từ một điểm cụ thể trong cảnh và có độ sáng không đổi đến tất cả các mặt phẳng phản chiếu trong cảnh \cite{principles_1990}.
+
 \subsubsection{Nguồn sáng định hướng - Directional Light}
-Nguồn sáng định hướng được mô hình hoá dựa trên một mặt trời ở khoảng cách vô hạn. Các tia sáng từ nguồn sáng này được xem như các tia chiếu song song, với độ suy giảm được xem là như nhau với các điểm được chiếu \cite{principles}.
+Nguồn sáng định hướng được mô hình hoá dựa trên một mặt trời ở khoảng cách vô hạn. Đây là mô hình cho trường hợp nguồn sáng điểm được đặt ở khoảng cách vô hạn, nghĩa là các tia sáng từ nguồn sáng này được xem như các tia chiếu song song \cite{principles_1990}, mô phỏng ánh sáng từ mặt trời.
 % hình: mặt trời
 
-\subsection{Nguồn sáng vô hướng - Nondirectional Light}
-
 \subsubsection{Nguồn sáng môi trường - Ambient Light}
-Nguồn sáng môi trường là một lượng ánh sáng được chiếu lên tất cả bề mặt, không phụ thuộc vào hướng và khoảng cách. Nguồn sáng môi trường giúp mọi bề mặt đều có thể được nhìn thấy, loại bỏ các vùng "thuần tối" (pure black) phi thực tế ở các bề mặt hướng ra xa nguồn sáng. Trong thực tế, các bề mặt hướng ra xa nguồn sáng vẫn được chiếu sáng do sự phản xạ từ các vật lân cận trong không gian \cite{principles}.
+Nguồn sáng môi trường là một lượng ánh sáng được chiếu lên tất cả bề mặt, không phụ thuộc vào hướng và khoảng cách. Nguồn sáng môi trường giúp loại bỏ các vùng "thuần tối" (pure black) ở các bề mặt hướng ra xa nguồn sáng \cite{principles_1990}. Trong thực tế, các bề mặt hướng ra xa nguồn sáng vẫn được chiếu sáng do sự phản xạ từ các vật lân cận trong không gian, nguồn sáng môi trường giúp xấp xỉ hiệu ứng này khi khả năng xử lý của máy tính vẫn còn hạn chế.
 
 \subsubsection{Nguồn sáng phát xạ - Emissive Light}
-Nguồn sáng phát xạ được sử dụng để mô tả các bề mặt có khả năng tự phát sáng nhưng không phải một nguồn sáng đúng nghĩa, cho phép bề mặt "phản xạ" ánh sáng ảo \cite{principles}.
+Nguồn sáng phát xạ được sử dụng để mô tả các bề mặt có khả năng tự phát sáng nhưng không phải một nguồn sáng đúng nghĩa, cho phép bề mặt "phản xạ" ánh sáng ảo dù không tồn tại nguồn sáng trong cảnh \cite{principles_1990}, mô phỏng các vật thể tự phát sáng như đèn neon.
 
 \section{Mô hình kết xuất đối tượng}
 
@@ -68,7 +70,7 @@ Nguồn sáng phát xạ được sử dụng để mô tả các bề mặt có
 \begin{enumerate}
 	\item Mô hình kết xuất phẳng
 	\begin{itemize}
-		\item \textbf{Nguyên lý:} Với vật thể được biểu diễn bằng một lưới hình học (mesh), xem mỗi đa giác trong lưới là một mặt phẳng độc lập. Màu sắc tại đa giác là một màu đồng nhất được tính toán dựa trên góc hợp bởi vector pháp tuyến của đa giác và vector hướng tới nguồn sáng\cite{principles}.
+		\item \textbf{Nguyên lý:} Với vật thể được biểu diễn bằng một lưới hình học (mesh), xem mỗi đa giác trong lưới là một mặt phẳng độc lập. Màu sắc tại đa giác là một màu đồng nhất được tính toán dựa trên góc hợp bởi vector pháp tuyến của đa giác và vector hướng tới nguồn sáng\cite{principles_1990}.
 		
 		\item \textbf{Phương pháp:}\\
 		Tại mỗi đa giác, tồn tại một vector pháp tuyến duy nhất $\vec{N} = \vec{a} \times \vec{b}$, với $\vec{a}, \vec{b}$ là hai vector không song song của đa giác.\\
@@ -283,6 +285,34 @@ Nguồn sáng phát xạ được sử dụng để mô tả các bề mặt có
 		Mô hình giả định tất cả các bề mặt đều là phản xạ khuếch tán hoàn hảo. Do đó, Radiosity không thể mô phỏng các hiện tượng phụ thuộc vào góc nhìn như phản xạ gương, bề mặt bóng loáng, hay các vật liệu trong suốt.\\
 		Chi phí tính toán và lưu trữ rất cao, đặc biệt là ma trận hệ số hình dạng có kích thước $n * n$ với $n$ là số lượng ô.\\
 		Chỉ áp dụng được cho các cảnh tĩnh (static scenes). Bất kỳ sự thay đổi nào về hình học hoặc vật liệu đều đòi hỏi phải tính toán lại toàn bộ.
+	\end{itemize}
+
+	\item Phương pháp PBR (Physically Based Rendering)
+	\begin{itemize}
+		\item \textbf{Nguyên lý:} Nguyên lý cốt lõi là việc tìm kiếm giải pháp cho Phương trình kết xuất sao cho vẫn tuân thủ nghiêm ngặt các định luật vật lý.
+		\begin{enumerate}
+			\item Mô hình vật liệu\\
+			PBR sử dụng các mô hình vật liệu mô tả cách các đối tượng phản xạ ánh sáng. Những mô hình thương được đại diện bằng \texit{Hàm phân bố phản xạ hai chiều (BRDF)}, đặc trưng cho sự phân bố ánh sáng đi ra dựa trên hướng ánh sáng đi vào. 
+			
+			\item Bảo toàn năng lượng\\
+			Năng lượng phản xạ ra khỏi bề mặt phải luôn nhỏ hơn hoặc bằng năng lượng ánh sáng chiếu tới.
+
+			\item Đối ứng Helmholtz\\
+			Việc hoán đổi hướng ánh sáng tới và hướng ánh sáng phản xạ sẽ không làm thay đổi giá trị của BDRF.
+
+			\item Tính Tuyến tính và Nguyên lý chồng chất\\
+			Tổng độ sáng phản xạ của một bề mặt phải bằng tổng độ phản xạ riêng lẻ từ các thành phần khác nhau.
+
+			\item Giải Phương trình kết xuất\\
+			Sử dụng các kĩ thuật xấp xỉ được giải nghiệm cho Phương trình kết xuất. 
+			
+		\end{enumerate}
+		
+		\item \textbf{Đóng góp:}\\
+		Tạo ra hình ảnh nhất quán trong mọi điều kiện ánh sáng; chuẩn hóa quy trình sản xuất (workflow) giữa các phần mềm khác nhau.
+
+		\item \textbf{Hạn chế:}\\
+		Chi phí tính toán cao; đòi hỏi quy trình tạo Texture maps phức tạp và chính xác hơn.
 	\end{itemize}
 	
 \end{enumerate}

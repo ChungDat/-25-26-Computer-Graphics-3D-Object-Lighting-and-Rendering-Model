@@ -103,6 +103,9 @@ int main() {
 		return -1;
 	}
 
+	std::cout << "OpenGL version: "
+		<< glGetString(GL_VERSION) << std::endl;
+
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetCursorPosCallback(window, mouseControl);
 	glfwSetScrollCallback(window, mouseScrollControl);

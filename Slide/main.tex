@@ -11,6 +11,7 @@
 \usepackage{amssymb}
 \usepackage{graphicx}
 \usepackage{csquotes}
+\usepackage{listings}
 
 
 \usepackage[vietnamese]{babel}
@@ -80,7 +81,7 @@
 \begin{frame}{Bối cảnh}
 	Đồ họa máy tính là lĩnh vực kết hợp giữa khoa học máy tính và quang học, đã phát triển từ giữa thế kỷ 20 thành một công nghệ nền tảng cho nhiều ngành công nghiệp hiện đại.\\
 	
-	Mục tiêu của đồ hoạ máy tính là nhằm \textbf{mô phỏng thế giới thực vào không gian hai chiều trên màn hình}. Nền tảng của lĩnh vực này là hai khái niệm cốt lõi: mô hình chiếu sáng (Lighting Models) và kết xuất đối tượng (Object Rendering).
+	Mục tiêu của đồ hoạ máy tính là nhằm \textbf{mô phỏng thế giới thực vào không gian hai chiều trên màn hình} và có thể giao tiếp với người dùng thông qua các thiết bị tương tác. Nền tảng của lĩnh vực này là hai khái niệm cốt lõi: mô hình chiếu sáng (Lighting Models) và kết xuất đối tượng (Object Rendering).
 \end{frame}
 
 \begin{frame}{Bối cảnh}
@@ -134,8 +135,8 @@
 	Các công trình tiêu biểu làm nền tảng:
 	\begin{itemize}
 		\item Gouraud Shading
-		\item Phong Shading
-		\item Blinn-Phong Shading
+		\item Phong Reflectance Model và Phong Shading
+		\item Blinn-Phong Reflectance Model
 	\end{itemize} \pause
 	Các kĩ thuật được sử dụng được dựa trên quan sát thay vì các nguyên tắc vật lý và hiện thực hoá bằng các mô hình xấp xỉ.
 \end{frame}
@@ -181,7 +182,7 @@
 \end{frame}
 
 \begin{frame}{Động lực nghiên cứu}
-	\textbf{Giải trí và truyền thông:} Trong ngành công nghiệp điện ảnh và trò chơi điện tử, cải thiện trải nghiệm đắm chìm (Immersive Experience) của người dùng là mục tiêu của mọi công ty nhằm thu hút khách hàng mới. Các kỹ thuật kết xuất tiên tiến, đặc biệt là dò tia thời gian thực (Real-time Ray Tracing), cho phép tạo ra các hiệu ứng phản xạ, bóng đổ, và chiếu sáng toàn cục phức tạp, mang lại trải nghiệm chân thực và hấp dẫn hơn.
+	\textbf{Giải trí và truyền thông:} Trong ngành công nghiệp điện ảnh và trò chơi điện tử, cải thiện trải nghiệm đắm chìm (Immersive Experience) của người dùng là mục tiêu của mọi công ty nhằm thu hút khách hàng mới. Các trò chơi có thể hiển thị hàng triệu đa giác mỗi giây, và các kỹ xảo được sử dụng trong phim điện ảnh đã quá thực tế và không thể dễ dàng phân biệt với các tài nguyên được tạo dựng thủ công \cite{principles_1990}. Các kỹ thuật kết xuất tiên tiến, đặc biệt là dò tia thời gian thực (Real-time Ray Tracing), cho phép tạo ra các hiệu ứng phản xạ, bóng đổ, và chiếu sáng toàn cục phức tạp, mang lại trải nghiệm chân thực và hấp dẫn hơn.
 \end{frame}
 
 \begin{frame}{Động lực nghiên cứu}
@@ -235,6 +236,12 @@
 \end{frame}
 
 \begin{frame}{Động lực nghiên cứu}
+	\begin{center}
+		\includegraphics[width=0.8\linewidth]{imagens/rtx_6.png}
+	\end{center}
+\end{frame}
+
+\begin{frame}{Động lực nghiên cứu}
 	\textbf{Khoa học:} Trong y học, kỹ thuật kết xuất thể tích (Volume Rendering) giúp các bác sĩ tái tạo các cấu trúc bên trong cơ thể từ các dữ liệu 2 chiều như CT/MRI. Trong các ngành khoa học khác, việc trực quan hoá các dữ liệu phức tạp đòi hỏi các mô hình chiếu sáng có khả năng làm nổi bật các chi tiết hình học có kích thước nhỏ.
 \end{frame}
 
@@ -249,7 +256,7 @@
 
 \subsection{Ý nghĩa thực tiễn}
 \begin{frame}{Ý nghĩa thực tiễn}
-	Rào cản lớn nhất đối với việc áp dụng rộng rãi các kỹ thuật quang thực là chi phí tính toán. Mục tiêu ghiên cứu nhằm tập trung vào việc phát triển các thuật toán xấp xỉ thông minh, các cấu trúc dữ liệu hiệu quả, và tận dụng khả năng xử lý song song của phần cứng hiện đại (GPU) để đưa chất lượng hình ảnh ngoại tuyến (offline) vào các ứng dụng tương tác thời gian thực.
+	Rào cản lớn nhất đối với việc áp dụng rộng rãi các kỹ thuật quang thực là chi phí tính toán. Mục tiêu nghiên cứu nhằm tập trung vào việc phát triển các thuật toán xấp xỉ thông minh, các cấu trúc dữ liệu hiệu quả, và tận dụng khả năng xử lý song song của phần cứng hiện đại (GPU) để đưa chất lượng hình ảnh ngoại tuyến (offline) vào các ứng dụng tương tác thời gian thực.
 \end{frame}
 
 \begin{frame}{Ý nghĩa thực tiễn}
@@ -258,7 +265,7 @@
 
 \subsection{Phát biểu bài toán}
 \begin{frame}{Phát biểu bài toán}
-	Bài toán tổng hợp hình ảnh trong đồ họa máy tính là quá trình biến đổi một mô tả toán học trừu tượng của một cảnh ba chiều thành một hình ảnh hai chiều quang thực. Mục tiêu cuối cùng là làm cho hình ảnh 2 chiều đầu ra trở nên không thể phân biệt được (hoặc càng giống càng tốt) với một bức ảnh chụp của một cảnh tương tự trong thế giới thực. Quá trình này có thể được phân tách thành hai bài toán con, lồng ghép và phụ thuộc lẫn nhau: định nghĩa Mô hình Chiếu sáng và thực thi quá trình Kết xuất Đối tượng.
+	Bài toán tổng hợp hình ảnh trong đồ họa máy tính là quá trình biến đổi một mô tả toán học trừu tượng của một cảnh ba chiều thành một hình ảnh hai chiều quang thực. Mục tiêu cuối cùng là làm cho hình ảnh 2 chiều đầu ra trở nên không thể phân biệt được (hoặc càng giống càng tốt) với một bức ảnh chụp của một cảnh tương tự trong thế giới thực. Quá trình này có thể được phân tách thành hai bài toán con: định nghĩa Mô hình Chiếu sáng và thực thi quá trình Kết xuất Đối tượng.
 \end{frame}
 
 \begin{frame}{Phát biểu bài toán}
@@ -282,7 +289,7 @@
 	\begin{center}
 		\begin{math}
 			x_{ij} = f(G, M, L, C)\\
-			Output = R(X) \quad X=\{x_{ij} | i, j \in O\}
+			Output = R(X) \quad X=\{x_{ij} | i, j \in O\}\\
 		\end{math}
 	\end{center}
 \end{frame}
@@ -293,7 +300,7 @@
 		\begin{itemize}
 			\item \textbf{Xác định điểm nhìn:} Thiết lập vị trí và hướng của camera, giới hạn phần không gian sẽ được hiển thị.
 			
-			\item \textbf{Biến đổi Hình học (Geometric Transformation):} Sắp xếp tất cả các đối tượng và camera vào một hệ quy chiếu chung. Các đối tượng có thể được định nghĩa từ chương trình có sẵn từ tập hợp các điểm và vector pháp tuyến tương ứng hoặc sử dụng các file đối tượng 3 chiều được dựng sẵn từ các chương trình xây dựng đối tượng 3 chiều như file .obj. Điều này bao gồm các thao tác di chuyển, xoay, và thay đổi kích thước các đối tượng từ không gian mô hình riêng vào một không gian thế giới thống nhất, và sau đó biến đổi toàn bộ cảnh từ không gian thế giới sang không gian camera, nơi camera được đặt tại gốc tọa độ, thông qua ma trận world-to-view.
+			\item \textbf{Biến đổi Hình học (Geometric Transformation):} Sắp xếp tất cả các đối tượng và camera vào một hệ quy chiếu chung. Điều này bao gồm các thao tác di chuyển, xoay, và thay đổi kích thước các đối tượng từ không gian mô hình riêng của chúng vào một không gian thế giới (world space) thống nhất.
 		\end{itemize}
 		
 	\end{enumerate}
@@ -301,7 +308,7 @@
 
 \begin{frame}{Framework bài toán}
 	\begin{enumerate}
-		\item \textbf{Tính toán Chiếu sáng và Tô bóng (Lighting and Shading Calculation):} Đây là công đoạn Mô hình Chiếu sáng được áp dụng. Sau khi xác định được bề mặt nhìn thấy tại mỗi pixel, hệ thống sẽ tính toán màu sắc của điểm đó. Kết quả là giá trị màu cuối cùng cho pixel đó, có thể bao gồm cả các hiệu ứng phức tạp như bóng đổ, phản xạ, và khúc xạ.
+		\item \textbf{Tính toán Chiếu sáng và Tô bóng (Lighting and Shading Calculation):} Đây là công đoạn Mô hình Chiếu sáng được áp dụng. Sau khi xác định được bề mặt nhìn thấy tại mỗi pixel, hệ thống sẽ tính toán màu sắc của điểm đó. Kết quả là giá trị màu cuối cùng cho pixel đó.
 		
 		\item \textbf{Chiếu (Projection)}: Sau khi cảnh được định vị tương đối so với camera, công đoạn này thực hiện phép chiếu để biến đổi các tọa độ 3D thành tọa độ 2D. Quá trình này mô phỏng cách mắt người hoặc ống kính máy ảnh hoạt động, tạo ra hiệu ứng phối cảnh (perspective) nơi các vật thể ở xa trông nhỏ hơn các vật thể ở gần. Các vật thể không được nhìn thấy sẽ được loại bỏ.
 		
@@ -323,7 +330,7 @@
 \subsection{Mô hình chiếu sáng}
 \begin{frame}{Mô hình chiếu sáng}
 	Trong thế giới thực, ánh sáng là các photon di chuyển theo tia trong không gian và phân tán trên bề mặt các vật. Sinh vật có thể nhìn thấy một vật do ánh sáng từ các nguồn sáng (Mặt trời, đèn đường, ...) chiếu đến vật, vật hấp thụ một phần ánh sáng và phản xạ phần còn lại vào mắt. Trong mắt có các tế bào thụ cảm ánh sáng (photoreceptors) chuyển đổi ánh sáng thành tín hiệu điện hoá, gửi đến não để tạo ra hình ảnh thị giác.\\
-	Trong đồ hoạ máy tính, các mô hình chiếu sáng mô phỏng nguồn sáng thực bằng việc biểu diễn mức độ năng lượng chiếu qua một điểm trong không gian \cite{principles}. Các mô hình phản xạ (reflectance model) sẽ dựa vào các biểu diễn toán học này để tính toán mối quan hệ tương đối giữa các vật liệu và nguồn sáng khác nhau. \cite{1982_a_reflectance_model}.
+%	Trong đồ hoạ máy tính, các mô hình chiếu sáng mô phỏng nguồn sáng thực bằng việc biểu diễn mức độ năng lượng chiếu qua một điểm trong không gian \cite{principles}. Các mô hình phản xạ (reflectance model) sẽ dựa vào các biểu diễn toán học này để tính toán mối quan hệ tương đối giữa các vật liệu và nguồn sáng khác nhau. \cite{1982_a_reflectance_model}.
 \end{frame}
 
 \begin{frame}{Mô hình chiếu sáng}
@@ -333,17 +340,23 @@
 \end{frame}
 
 \begin{frame}{Mô hình chiếu sáng}
+	\textbf{Nguồn sáng hình học - Geometric Light}\\
+	Nguồn sáng hình học là nguồn sáng được đặt trong cảnh và có sự suy giảm độ sáng phụ thuộc khoảng cách giữa nguồn sáng và mặt phẳng phản chiếu\cite{principles_1990}.
+\end{frame}
+
+
+\begin{frame}{Nguồn sáng hình học}
 	\textbf{Nguồn sáng điểm - Point Light}\\
-	Nguồn sáng điểm được đặt trong cảnh (scene) và chiếu sáng theo mọi hướng. Các nguồn sáng lớn hơn có thể được mô hình hoá bằng một nguồn sáng điểm ở trung tâm, được bao quanh bởi các hình học đại diện (proxy geometry) nhằm đánh lừa người xem \cite{principles}.\\
+	Nguồn sáng điểm được đặt trong cảnh và chiếu sáng theo mọi hướng, mô phỏng nguồn sáng như bóng đèn điện \cite{principles_1990}.\\
 	\begin{center}
 		\includegraphics[height=0.45\textheight]{imagens/pointlight_1.png}
 		\includegraphics[height=0.45\textheight]{imagens/pointlight_2.jpg}
 	\end{center}
 \end{frame}
 
-\begin{frame}{Mô hình chiếu sáng}
+\begin{frame}{Nguồn sáng hình học}
 	\textbf{Nguồn sáng chiếu điểm - Spot Light}\\
-	Nguồn sáng chiếu điểm là nguồn sáng điểm, với giới hạn chiếu nằm trong một hình nón \cite{principles}.
+	Nguồn sáng chiếu điểm là nguồn sáng điểm, với giới hạn chiếu nằm trong một hình nón, mô phỏng nguồn sáng như đèn pha \cite{principles_1990}.
 	\begin{center}
 		\includegraphics[height=0.45\textheight]{imagens/spotlight_1.png}
 		\includegraphics[height=0.45\textheight]{imagens/spotlight_2.png}
@@ -351,11 +364,30 @@
 \end{frame}
 
 \begin{frame}{Mô hình chiếu sáng}
+	\textbf{Nguồn sáng phi hình học - Non-Geometry Light}\\
+	Nguồn sáng phi hình học là nguồn sáng không có vị trí trong cảnh, ánh sáng phát ra không từ một điểm cụ thể trong cảnh và có độ sáng không đổi đến tất cả các mặt phẳng phản chiếu trong cảnh \cite{principles_1990}.
+\end{frame}
+
+\begin{frame}{Nguồn sáng phi hình học}
 	\textbf{Nguồn sáng định hướng - Directional Light}\\
-	Nguồn sáng định hướng được mô hình hoá dựa trên một mặt trời ở khoảng cách vô hạn. Các tia sáng từ nguồn sáng này được xem như các tia chiếu song song, với độ suy giảm được xem là như nhau với các điểm được chiếu \cite{principles}.
+	Nguồn sáng định hướng được mô hình hoá dựa trên một mặt trời ở khoảng cách vô hạn. Đây là mô hình cho trường hợp nguồn sáng điểm được đặt ở khoảng cách vô hạn, nghĩa là các tia sáng từ nguồn sáng này được xem như các tia chiếu song song \cite{principles_1990}, mô phỏng ánh sáng từ mặt trời.
 	\begin{center}
 		\includegraphics[height=0.35\textheight]{imagens/directionallight_1.png}
 		\includegraphics[height=0.35\textheight]{imagens/directionallight_2.png}
+	\end{center}
+\end{frame}
+
+\begin{frame}{Nguồn sáng phi hình học}
+	\textbf{Nguồn sáng môi trường - Ambient Light}\\
+	Nguồn sáng môi trường là một lượng ánh sáng được chiếu lên tất cả bề mặt, không phụ thuộc vào hướng và khoảng cách. Nguồn sáng môi trường giúp loại bỏ các vùng "thuần tối" (pure black) ở các bề mặt hướng ra xa nguồn sáng \cite{principles_1990}.
+\end{frame}
+
+\begin{frame}{Nguồn sáng phi hình học}
+	\textbf{Nguồn sáng phát xạ - Emissive Light}\\
+	Nguồn sáng phát xạ được sử dụng để mô tả các bề mặt có khả năng tự phát sáng nhưng không phải một nguồn sáng đúng nghĩa, cho phép bề mặt "phản xạ" ánh sáng ảo dù không tồn tại nguồn sáng trong cảnh \cite{principles_1990}, mô phỏng các vật thể tự phát sáng.
+
+	\begin{center}
+		\includegraphics[height=0.35\textheight]{imagens/emission.jpg}
 	\end{center}
 \end{frame}
 
@@ -436,7 +468,7 @@
 			\hline
 			\textbf{Mô hình} & \textbf{Phương pháp} \\ \hline
 			Rendering Equation & Giải phương trình tích phân vô hạn thông qua các thuật toán xác suất như Monte Carlo, Path Tracing. \\ \hline
-			Radiosity & Chia nhỏ bề mặt thành các miếng (patches), tính hệ số hình học (Form Factors) và giải hệ phương trình tuyến tính ma trận lớn. \\ \hline
+%			Radiosity & Chia nhỏ bề mặt thành các miếng (patches), tính hệ số hình học (Form Factors) và giải hệ phương trình tuyến tính ma trận lớn. \\ \hline
 			PBR & Sử dụng các hàm phân bố phản xạ hai chiều (BRDF) phức tạp (như Cook-Torrance) kết hợp với các bản đồ (maps): Albedo, Normal, Roughness, Metalness. \\ \hline
 		\end{tabular}
 	\end{table}
@@ -453,7 +485,7 @@
 			Phong & Tạo ra điểm sáng phản xạ (highlight) rõ nét, giúp vật thể trông thực và "3D" hơn hẳn so với Gouraud. \\ \hline
 			Blinn-Phong & Hiệu quả tính toán cao hơn Phong gốc; điểm sáng (highlight) trông mềm mại và tự nhiên hơn dưới nguồn sáng diện rộng. \\ \hline
 			Rendering Equation & Là "Thuyết thống nhất" của đồ họa; cơ sở lý thuyết cho mọi kỹ thuật quang thực hiện đại. \\ \hline
-			Radiosity & Mô phỏng chính xác Global Illumination và bóng đổ mềm tự nhiên lần đầu tiên. \\ \hline
+%			Radiosity & Mô phỏng chính xác Global Illumination và bóng đổ mềm tự nhiên lần đầu tiên. \\ \hline
 			PBR & Tạo ra hình ảnh nhất quán trong mọi điều kiện ánh sáng; chuẩn hóa quy trình sản xuất (workflow) giữa các phần mềm khác nhau. \\ \hline
 		\end{tabular}
 	\end{table}
@@ -470,7 +502,7 @@
 			Phong & Vật thể trông giống "nhựa" (plastic look); là mô hình thực nghiệm không bảo toàn năng lượng. \\ \hline
 			Blinn-Phong & Là mô hình thực nghiệm, chưa mô phỏng đúng tính chất vật lý của kim loại hay chất cách điện. \\ \hline
 			Rendering Equation & Không thể giải chính xác tuyệt đối về mặt toán học; mất rất nhiều thời gian tính toán. \\ \hline
-			Radiosity & Không xử lý được vật liệu bóng/gương (Specular); tốn bộ nhớ lưu trữ; cần tính toán lại với vật thể động. \\ \hline
+%			Radiosity & Không xử lý được vật liệu bóng/gương (Specular); tốn bộ nhớ lưu trữ; cần tính toán lại với vật thể động. \\ \hline
 			PBR & Chi phí tính toán cao; đòi hỏi quy trình tạo Texture maps phức tạp và chính xác hơn. \\ \hline
 		\end{tabular}
 	\end{table}
@@ -502,7 +534,7 @@
 %\end{frame}
 
 \begin{frame}{Flat Shading}
-	\item \textbf{Đóng góp:} Hiệu suất tính toán của tô bóng phẳng rất cao. Vì chỉ có một phép tính chiếu sáng cho mỗi đa giác, đây là phương pháp nhanh nhất có thể, cho phép các hệ thống phần cứng sơ khai có thể kết xuất các cảnh 3D rắn trong thời gian thực.\\
+	\textbf{Đóng góp:} Hiệu suất tính toán của tô bóng phẳng rất cao. Vì chỉ có một phép tính chiếu sáng cho mỗi đa giác, đây là phương pháp nhanh nhất có thể, cho phép các hệ thống phần cứng sơ khai có thể kết xuất các cảnh 3D rắn trong thời gian thực.\\
 	\textbf{Hạn chế:} Vì mỗi đa giác có một màu riêng biệt, các bề mặt cong được xấp xỉ bằng lưới đa giác sẽ có vẻ ngoài "gãy khúc" hoặc "khối cạnh" (faceted).
 	\begin{center}
 		\includegraphics[height=0.25\linewidth]{imagens/sphere_2.png}
@@ -614,9 +646,13 @@
 
 \begin{frame}{Phong Shading}
 	\begin{center}
-		\includegraphics[width=\linewidth]{imagens/diffuse-vs-specular.png}
+%		\includegraphics[width=\linewidth]{imagens/diffuse-vs-specular.png}
+		\includegraphics[width=\linewidth]{imagens/specular_vs_diffuse.png}
 	\end{center}
 \end{frame}
+
+%\item \textbf{Phản xạ gương (Specular Reflection):} Xảy ra ngay tại bề mặt phân cách giữa không khí và vật liệu. Nó chịu trách nhiệm cho các điểm sáng (highlights) và bị ảnh hưởng mạnh bởi độ nhám bề mặt.
+%\item \textbf{Phản xạ khuếch tán (Diffuse Reflection):} Xảy ra do tán xạ bên trong (internal scattering) hoặc phản xạ nhiều lần trên bề mặt thô. Ánh sáng xâm nhập vào vật liệu, tán xạ và thoát ra theo mọi hướng.
 
 \begin{frame}{Phong Shading}
 	\begin{center}
@@ -674,12 +710,12 @@
 %	- $\vec{V}$ là vector đơn vị từ vị trí của mảnh đến camera.
 %\end{frame}
 
-\begin{frame}{Phong Shading}
-	\begin{center}
-		\includegraphics[height=0.4\linewidth]{imagens/phong_1.png}\\
-		\cite{phong2}
-	\end{center}
-\end{frame}
+%\begin{frame}{Phong Shading}
+%	\begin{center}
+%		\includegraphics[height=0.4\linewidth]{imagens/phong_1.png}\\
+%		\cite{phong2}
+%	\end{center}
+%\end{frame}
 
 \begin{frame}{Phong Shading}
 	\textbf{Đóng góp:} Tô bóng Phong tạo ra các đốm sáng phản xạ gương mượt mà và chính xác hơn nhiều. Mô hình đã trở thành tiêu chuẩn trong nhiều thập kỷ cho cả đồ họa thời gian thực và ngoại tuyến.\\
@@ -741,22 +777,22 @@
 \begin{frame}{Phương trình kết xuất}
 	\textbf{Đóng góp:}\\
 	Cung cấp một nền tảng lý thuyết thống nhất cho tất cả các thuật toán kết xuất dựa trên vật lý.\\
-	Cho phép mô phỏng một cách tự nhiên và toàn diện tất cả các hiện tượng quang học phức tạp, bao gồm bóng đổ mềm, phản xạ gương và khuếch tán, hiện tượng tụ quang (caustics), chiếu sáng gián tiếp, và độ sâu trường ảnh (depth of field) trong cùng một khuôn khổ.\\
+	Cho phép mô phỏng một cách tự nhiên và toàn diện tất cả các hiện tượng quang học phức tạp.\\
 	Là nền tảng cho hầu hết các trình kết xuất quang thực hiện đại được sử dụng trong sản xuất phim ảnh và hiệu ứng kỹ xảo.
 	
 	\textbf{Hạn chế:}\\
-	Chi phí tính toán cực kỳ cao. Các phương pháp Monte Carlo hội tụ rất chậm, đòi hỏi phải lấy hàng trăm hoặc hàng nghìn mẫu (đường đi) cho mỗi pixel để tạo ra một hình ảnh không bị nhiễu (noise).\\
-	Bản chất ngẫu nhiên của thuật toán tạo ra nhiễu trong hình ảnh, đặc biệt là ở các khu vực có các đường đi ánh sáng phức tạp (ví dụ: tụ quang).\\
-	Không phù hợp cho các ứng dụng thời gian thực do tốc độ hội tụ chậm.
+	Chi phí tính toán cực kỳ cao. Không phù hợp cho các ứng dụng thời gian thực do tốc độ hội tụ chậm.
+	Bản chất ngẫu nhiên của thuật toán tạo ra nhiễu trong hình ảnh, đặc biệt là ở các khu vực có các đường đi ánh sáng phức tạp.\\
+	
 \end{frame}
 
-\begin{frame}{Phương pháp Radiosity}
-	\textbf{Nguyên lý:} Nguyên lý cốt lõi là sự bảo toàn năng lượng trong một hệ thống khép kín bao gồm các bề mặt phản xạ khuếch tán hoàn hảo (perfectly diffuse). Nó mô hình hóa sự cân bằng năng lượng ánh sáng, trong đó tổng năng lượng ánh sáng rời khỏi một bề mặt (radiosity) bằng tổng năng lượng do chính nó phát ra với năng lượng nó phản xạ lại từ tất cả các bề mặt khác trong cảnh. Đặc điểm quan trọng nhất là nó tính toán sự tương tác ánh sáng gián tiếp giữa các bề mặt, tạo ra các hiệu ứng như chảy máu màu (color bleeding)\cite{radiosity1}.
-	
-	\begin{center}
-		\includegraphics[height=0.25\linewidth]{imagens/radiosity_1.jpg}
-	\end{center}
-\end{frame}
+%\begin{frame}{Phương pháp Radiosity}
+%	\textbf{Nguyên lý:} Giả định tồn tại một hệ thống khép kín bao gồm các bề mặt phản xạ khuếch tán hoàn hảo (perfectly diffuse). Nó mô hình hóa sự cân bằng năng lượng ánh sáng, trong đó tổng năng lượng ánh sáng rời khỏi một bề mặt bằng tổng năng lượng do chính nó phát ra với năng lượng nó phản xạ lại từ tất cả các bề mặt khác trong cảnh. Đặc điểm quan trọng nhất là nó tính toán sự tương tác ánh sáng gián tiếp giữa các bề mặt, tạo ra các hiệu ứng như chảy máu màu (color bleeding)\cite{radiosity1}.
+%	
+%	\begin{center}
+%		\includegraphics[height=0.25\linewidth]{imagens/radiosity_1.jpg}
+%	\end{center}
+%\end{frame}
 
 %\begin{frame}{Phương pháp Radiosity}
 %	\textbf{Phương pháp:}\\
@@ -777,16 +813,16 @@
 %	- $\rho_i$ là hệ số phản xạ của ô $i$.
 %\end{frame}
 
-\begin{frame}{Phương pháp Radiosity}
-	\textbf{Đóng góp:}\\
-	Đây là phương pháp đầu tiên mô phỏng thành công các hiệu ứng chiếu sáng khuếch tán gián tiếp một cách tinh tế, tạo ra các bóng đổ mềm mại và hiện tượng chảy máu màu cực kỳ chân thực, điều mà các mô hình chiếu sáng cục bộ không thể làm được\cite{radiosity1}.\\
-	Kết quả tính toán độc lập với góc nhìn. Sau khi giải hệ phương trình, các giá trị chiếu sáng được lưu lại trên các ô, cho phép người dùng di chuyển camera và kết xuất cảnh từ các góc nhìn khác nhau trong thời gian thực mà không cần tính toán lại.
-	
-	\textbf{Hạn chế:}\\
-	Mô hình giả định tất cả các bề mặt đều là phản xạ khuếch tán hoàn hảo. Do đó, Radiosity không thể mô phỏng các hiện tượng phụ thuộc vào góc nhìn như phản xạ gương, bề mặt bóng loáng, hay các vật liệu trong suốt.\\
-	Chi phí tính toán và lưu trữ rất cao, đặc biệt là ma trận hệ số hình dạng có kích thước $n * n$ với $n$ là số lượng ô.\\
-	Chỉ áp dụng được cho các cảnh tĩnh (static scenes). Bất kỳ sự thay đổi nào về hình học hoặc vật liệu đều đòi hỏi phải tính toán lại toàn bộ.
-\end{frame}
+%\begin{frame}{Phương pháp Radiosity}
+%	\textbf{Đóng góp:}\\
+%	Đây là phương pháp đầu tiên mô phỏng thành công các hiệu ứng chiếu sáng khuếch tán gián tiếp một cách tinh tế, tạo ra các bóng đổ mềm mại và hiện tượng chảy máu màu cực kỳ chân thực, điều mà các mô hình chiếu sáng cục bộ không thể làm được\cite{radiosity1}.\\
+%	Kết quả tính toán độc lập với góc nhìn. Sau khi giải hệ phương trình, các giá trị chiếu sáng được lưu lại trên các ô, cho phép người dùng di chuyển camera và kết xuất cảnh từ các góc nhìn khác nhau trong thời gian thực mà không cần tính toán lại.
+%	
+%	\textbf{Hạn chế:}\\
+%	Mô hình giả định tất cả các bề mặt đều là phản xạ khuếch tán hoàn hảo. Do đó, Radiosity không thể mô phỏng các hiện tượng phụ thuộc vào góc nhìn như phản xạ gương, bề mặt bóng loáng, hay các vật liệu trong suốt.\\
+%	Chi phí tính toán và lưu trữ rất cao, đặc biệt là ma trận hệ số hình dạng có kích thước $n * n$ với $n$ là số lượng ô.\\
+%	Chỉ áp dụng được cho các cảnh tĩnh (static scenes). Bất kỳ sự thay đổi nào về hình học hoặc vật liệu đều đòi hỏi phải tính toán lại toàn bộ.
+%\end{frame}
 
 \begin{frame}{Quy trình PBR}
 	\textbf{Nguyên lý:} Nguyên lý cốt lõi là tìm nghiệm cho Phương trình kết xuất bằng các mô hình vật liệu mô tả cách vật thể phản xạ ánh sáng. Những mô hình này thường được biểu diễn bởi hàm phân bố phản xạ hai chiều (Bidirectional Reflectance Distribution Function - BRDF).\\
@@ -804,15 +840,128 @@
 	\textbf{Hạn chế:}\\
 	Chi phí tính toán cao; đòi hỏi quy trình tạo Texture maps phức tạp và chính xác hơn.\\
 	Các mô hình PBR cần lượng lớn các tham số, các tham số này thường khó đạt được trong thực tế.\\
+\end{frame}
+
+\section{Methodology}
+\begin{frame}{Phương pháp}
+	Mô hình Cook-Torance dựa trên vật lý, xem xét độc lập hai thành phần: sự phân bố năng lượng quang phổ (màu sắc) và sự phân bố định hướng của ánh sáng phản xạ.\\
+	Nguyên lý cốt lõi của mô hình Cook-Torrance dựa trên quang học hình học (ray theory) và mô hình vi bề mặt (microfacet model).
+\end{frame}
+
+\section{Lý thuyết Vi bề mặt}
+\begin{frame}{Lý thuyết Vi bề mặt}
+	Mô hình giả định rằng một bề mặt thô nhám (rough surface) được cấu tạo từ vô số các mặt phẳng gương siêu nhỏ gọi là các vi bề mặt (microfacets). 
+	\begin{center}
+		\includegraphics[width=\linewidth]{imagens/microfacet.jpg}
+	\end{center}
+\end{frame}
+
+\section{Ứng dụng}
+\begin{frame}{Ứng dụng}
+	\begin{itemize}
+		\item \textbf{Mô phỏng Nhựa (Plastics):} Sử dụng thành phần gương màu trắng (do $F$ phẳng theo bước sóng) và thành phần khuếch tán có màu. Điều này tái tạo chính xác hiệu ứng "bóng loáng" của nhựa màu.
+		\item \textbf{Mô phỏng Kim loại (Metals):} Loại bỏ thành phần khuếch tán ($d \approx 0$). Thành phần gương mang màu sắc của vật liệu (ví dụ: Đồng) và thay đổi màu nhẹ khi góc nhìn chuyển sang góc nghiêng (do sự thay đổi của $F$).
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Ứng dụng}
+	\begin{center}
+		\includegraphics[width=\linewidth]{imagens/ball4.jpg}
+	\end{center}
+\end{frame}
+
+\section{Implementation \& Experiment}
+\begin{frame}{Cài đặt}
+	\begin{itemize}
+		\item OpenGL 3.3: Một hệ thống đặc tả dùng để lập trình 2D và 3D. OpenGL cung cấp tập các hàm chuẩn để giao tiếp với GPU, cho phép lập trình viên điều khiển pipeline đồ họa, viết shader, và quản lý tài nguyên như buffer, texture và framebuffer.
+		\item GLFW: Thư viện hỗ trợ tạo cửa sổ và xử lý tương tác cho các ứng dụng OpenGL. GLFW chịu trách nhiệm quản lý cửa sổ, ngữ cảnh OpenGL (OpenGL context), cũng như xử lý các sự kiện bàn phím, chuột và thời gian.
+		\item GLAD: Thư viện tải hàm OpenGL (OpenGL function loader). GLAD đảm bảo chương trình có thể sử dụng đúng các hàm OpenGL mà driver GPU hỗ trợ.
+		\item GLM: Thư viện toán học cho đồ họa máy tính, được thiết kế theo chuẩn của GLSL. GLM cung cấp các kiểu dữ liệu và phép toán cho vector, ma trận, quaternion và các phép biến đổi hình học thường dùng trong đồ họa 3D.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Cài đặt}
+	\begin{itemize}
+		\item Assimp: Thư viện nhập mô hình 3D đa định dạng cho các ứng dụng đồ họa. Assimp hỗ trợ đọc nhiều định dạng mô hình phổ biến như OBJ, FBX, COLLADA và glTF, đồng thời chuyển đổi chúng về một cấu trúc dữ liệu trung gian thống nhất, bao gồm lưới (mesh), vật liệu (material), texture và hệ phân cấp nút (scene graph).
+		\item Dear ImGui: Thư viện giao diện người dùng cho các ứng dụng đồ họa thời gian thực, cho phép xây dựng nhanh các thành phần giao diện.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Cài đặt}
+	\begin{columns}[T]
+		% --- LEFT COLUMN ---
+		\begin{column}{0.5\textwidth}
+			\begin{center}
+				Khởi tạo hệ thống
+				\begin{itemize}
+					\item initWindow()
+					\item gladLoadGLLoader()
+					\item glEnable(GL\_DEPTH\_TEST)
+					\item ImGui::CreateContext()
+				\end{itemize}
+			\end{center}
+		\end{column}
+		
+		% --- RIGHT COLUMN ---
+		\begin{column}{0.5\textwidth}
+			\begin{center}
+				Lưu trữ đối tượng
+				\begin{itemize}
+					\item glGenVertexArrays(), glGenBuffers(), Assimp::Importer.ReadFile()
+					\item glDrawArrays(), glDrawElements()
+					\item createObject()
+				\end{itemize}
+			\end{center}
+		\end{column}
+	\end{columns}
 	
-	
+\end{frame}
+%
+\begin{frame}{Cài đặt}
+	\begin{columns}[T]
+		\begin{column}{0.5\textwidth}
+			\begin{center}
+				Phép biến đổi ma trận
+				\begin{itemize}
+					\item glm::scale(), glm::rotate(), glm::translate()
+					\item glm::lookAt()
+				\end{itemize}
+			\end{center}
+		\end{column}
+		
+		\begin{column}{0.5\textwidth}
+			\begin{center}
+				Lưu trữ Shader và Texture
+				\begin{itemize}
+					\item glGenTextures(), glBindTexture();
+					\item glCreateShader(), glShaderSource(), glCompileShader()
+				\end{itemize}
+			\end{center}
+		\end{column}
+	\end{columns}
 	
 \end{frame}
 
-%\section{Methodology}
-%
-%\section{Implementation \& Experiment}
-%
+\begin{frame}[fragile]{Cài đặt}
+Vòng lặp chính
+\begin{lstlisting}[language=C++]
+	while (!windowClosed) {
+		processInput();
+		
+		model = updateModel();
+		view  = updateView();
+		
+		shader.use();
+		object.draw();
+		
+		GUI.draw();
+		
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
+\end{lstlisting}
+\end{frame}
+
 %\section{Conclusion}
 %
 %\section{Discussion}

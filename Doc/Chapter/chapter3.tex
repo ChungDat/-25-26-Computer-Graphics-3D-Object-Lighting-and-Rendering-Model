@@ -1,2 +1,117 @@
 \chapter{Phương pháp}
-%Chọn lấy một giải pháp tiên tiến để trình bày.
+Trước sự ra đời của mô hình Cook-Torance vào năm 1982, các mô hình quan sát thực nghiệm như Phong \cite{phong2} và Blinn \cite{blinn_phong3} dù đạt hiệu quả về mặt tính toán, chúng thường cho ra hình ảnh trông giống nhựa (plastic-looking) và không mô phỏng chính xác tính chất vật lý của kim loại hay sự thay đổi màu sắc tại các góc nhìn nghiêng (grazing angles).\\
+Bài báo \textit{"A Reflectance Model for Computer Graphics"} \cite{a_reflectance_model_1982} của Cook và Torrance đề xuất một phương pháp tiếp cận mới dựa trên vật lý (Physically Based Rendering - PBR). Mô hình này xem xét độc lập hai thành phần: sự phân bố năng lượng quang phổ (màu sắc) và sự phân bố định hướng của ánh sáng phản xạ. Đây là nền tảng cho các kỹ thuật kết xuất hiện đại ngày nay.\\
+
+\section{Cơ sở Vật lý và Lý thuyết Vi bề mặt (Physics Basis and Microfacet Theory)}
+
+Nguyên lý cốt lõi của mô hình Cook-Torrance dựa trên quang học hình học (ray theory) và mô hình vi bề mặt (microfacet model).
+
+\subsection{Lý thuyết Vi bề mặt (Microfacet Theory)}
+Mô hình giả định rằng một bề mặt thô nhám (rough surface) được cấu tạo từ vô số các mặt phẳng gương siêu nhỏ gọi là các vi bề mặt (microfacets). 
+\begin{itemize}
+    \item Các vi bề mặt này phản xạ ánh sáng theo định luật phản xạ gương lý tưởng (ideal specular reflection).
+    \item Chỉ những vi bề mặt nào có vectơ pháp tuyến hướng đúng về phía vectơ trung gian (halfway vector) giữa nguồn sáng và người quan sát mới đóng góp vào thành phần phản xạ gương nhìn thấy được.
+\end{itemize}
+
+\subsection{Các thành phần của sự phản xạ}
+Mô hình chia sự phản xạ thành hai thành phần chính:
+\begin{enumerate}
+    \item \textbf{Phản xạ gương (Specular Reflection):} Xảy ra ngay tại bề mặt phân cách giữa không khí và vật liệu. Nó chịu trách nhiệm cho các điểm sáng (highlights) và bị ảnh hưởng mạnh bởi độ nhám bề mặt.
+    \item \textbf{Phản xạ khuếch tán (Diffuse Reflection):} Xảy ra do tán xạ bên trong (internal scattering) hoặc phản xạ nhiều lần trên bề mặt thô. Ánh sáng xâm nhập vào vật liệu, tán xạ và thoát ra theo mọi hướng.
+\end{enumerate}
+
+\section{Mô hình Cook-Torrance (The Cook-Torrance Model)}
+
+Mô hình Cook-Torrance định nghĩa cường độ ánh sáng phản xạ $I_r$ tới mắt người quan sát từ một nguồn sáng có cường độ $I_i$ như sau:
+
+\begin{equation}
+I_r = I_{ia}R_a + \sum_{l} I_{il} (N \cdot L_l) d\omega_{il} (sR_s + dR_d)
+\end{equation}
+
+Trong đó:
+\begin{itemize}
+	\item $R_a$: Hệ số phản xạ môi trường (Ambient reflectance).
+    \item $R_s$: Hệ số phản xạ gương (Specular bidirectional reflectance).
+    \item $R_d$: Hệ số phản xạ khuếch tán (Diffuse bidirectional reflectance).
+    \item $d\omega_{i}$: Góc khối của nguồn sáng, $d\omega_{i}=\frac{A}{r^2}$ với $A$ là diện tích mặt chiếu, $r$ là khoảng cách chiếu.
+    \item $s, d$: Trọng số của thành phần gương và khuếch tán ($s + d = 1$).
+    \item $N, L, V$: Lần lượt là vectơ pháp tuyến bề mặt, vectơ hướng nguồn sáng và vectơ hướng người nhìn.
+\end{itemize}
+
+Trọng tâm của bài báo nằm ở việc xây dựng thành phần phản xạ gương $R_s$:
+
+\begin{equation}
+R_s = \frac{F D G}{\pi (N \cdot L)(N \cdot V)}
+\end{equation}
+
+\subsection{Hàm phân bố vi bề mặt $D$ (Distribution Function)}
+Hàm $D$ mô tả tỷ lệ các vi bề mặt có hướng pháp tuyến trùng với vectơ trung gian $H$ (vectơ phân giác của $L$ và $V$). %Bài báo đề xuất sử dụng hàm phân bố Beckmann thay vì hàm Gaussian như Blinn, vì nó dựa trên lý thuyết tán xạ sóng điện từ:
+
+\begin{equation}
+D = \frac{1}{m^2 \cos^4 \alpha} e^{-[(\tan \alpha)/m]^2}
+\end{equation}
+
+Trong đó:
+\begin{itemize}
+    \item $m$: Độ dốc trung bình bình phương (root mean square slope), đại diện cho độ nhám của bề mặt (giá trị $m$ nhỏ ứng với bề mặt bóng, $m$ lớn ứng với bề mặt nhám).
+    \item $\alpha$: Góc giữa pháp tuyến bề mặt $N$ và vectơ trung gian $H$.
+\end{itemize}
+
+\subsection{Hệ số suy hao hình học $G$ (Geometrical Attenuation Factor)}
+Hệ số $G$ tính đến việc ánh sáng bị che khuất bởi chính các cấu trúc gồ ghề của bề mặt. Nó bao gồm hai hiện tượng:
+\begin{itemize}
+    \item \textbf{Che bóng (Shadowing):} Ánh sáng tới bị chặn trước khi đến vi bề mặt.
+    \item \textbf{Che khuất (Masking):} Ánh sáng phản xạ bị chặn trước khi đến mắt người nhìn.
+\end{itemize}
+%Công thức được sử dụng là:
+\begin{equation}
+G = \min \left\{ 1, \frac{2(N \cdot H)(N \cdot V)}{(V \cdot H)}, \frac{2(N \cdot H)(N \cdot L)}{(V \cdot H)} \right\}
+\end{equation}
+
+\subsection{Hệ số Fresnel $F$ (Fresnel Term)}
+Đây là điểm cải tiến quan trọng nhất so với các mô hình cũ. $F$ mô tả tỷ lệ ánh sáng được phản xạ so với ánh sáng bị khúc xạ hấp thụ, phụ thuộc vào góc tới và bước sóng ánh sáng.
+
+Theo phương trình Fresnel, khi góc tới ($\theta$) tiến gần đến $90^\circ$ (grazing angle), hệ số phản xạ $F$ của mọi vật liệu đều tiến tới 1 (phản xạ toàn phần). Điều này giải thích tại sao màu sắc của điểm phản xạ gương thay đổi theo góc nhìn, đặc biệt là ở kim loại.
+
+\section{Quy trình Kết xuất và Màu sắc (Rendering Pipeline and Color)}
+
+Một đóng góp lớn của Cook và Torrance là phương pháp mô phỏng màu sắc dựa trên quang phổ (spectral energy distribution).
+
+\subsection{Sự phụ thuộc vào bước sóng}
+Khác với mô hình Phong gán một màu cố định cho phản xạ gương (thường là màu trắng cho nhựa hoặc màu vật liệu cho kim loại), Cook-Torrance tính toán $F$ tại từng bước sóng khả kiến.
+\begin{itemize}
+    \item Với \textbf{Kim loại (Metals):} Phản xạ chủ yếu diễn ra ở bề mặt. Hệ số $F$ biến đổi mạnh theo bước sóng tại góc tới thẳng đứng (tạo nên màu đặc trưng của kim loại như vàng hay đồng).
+    \item Với \textbf{Phi kim/Nhựa (Plastics/Dielectrics):} $F$ gần như không đổi theo bước sóng ở góc thẳng đứng (thường là màu trắng/xám). Màu sắc của vật thể chủ yếu đến từ thành phần khuếch tán $R_d$ (do các hạt sắc tố bên dưới bề mặt).
+\end{itemize}
+
+%\subsection{Chuyển đổi sang không gian màu RGB}
+%Để hiển thị trên màn hình, phân bố năng lượng quang phổ $E(\lambda)$ của ánh sáng phản xạ phải được chuyển đổi sang không gian màu XYZ (sử dụng các hàm phối màu - matching functions) và sau đó sang RGB.
+
+\section{Ứng dụng và Kết quả (Applications and Results)}
+
+Mô hình đã được áp dụng để mô phỏng sự khác biệt giữa kim loại và nhựa, điều mà các mô hình trước đó thường thất bại.
+
+\begin{itemize}
+    \item \textbf{Mô phỏng Nhựa (Plastics):} Sử dụng thành phần gương màu trắng (do $F$ phẳng theo bước sóng) và thành phần khuếch tán có màu. Điều này tái tạo chính xác hiệu ứng "bóng loáng" của nhựa màu.
+    \item \textbf{Mô phỏng Kim loại (Metals):} Loại bỏ thành phần khuếch tán ($d \approx 0$). Thành phần gương mang màu sắc của vật liệu (ví dụ: Đồng) và thay đổi màu nhẹ khi góc nhìn chuyển sang góc nghiêng (do sự thay đổi của $F$).
+\end{itemize}
+
+%\section{Ưu điểm và Hạn chế}
+%
+%\subsection{Ưu điểm}
+%\begin{enumerate}
+%    \item \textbf{Tính chân thực vật lý:} Mô hình giải thích được hành vi ánh sáng dựa trên tính chất vật liệu thực tế (chỉ số khúc xạ $n$, hệ số tắt dần $k$).
+%    \item \textbf{Thay đổi màu sắc theo góc (Color Shift):} Tái hiện chính xác hiện tượng Fresnel, làm cho kim loại trông "thực" hơn tại các cạnh viền.
+%    \item \textbf{Linh hoạt:} Có thể mô phỏng đa dạng vật liệu từ nhựa bóng, cao su nhám đến kim loại rỉ sét bằng cách điều chỉnh tham số $m, s, d$.
+%\end{enumerate}
+%
+%\subsection{Hạn chế}
+%\begin{enumerate}
+%    \item \textbf{Chi phí tính toán:} Tại thời điểm năm 1982, việc tính toán $F$ theo bước sóng và tích phân quang phổ rất tốn kém tài nguyên.
+%    \item \textbf{Phức tạp:} Yêu cầu dữ liệu đầu vào là các chỉ số vật lý ($n, k$) hoặc quang phổ phản xạ thực nghiệm, không phải lúc nào cũng có sẵn.
+%    \item \textbf{Giả định đơn giản hóa:} Mô hình vẫn giả định $R_a$ (ambient) là hằng số và bỏ qua tương tác phản xạ giữa các vật thể (inter-object reflection) ngoại trừ qua thành phần môi trường.
+%\end{enumerate}
+
+%\section{Kết luận (Conclusion)}
+%
+%Mô hình phản xạ Cook-Torrance đã đặt nền móng cho kỷ nguyên Kết xuất dựa trên vật lý (PBR). Bằng cách kết hợp lý thuyết vi bề mặt, phương trình Fresnel và dữ liệu quang phổ, mô hình đã chứng minh rằng việc mô phỏng chính xác các hiện tượng vật lý là chìa khóa để đạt được hình ảnh đồ họa chân thực. Các nguyên lý được trình bày trong bài báo này—đặc biệt là sự phân tách giữa thành phần gương/khuếch tán dựa trên cấu trúc vật liệu và việc sử dụng hàm phân bố $D$—vẫn là thành phần cốt lõi trong các công cụ kết xuất hiện đại (như Unreal Engine, Unity hay Blender).
