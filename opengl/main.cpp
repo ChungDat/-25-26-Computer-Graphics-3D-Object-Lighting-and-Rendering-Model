@@ -294,6 +294,7 @@ int main() {
 		lightProperties.show();
 
 		ImGui::Separator();
+		ImGui::Separator();
 
 		if (lightList[0]->isEnabled()) {
 			if (ImGui::Button("Hide Flash Light"))

@@ -98,25 +98,32 @@ void ObjectProperties::show() {
 			ImGui::PopID();
 		}
 		ImGui::SeparatorText("Position");
-		float posX = objectList[currentSelect]->getX();
-		float posY = objectList[currentSelect]->getY();
-		float posZ = objectList[currentSelect]->getZ();
-		bool positionChanged = false;
-		positionChanged = ImGui::SliderFloat("X##o", &posX, -10.0f, 10.0f, "%.1f") || positionChanged;
-		positionChanged = ImGui::SliderFloat("Y##o", &posY, -10.0f, 10.0f, "%.1f") || positionChanged;
-		positionChanged = ImGui::SliderFloat("Z##o", &posZ, -10.0f, 10.0f, "%.1f") || positionChanged;
-		if (positionChanged) {
-			objectList[currentSelect]->setPosition(glm::vec3(posX, posY, posZ));
-		}
-
-		if (objectList[currentSelect]->isEnabled()) {
-			if (ImGui::Button("Hide##o")) {
-				objectList[currentSelect]->disable();
+		if (objectList.size () > 0 && currentSelect < objectList.size()) {
+			float posX = objectList[currentSelect]->getX();
+			float posY = objectList[currentSelect]->getY();
+			float posZ = objectList[currentSelect]->getZ();
+			bool positionChanged = false;
+			positionChanged = ImGui::SliderFloat("X##o", &posX, -10.0f, 10.0f, "%.1f") || positionChanged;
+			positionChanged = ImGui::SliderFloat("Y##o", &posY, -10.0f, 10.0f, "%.1f") || positionChanged;
+			positionChanged = ImGui::SliderFloat("Z##o", &posZ, -10.0f, 10.0f, "%.1f") || positionChanged;
+			if (positionChanged) {
+				objectList[currentSelect]->setPosition(glm::vec3(posX, posY, posZ));
 			}
-		}
-		else {
-			if (ImGui::Button("Show##o")) {
-				objectList[currentSelect]->enable();
+
+			if (objectList[currentSelect]->isEnabled()) {
+				if (ImGui::Button("Hide##o")) {
+					objectList[currentSelect]->disable();
+				}
+			}
+			else {
+				if (ImGui::Button("Show##o")) {
+					objectList[currentSelect]->enable();
+				}
+			}
+
+			if (ImGui::Button("Remove##o")) {
+				delete objectList[currentSelect];
+				objectList.erase(objectList.begin() + currentSelect);
 			}
 		}
 	}
@@ -140,78 +147,88 @@ void LightProperties::show() {
 			}
 			ImGui::PopID();
 		}
-		if (lightList[currentSelect]->getType() != "Directional") {
-			ImGui::SeparatorText("Position");
-			float posX = lightList[currentSelect]->getX();
-			float posY = lightList[currentSelect]->getY();
-			float posZ = lightList[currentSelect]->getZ();
-			bool positionChanged = false;
-			positionChanged = ImGui::SliderFloat("X##l", &posX, -10.0f, 10.0f, "%.1f") || positionChanged;
-			positionChanged = ImGui::SliderFloat("Y##l", &posY, -10.0f, 10.0f, "%.1f") || positionChanged;
-			positionChanged = ImGui::SliderFloat("Z##l", &posZ, -10.0f, 10.0f, "%.1f") || positionChanged;
-			if (positionChanged) {
-				lightList[currentSelect]->setPosition(glm::vec3(posX, posY, posZ));
+		if (lightList.size() > 0 && currentSelect < lightList.size()) {
+			if (lightList[currentSelect]->getType() != "Directional") {
+				ImGui::SeparatorText("Position");
+				float posX = lightList[currentSelect]->getX();
+				float posY = lightList[currentSelect]->getY();
+				float posZ = lightList[currentSelect]->getZ();
+				bool positionChanged = false;
+				positionChanged = ImGui::SliderFloat("X##l", &posX, -10.0f, 10.0f, "%.1f") || positionChanged;
+				positionChanged = ImGui::SliderFloat("Y##l", &posY, -10.0f, 10.0f, "%.1f") || positionChanged;
+				positionChanged = ImGui::SliderFloat("Z##l", &posZ, -10.0f, 10.0f, "%.1f") || positionChanged;
+				if (positionChanged) {
+					lightList[currentSelect]->setPosition(glm::vec3(posX, posY, posZ));
+				}
 			}
-		}
-		else {
-			ImGui::SeparatorText("Direction");
-			glm::vec3 dir = lightList[currentSelect]->getDirection();
-			float dirX = dir.x;
-			float dirY = dir.y;
-			float dirZ = dir.z;
-			bool directionChanged = false;
-			directionChanged = ImGui::SliderFloat("X", &dirX, -10.0f, 10.0f, "%.1f") || directionChanged;
-			directionChanged = ImGui::SliderFloat("Y", &dirY, -10.0f, 10.0f, "%.1f") || directionChanged;
-			directionChanged = ImGui::SliderFloat("Z", &dirZ, -10.0f, 10.0f, "%.1f") || directionChanged;
-			if (directionChanged) {
-				lightList[currentSelect]->setDirection(glm::vec3(dirX, dirY, dirZ));
+			else {
+				ImGui::SeparatorText("Direction");
+				glm::vec3 dir = lightList[currentSelect]->getDirection();
+				float dirX = dir.x;
+				float dirY = dir.y;
+				float dirZ = dir.z;
+				bool directionChanged = false;
+				directionChanged = ImGui::SliderFloat("X", &dirX, -10.0f, 10.0f, "%.1f") || directionChanged;
+				directionChanged = ImGui::SliderFloat("Y", &dirY, -10.0f, 10.0f, "%.1f") || directionChanged;
+				directionChanged = ImGui::SliderFloat("Z", &dirZ, -10.0f, 10.0f, "%.1f") || directionChanged;
+				if (directionChanged) {
+					lightList[currentSelect]->setDirection(glm::vec3(dirX, dirY, dirZ));
+				}
 			}
-		}
 
-		if (lightList[currentSelect]->getType() != "Directional") {
-			ImGui::SeparatorText("Orbit");
-			float radius = lightList[currentSelect]->getRadius();
-			bool directionChanged = false;
-			if (ImGui::SliderFloat("Radius", &radius, 0.0, 10.0f, "%.1f"))
-				lightList[currentSelect]->setRadius(radius);
-		}
-
-		if (lightList[currentSelect]->getType() == "Spot") {
-			ImGui::SeparatorText("Cut Off");
-			float innerCutOff = lightList[currentSelect]->getInnerCutOff();
-			float outerCutOff = lightList[currentSelect]->getOuterCutOff();
-			bool cutOffChanged = false;
-			cutOffChanged = ImGui::SliderFloat("Inner", &innerCutOff, 0.0f, 15.0f, "%.1f") || cutOffChanged;
-			cutOffChanged = ImGui::SliderFloat("Outer", &outerCutOff, innerCutOff, innerCutOff + 10.0f, "%.1f") || cutOffChanged;
-			if (cutOffChanged && outerCutOff >= innerCutOff) {
-				lightList[currentSelect]->setInnerCutOff(innerCutOff);
-				lightList[currentSelect]->setOuterCutOff(outerCutOff);
+			if (lightList[currentSelect]->getType() != "Directional") {
+				ImGui::SeparatorText("Orbit");
+				float radius = lightList[currentSelect]->getRadius();
+				bool directionChanged = false;
+				if (ImGui::SliderFloat("Radius", &radius, 0.0, 10.0f, "%.1f"))
+					lightList[currentSelect]->setRadius(radius);
 			}
-		}
 
-		ImGui::SeparatorText("Color");
-		glm::vec3 _color = lightList[currentSelect]->getColor();
-		float colorR = _color.x;
-		float colorG = _color.y;
-		float colorB = _color.z;
-		float col[3] = {colorR, colorG, colorB};
-
-		glm::vec3& lightColorRef = lightList[currentSelect]->getColor_Ref();
-		if (lightList[currentSelect]->isEnabled()) {
-			if (ImGui::ColorEdit3("##color", col))
-			{
-				lightList[currentSelect]->setColor(glm::vec3(col[0], col[1], col[2]));
+			if (lightList[currentSelect]->getType() == "Spot") {
+				ImGui::SeparatorText("Cut Off");
+				float innerCutOff = lightList[currentSelect]->getInnerCutOff();
+				float outerCutOff = lightList[currentSelect]->getOuterCutOff();
+				bool cutOffChanged = false;
+				cutOffChanged = ImGui::SliderFloat("Inner", &innerCutOff, 0.0f, 15.0f, "%.1f") || cutOffChanged;
+				cutOffChanged = ImGui::SliderFloat("Outer", &outerCutOff, innerCutOff, innerCutOff + 10.0f, "%.1f") || cutOffChanged;
+				if (cutOffChanged && outerCutOff >= innerCutOff) {
+					lightList[currentSelect]->setInnerCutOff(innerCutOff);
+					lightList[currentSelect]->setOuterCutOff(outerCutOff);
+				}
 			}
-		}
 
-		if (lightList[currentSelect]->isEnabled()) {
-			if (ImGui::Button("Hide##l")) {
-				lightList[currentSelect]->disable();
+			ImGui::SeparatorText("Color");
+			glm::vec3 _color = lightList[currentSelect]->getColor();
+			float colorR = _color.x;
+			float colorG = _color.y;
+			float colorB = _color.z;
+			float col[3] = {colorR, colorG, colorB};
+
+			glm::vec3& lightColorRef = lightList[currentSelect]->getColor_Ref();
+			if (lightList[currentSelect]->isEnabled()) {
+				if (ImGui::ColorEdit3("##color", col))
+				{
+					lightList[currentSelect]->setColor(glm::vec3(col[0], col[1], col[2]));
+				}
 			}
-		}
-		else {
-			if (ImGui::Button("Show##l")) {
-				lightList[currentSelect]->enable();
+
+			if (lightList[currentSelect]->isEnabled()) {
+				if (ImGui::Button("Hide##l")) {
+					lightList[currentSelect]->disable();
+				}
+			}
+			else {
+				if (ImGui::Button("Show##l")) {
+					lightList[currentSelect]->enable();
+				}
+			}
+
+			if (ImGui::Button("Remove##l")) {
+				if (lightList.size() > 0) {
+					delete lightList[currentSelect];
+					lightList.erase(lightList.begin() + currentSelect);
+					currentSelect = 0;
+				}
 			}
 		}
 	}

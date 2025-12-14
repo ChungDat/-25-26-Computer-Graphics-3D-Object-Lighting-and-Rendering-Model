@@ -789,22 +789,24 @@
 \end{frame}
 
 \begin{frame}{Quy trình PBR}
-	\textbf{Nguyên lý:} Nguyên lý cốt lõi là sự bảo toàn năng lượng trong một hệ thống khép kín bao gồm các bề mặt phản xạ khuếch tán hoàn hảo (perfectly diffuse). Nó mô hình hóa sự cân bằng năng lượng ánh sáng, trong đó tổng năng lượng ánh sáng rời khỏi một bề mặt (radiosity) bằng tổng năng lượng do chính nó phát ra với năng lượng nó phản xạ lại từ tất cả các bề mặt khác trong cảnh. Đặc điểm quan trọng nhất là nó tính toán sự tương tác ánh sáng gián tiếp giữa các bề mặt, tạo ra các hiệu ứng như chảy máu màu (color bleeding)\cite{radiosity1}.
+	\textbf{Nguyên lý:} Nguyên lý cốt lõi là tìm nghiệm cho Phương trình kết xuất bằng các mô hình vật liệu mô tả cách vật thể phản xạ ánh sáng. Những mô hình này thường được biểu diễn bởi hàm phân bố phản xạ hai chiều (Bidirectional Reflectance Distribution Function - BRDF).\\
 	
 	\begin{center}
-		\includegraphics[height=0.25\linewidth]{imagens/radiosity_1.jpg}
+		\includegraphics[height=0.25\linewidth]{imagens/pbr_1.jpg}
+		\includegraphics[height=0.25\linewidth]{imagens/pbr_2.png}
 	\end{center}
 \end{frame}
 
 \begin{frame}{Quy trình PBR}
 	\textbf{Đóng góp:}\\
-	Đây là phương pháp đầu tiên mô phỏng thành công các hiệu ứng chiếu sáng khuếch tán gián tiếp một cách tinh tế, tạo ra các bóng đổ mềm mại và hiện tượng chảy máu màu cực kỳ chân thực, điều mà các mô hình chiếu sáng cục bộ không thể làm được\cite{radiosity1}.\\
-	Kết quả tính toán độc lập với góc nhìn. Sau khi giải hệ phương trình, các giá trị chiếu sáng được lưu lại trên các ô, cho phép người dùng di chuyển camera và kết xuất cảnh từ các góc nhìn khác nhau trong thời gian thực mà không cần tính toán lại.
+	Tạo ra hình ảnh nhất quán trong mọi điều kiện ánh sáng; chuẩn hóa quy trình sản xuất (workflow) giữa các phần mềm khác nhau.\\
 	
 	\textbf{Hạn chế:}\\
-	Mô hình giả định tất cả các bề mặt đều là phản xạ khuếch tán hoàn hảo. Do đó, Radiosity không thể mô phỏng các hiện tượng phụ thuộc vào góc nhìn như phản xạ gương, bề mặt bóng loáng, hay các vật liệu trong suốt.\\
-	Chi phí tính toán và lưu trữ rất cao, đặc biệt là ma trận hệ số hình dạng có kích thước $n * n$ với $n$ là số lượng ô.\\
-	Chỉ áp dụng được cho các cảnh tĩnh (static scenes). Bất kỳ sự thay đổi nào về hình học hoặc vật liệu đều đòi hỏi phải tính toán lại toàn bộ.
+	Chi phí tính toán cao; đòi hỏi quy trình tạo Texture maps phức tạp và chính xác hơn.\\
+	Các mô hình PBR cần lượng lớn các tham số, các tham số này thường khó đạt được trong thực tế.\\
+	
+	
+	
 \end{frame}
 
 %\section{Methodology}
