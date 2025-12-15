@@ -349,6 +349,23 @@
 	\textbf{Nguồn sáng điểm - Point Light}\\
 	Nguồn sáng điểm được đặt trong cảnh và chiếu sáng theo mọi hướng, mô phỏng nguồn sáng như bóng đèn điện \cite{principles_1990}.\\
 	\begin{center}
+		\begin{math}
+			I_o(x) = I_i * f_{att}(r) * max(0, n \cdot l)\\
+			f_{att}(r) = \frac{1}{k_c + k_l * r + k_q * r^2}\\
+			l = \frac{(p_i - x)}{||p_i - x||}
+			
+		\end{math}
+	\end{center}
+\end{frame}
+
+\begin{frame}{Nguồn sáng hình học}
+	\begin{center}
+		\includegraphics[height=0.45\textheight]{imagens/light-equation.png}
+	\end{center}
+\end{frame}
+
+\begin{frame}{Nguồn sáng hình học}
+	\begin{center}
 		\includegraphics[height=0.45\textheight]{imagens/pointlight_1.png}
 		\includegraphics[height=0.45\textheight]{imagens/pointlight_2.jpg}
 	\end{center}
@@ -357,6 +374,32 @@
 \begin{frame}{Nguồn sáng hình học}
 	\textbf{Nguồn sáng chiếu điểm - Spot Light}\\
 	Nguồn sáng chiếu điểm là nguồn sáng điểm, với giới hạn chiếu nằm trong một hình nón, mô phỏng nguồn sáng như đèn pha \cite{principles_1990}.
+	\begin{center}
+		\begin{math}
+			I_o(x) = I_i * f_{att}(r) * f_{spot}(\theta) * max(0, n \cdot l)\\
+			f_{spot}(\theta) =
+			\begin{cases}
+				1 \qquad cos\theta \ge cos\theta_{in}\\
+				\frac{cos \theta - cos \theta_{out}}{cos \theta_{in} - cos \theta_{out}} \qquad cos \theta_{out} < cos \theta < cos \theta_{in}\\
+				0 \qquad cos(\theta) \le cos(\theta_{out})
+			\end{cases}\\
+			\vfill
+			l = \frac{(p_i - x)}{||p_i - x||}\\
+			cos \theta = l \cdot (-d)\\
+			
+		\end{math}
+	\end{center}
+\end{frame}
+
+\begin{frame}{Nguồn sáng hình học}
+	\textbf{Nguồn sáng chiếu điểm - Spot Light}\\
+	\begin{center}
+		\includegraphics[height=0.45\textheight]{imagens/spotlight_3.png}
+	\end{center}
+\end{frame}
+
+\begin{frame}{Nguồn sáng hình học}
+	\textbf{Nguồn sáng chiếu điểm - Spot Light}\\
 	\begin{center}
 		\includegraphics[height=0.45\textheight]{imagens/spotlight_1.png}
 		\includegraphics[height=0.45\textheight]{imagens/spotlight_2.png}
@@ -372,14 +415,38 @@
 	\textbf{Nguồn sáng định hướng - Directional Light}\\
 	Nguồn sáng định hướng được mô hình hoá dựa trên một mặt trời ở khoảng cách vô hạn. Đây là mô hình cho trường hợp nguồn sáng điểm được đặt ở khoảng cách vô hạn, nghĩa là các tia sáng từ nguồn sáng này được xem như các tia chiếu song song \cite{principles_1990}, mô phỏng ánh sáng từ mặt trời.
 	\begin{center}
+		\begin{math}
+			I_o(x) = I_i * max(0, n \cdot l)\\
+			l = -d\\
+			||d|| = 1
+		\end{math}
+	\end{center}
+\end{frame}
+
+\begin{frame}{Nguồn sáng phi hình học}
+	\textbf{Nguồn sáng định hướng - Directional Light}\\
+	\begin{center}
 		\includegraphics[height=0.35\textheight]{imagens/directionallight_1.png}
 		\includegraphics[height=0.35\textheight]{imagens/directionallight_2.png}
 	\end{center}
 \end{frame}
 
 \begin{frame}{Nguồn sáng phi hình học}
-	\textbf{Nguồn sáng môi trường - Ambient Light}\\
-	Nguồn sáng môi trường là một lượng ánh sáng được chiếu lên tất cả bề mặt, không phụ thuộc vào hướng và khoảng cách. Nguồn sáng môi trường giúp loại bỏ các vùng "thuần tối" (pure black) ở các bề mặt hướng ra xa nguồn sáng \cite{principles_1990}.
+	\begin{columns}[T]
+		% --- LEFT COLUMN ---
+		\begin{column}{0.4\textwidth}
+			\textbf{Nguồn sáng môi trường - Ambient Light}\\
+			Nguồn sáng môi trường là một lượng ánh sáng được chiếu lên tất cả bề mặt, không phụ thuộc vào hướng và khoảng cách. Nguồn sáng môi trường giúp loại bỏ các vùng "thuần tối" (pure black) ở các bề mặt hướng ra xa nguồn sáng \cite{principles_1990}.
+		\end{column}
+		
+		% --- RIGHT COLUMN ---
+		\begin{column}{0.6\textwidth}
+			\begin{center}
+				\includegraphics[width=0.7\linewidth]{imagens/ambient2.jpg}
+			\end{center}
+		\end{column}
+	\end{columns}
+	
 \end{frame}
 
 \begin{frame}{Nguồn sáng phi hình học}
@@ -414,7 +481,7 @@
 		\item Mô hình vật lý
 		\begin{enumerate}
 			\item Phương trình kết xuất
-			\item Phương pháp Radiosity
+%			\item Phương pháp Radiosity
 			\item Quy trình Physically Based Rendering - PBR
 		\end{enumerate}
 	\end{enumerate}
@@ -516,22 +583,25 @@
 	\end{center}
 \end{frame}
 
-%\begin{frame}{Flat Shading}
-%	\textbf{Phương pháp:}\\
-%	Tại mỗi đa giác, tồn tại một vector pháp tuyến duy nhất $\vec{N} = \vec{a} \times \vec{b}$, với $\vec{a}, \vec{b}$ là hai vector không song song của đa giác.\\
+\begin{frame}{Flat Shading}
+	\textbf{Phương pháp:}\\
+	Tại mỗi đa giác, tồn tại một vector pháp tuyến duy nhất $\vec{N} = \vec{a} \times \vec{b}$, với $\vec{a}, \vec{b}$ là hai vector không song song của đa giác.\\
 %	Một phép tính chiếu sáng duy nhất được thực hiện cho toàn bộ đa giác, thường chỉ sử dụng thành phần khuếch tán (diffuse) của một mô hình chiếu sáng đơn giản, tỉ lệ với góc hợp bởi vector pháp tuyến và vector hướng tới nguồn sáng.\\
-%	\begin{math}
-%		I = k * I_l * max(0, \vec{N} \cdot \vec{L})
-%	\end{math}
+\begin{center}
+	\begin{math}
+		I = k * I_l * max(0, \vec{N} \cdot \vec{L})
+	\end{math}
+\end{center}
+	
 %	
-%	Với:\\
-%	- $I$ là cường độ ánh sáng được tính toán.\\
-%	- $k$ là hệ số phản xạ, xác định mức độ hấp thụ ánh sáng của vật thể.\\
-%	- $I_l$ là cường độ và màu sắc nguồn sáng.\\
-%	- $\vec{N}$ là vector pháp tuyến đơn vị của bề mặt đa giác.\\
-%	- $\vec{L}$ là vector đơn vị chỉ hướng từ điểm đang xét trên bề mặt đa giác đến nguồn sáng.\\
+	Với:\\
+	- $I$ là cường độ ánh sáng được tính toán.\\
+	- $k$ là hệ số phản xạ, xác định mức độ hấp thụ ánh sáng của vật thể.\\
+	- $I_l$ là cường độ và màu sắc nguồn sáng.\\
+	- $\vec{N}$ là vector pháp tuyến đơn vị của bề mặt đa giác.\\
+	- $\vec{L}$ là vector đơn vị chỉ hướng từ điểm đang xét trên bề mặt đa giác đến nguồn sáng.\\
 %	Tất cả các pixel thuộc đa giác sẽ được lấp đầy bằng giá trị $I$.
-%\end{frame}
+\end{frame}
 
 \begin{frame}{Flat Shading}
 	\textbf{Đóng góp:} Hiệu suất tính toán của tô bóng phẳng rất cao. Vì chỉ có một phép tính chiếu sáng cho mỗi đa giác, đây là phương pháp nhanh nhất có thể, cho phép các hệ thống phần cứng sơ khai có thể kết xuất các cảnh 3D rắn trong thời gian thực.\\
@@ -549,48 +619,48 @@
 	\end{center}
 \end{frame}
 
-%\begin{frame}{Gouraud Shading}
-%	\textbf{Phương pháp:}\\
+\begin{frame}{Gouraud Shading}
+	\textbf{Phương pháp:}\\
 %	Tại mỗi đỉnh, tồn tại một vector pháp tuyến $\vec{N}$, được tính bằng trung bình của các pháp tuyến của các mặt chung đỉnh.\\
-%	\begin{center}
-%		\begin{math}
-%			\vec{N^*} = \frac{1}{m} \sum_{i=1}^{m} \vec{N_i} \quad \quad \vec{N} = \frac{\vec{N^*}}{||\vec{N^*}||}\\
-%			I_v = k * I_l * max(0, \vec{N} \cdot \vec{L})
-%		\end{math}
-%	\end{center}
+	\begin{center}
+		\begin{math}
+			\vec{N^*} = \frac{1}{m} \sum_{i=1}^{m} \vec{N_i} \quad \quad \vec{N} = \frac{\vec{N^*}}{||\vec{N^*}||}\\
+			I_v = k * I_l * max(0, \vec{N^*} \cdot \vec{L})
+		\end{math}
+	\end{center}
 %	
-%	Với:\\
-%	- $\vec{N_i}$ là vector pháp tuyến đơn vị của bề mặt đa giác $i$.\\
-%	- $\vec{N}$ là vector pháp tuyến đơn vị trung bình tại đỉnh đang xét.\\
-%	- $\vec{L}$ là vector đơn vị chỉ hướng từ đỉnh đang xét trên bề mặt đa giác đến nguồn sáng.\\
-%	- $I$ là cường độ ánh sáng được tính toán.\\
-%	- $k$ là hệ số phản xạ, xác định mức độ hấp thụ ánh sáng của vật thể.\\
-%	- $I_l$ là cường độ và màu sắc nguồn sáng.\\
-%\end{frame}
+	Với:\\
+	- $\vec{N_i}$ là vector pháp tuyến đơn vị của bề mặt đa giác $i$.\\
+	- $\vec{N}$ là vector pháp tuyến đơn vị trung bình tại đỉnh đang xét.\\
+	- $\vec{L}$ là vector đơn vị chỉ hướng từ đỉnh đang xét trên bề mặt đa giác đến nguồn sáng.\\
+	- $I$ là cường độ ánh sáng được tính toán.\\
+	- $k$ là hệ số phản xạ, xác định mức độ hấp thụ ánh sáng của vật thể.\\
+	- $I_l$ là cường độ và màu sắc nguồn sáng.\\
+\end{frame}
 
-%\begin{frame}{Gouraud Shading}
+\begin{frame}{Gouraud Shading}
 %	Tại mỗi dòng quét cắt qua đa giác, cường độ màu tại các giao điểm trên các cạnh của đa giác được nội suy tuyến tính từ màu của các đỉnh tương ứng.\\
-%	\begin{center}
-%		\begin{math}
-%			I_i = t * I_A + (1 - t) * I_B \quad t \in [0; 1]
-%		\end{math}
-%	\end{center}
+	\begin{center}
+		\begin{math}
+			I_i = t * I_A + (1 - t) * I_B \quad t \in [0; 1]
+		\end{math}
+	\end{center}
 %	
-%	Với:\\
-%	- $I_i$ là cường độ ánh sáng tại một điểm trên cạnh nối giữa đỉnh A và B.\\
-%	- $I_A, I_B$ là cường độ ánh sáng tại hai đỉnh A và B.\\
+	Với:\\
+	- $I_i$ là cường độ ánh sáng tại một điểm trên cạnh nối giữa đỉnh A và B.\\
+	- $I_A, I_B$ là cường độ ánh sáng tại hai đỉnh A và B.\\
 %	
 %	Tại mỗi pixel trên dòng quét nằm bên trong đa giác, cường độ màu được nội suy từ màu của các giao điểm trên cạnh.\\
-%	\begin{center}
-%		\begin{math}
-%			I_j = t * I_1 + (1 - t) * I_2 \quad t \in (0; 1)
-%		\end{math}
-%	\end{center}
+	\begin{center}
+		\begin{math}
+			I_j = t * I_1 + (1 - t) * I_2 \quad t \in (0; 1)
+		\end{math}
+	\end{center}
 %	
-%	Với:\\
-%	- $I_j$ là cường độ ánh sáng tại một điểm nằm trên dòng quét.\\
-%	- $I_1, I_2$ là cường độ ánh sáng tại hai giao điểm giữa dòng quét và các cạnh đa giác.
-%\end{frame}
+	Với:\\
+	- $I_j$ là cường độ ánh sáng tại một điểm nằm trên dòng quét.\\
+	- $I_1, I_2$ là cường độ ánh sáng tại hai giao điểm giữa dòng quét và các cạnh đa giác.
+\end{frame}
 
 \begin{frame}{Gouraud Shading}
 	\begin{columns}[T]
@@ -666,49 +736,54 @@
 	\end{center}
 \end{frame}
 
-%\begin{frame}{Phong Shading}
-%	\textbf{Phương pháp:}
-%		\textit{Xử lý đỉnh}\\
+\begin{frame}{Phong Shading}
+	\textbf{Phương pháp:}
+		\textit{Xử lý đỉnh}\\
 %		Tại mỗi đỉnh, tồn tại một vector pháp tuyến $\vec{N}$, được tính bằng trung bình của các pháp tuyến của các mặt chung đỉnh.\\
-%		\begin{math}
-%			\vec{N^*} = \frac{1}{m} \sum_{i=1}^{m} \vec{N_i} \quad \quad \vec{N} = \frac{\vec{N^*}}{||\vec{N^*}||}\\
-%			I_v = k * I_l * max(0, \vec{N} \cdot \vec{L})
-%		\end{math}
+		\begin{center}
+			\begin{math}
+				\vec{\hat{N}} = \frac{1}{m} \sum_{i=1}^{m} \vec{N_i} \quad \quad \vec{N^*} = \frac{\vec{\hat{N}}}{||\vec{\hat{N}}||}\\
+				I_v = k * I_l * max(0, \vec{N} \cdot \vec{L})
+			\end{math}
+		\end{center}
+		
 %		
-%		Với:\\
-%		- $\vec{N_i}$ là vector pháp tuyến đơn vị của bề mặt đa giác $i$.\\
-%		- $\vec{N}$ là vector pháp tuyến đơn vị trung bình tại đỉnh đang xét.\\
-%		- $\vec{L}$ là vector đơn vị chỉ hướng từ đỉnh đang xét trên bề mặt đa giác đến nguồn sáng.\\
-%		- $I$ là cường độ ánh sáng được tính toán.\\
-%		- $k$ là hệ số phản xạ, xác định mức độ hấp thụ ánh sáng của vật thể.\\
-%		- $I_l$ là cường độ và màu sắc nguồn sáng.
-%\end{frame}
+		Với:\\
+		- $\vec{N_i}$ là vector pháp tuyến đơn vị của bề mặt đa giác $i$.\\
+		- $\vec{N}$ là vector pháp tuyến đơn vị trung bình tại đỉnh đang xét.\\
+		- $\vec{L}$ là vector đơn vị chỉ hướng từ đỉnh đang xét trên bề mặt đa giác đến nguồn sáng.\\
+		- $I$ là cường độ ánh sáng được tính toán.\\
+		- $k$ là hệ số phản xạ, xác định mức độ hấp thụ ánh sáng của vật thể.\\
+		- $I_l$ là cường độ và màu sắc nguồn sáng.
+\end{frame}
 %
-%\begin{frame}{Phong Shading}
-%	\textit{Tạo lưới và nội suy (Rasterization and Interpolation)}\\
-%	Tạo lưới nhằm xác định tất cả các pixel trên màn hình được bao phủ bởi đa giác. Các pixel này được gọi là mảnh (fragment) trong quá trình tính toán.\\
-%	Vector pháp tuyến của mỗi mảnh được nội suy tuyến tính từ các vector pháp tuyến tại các đỉnh của đa giác.
-%\end{frame}
+\begin{frame}{Phong Shading}
+	\textit{Tạo lưới và nội suy (Rasterization and Interpolation)}\\
+	Tạo lưới nhằm xác định tất cả các pixel trên màn hình được bao phủ bởi đa giác. Các pixel này được gọi là mảnh (fragment) trong quá trình tính toán.\\
+	Vector pháp tuyến của mỗi mảnh được nội suy tuyến tính từ các vector pháp tuyến tại các đỉnh của đa giác.
+\end{frame}
 %
-%\begin{frame}{Phong Shading}
-%	\textit{Tính toán chiếu sáng}\\
+\begin{frame}{Phong Shading}
+	\textit{Tính toán chiếu sáng}\\
 %	Tại mỗi mảnh, mô hình Phong được áp dụng và tính toán cường độ sáng.\\
-%	\begin{math}
-%		\vec{R^*} = 2 * (\vec{L} \cdot \vec{N}) * \vec{N} - \vec{L} \quad \quad \quad \vec{R} = \frac{\vec{R^*}}{||\vec{R^*}||}\\
-%		Ambient = k_a * I_a\\
-%		Diffuse = k_d * I_d * max(0, \vec{N} \cdot \vec{L})\\
-%		Specular = k_s * I_s * max(0, \vec{R} \cdot \vec{V})^n\\
-%		I = Ambient + Diffuse + Specular
-%	\end{math}
+\begin{center}
+	\begin{math}
+		\vec{R^*} = 2 * (\vec{L} \cdot \vec{N}) * \vec{N} - \vec{L} \quad \quad \quad \vec{R} = \frac{\vec{R^*}}{||\vec{R^*}||}\\
+		Ambient = k_a * I_a\\
+		Diffuse = k_d * I_d * max(0, \vec{N} \cdot \vec{L})\\
+		Specular = k_s * I_s * max(0, \vec{R} \cdot \vec{V})^n\\
+		I = Ambient + Diffuse + Specular
+	\end{math}
+\end{center}
 %	
-%	Với:\\
-%	- $k_a, k_d, k_s$ là hệ số phản xạ môi trường, khuếch tán, phản xạ gương tương ứng với các thành phần ánh sáng.\\
-%	- $I_a, I_d, I_s$ là cường độ của các thành phần ánh sáng.\\
-%	- $\vec{N}$ là vector pháp tuyến đơn vị của mảnh.\\
-%	- $\vec{L}$ là vector đơn vị chỉ hướng từ mảnh đang xét đến nguồn sáng.\\
-%	- $\vec{R}$ là vector đơn vị phản xạ hướng chiếu sáng.\\
-%	- $\vec{V}$ là vector đơn vị từ vị trí của mảnh đến camera.
-%\end{frame}
+	Với:\\
+	- $k_a, k_d, k_s$ là hệ số phản xạ môi trường, khuếch tán, phản xạ gương tương ứng với các thành phần ánh sáng.\\
+	- $I_a, I_d, I_s$ là cường độ của các thành phần ánh sáng.\\
+	- $\vec{N}$ là vector pháp tuyến đơn vị của mảnh.\\
+	- $\vec{L}$ là vector đơn vị chỉ hướng từ mảnh đang xét đến nguồn sáng.\\
+	- $\vec{R}$ là vector đơn vị phản xạ hướng chiếu sáng.\\
+	- $\vec{V}$ là vector đơn vị từ vị trí của mảnh đến camera.
+\end{frame}
 
 %\begin{frame}{Phong Shading}
 %	\begin{center}
@@ -730,12 +805,12 @@
 %	\begin{enumerate}
 %		\item Tính toán chiếu sáng\\
 		Tại thành phần phản xạ gương, thay thế vector phản xạ $\vec{R}$ bằng vector nửa góc (Halfway vector) $\vec{H}$.\\
-%		\begin{center}
-%			\begin{math}
-%				\vec{H} = \frac{\vec{L} + \vec{V}}{||\vec{L} + \vec{V}||}\\
-%				Specular = k_s * I_s * max(0, \vec{R} \cdot \vec{V})^n\\
-%			\end{math}
-%		\end{center}
+		\begin{center}
+			\begin{math}
+				\vec{H} = \frac{\vec{L} + \vec{V}}{||\vec{L} + \vec{V}||}\\
+				Specular = k_s * I_s * max(0, \vec{R} \cdot \vec{V})^n\\
+			\end{math}
+		\end{center}
 %		
 %		Với:\\
 %		- $k_s$ là hệ số phản xạ gương tương ứng với thành phần ánh sáng.\\
@@ -763,16 +838,17 @@
 	\textbf{Nguyên lý:} Phương trình Kết xuất là một biểu thức vật lý mô tả trạng thái cân bằng của bức xạ ánh sáng tại mọi điểm trong một cảnh. Nó phát biểu rằng, ánh sáng đi ra $(L_o)$ từ một điểm x theo một hướng $\omega_o$ bằng tổng của ánh sáng do chính điểm đó phát ra $(L_e)$ và tích phân của tất cả ánh sáng đi tới $(L_i)$ từ mọi hướng $\omega_i$ trên bán cầu $\Omega$ xung quanh điểm đó, được điều chỉnh bởi hàm phân bố tán xạ hai chiều (BRDF) của bề mặt\cite{render_equa1}.
 \end{frame}
 
-%\begin{frame}{Phương trình kết xuất}
-%	\textbf{Phương pháp:}\\
-%	Phương trình có dạng tích phân Fredholm loại thứ hai:\\
-%	\begin{math}
-%		L_o(x, \omega_o) = L_e(x, \omega_o) + \int_\Omega f_r(x, \omega_i, \omega_o) * L_i(x, \omega_i)(n \cdot \omega_i) d\omega_i
-%	\end{math}
-%	
-%	Do tính phức tạp và đệ quy, phương trình này không có lời giải giải tích cho các cảnh thông thường. Kajiya đã đề xuất sử dụng các phương pháp Monte Carlo để xấp xỉ giá trị của tích phân.\\
-%	Thuật toán thực tế để giải phương trình này được gọi là Dò đường (Path Tracing).
-%\end{frame}
+\begin{frame}{Phương trình kết xuất}
+	\textbf{Phương pháp:}\\
+	Phương trình có dạng tích phân Fredholm loại thứ hai:\\
+	\begin{center}
+		\begin{math}
+			L_o(x, \omega_o) = L_e(x, \omega_o) + \int_\Omega f_r(x, \omega_i, \omega_o) * L_i(x, \omega_i)(n \cdot \omega_i) d\omega_i\\
+			L_o \approx L_e + \frac{1}{N} \Sigma_{k=1}^N \frac{f_r(x, \omega_k, \omega_o) * L_i(\omega_k)(n \cdot \omega_i) d\omega_i}{p(\omega_k)}
+		\end{math}\\
+		\includegraphics[width=0.5\linewidth]{imagens/rendering_equa1.png}
+	\end{center}
+\end{frame}
 
 \begin{frame}{Phương trình kết xuất}
 	\textbf{Đóng góp:}\\
@@ -876,7 +952,7 @@
 		\item OpenGL 3.3: Một hệ thống đặc tả dùng để lập trình 2D và 3D. OpenGL cung cấp tập các hàm chuẩn để giao tiếp với GPU, cho phép lập trình viên điều khiển pipeline đồ họa, viết shader, và quản lý tài nguyên như buffer, texture và framebuffer.
 		\item GLFW: Thư viện hỗ trợ tạo cửa sổ và xử lý tương tác cho các ứng dụng OpenGL. GLFW chịu trách nhiệm quản lý cửa sổ, ngữ cảnh OpenGL (OpenGL context), cũng như xử lý các sự kiện bàn phím, chuột và thời gian.
 		\item GLAD: Thư viện tải hàm OpenGL (OpenGL function loader). GLAD đảm bảo chương trình có thể sử dụng đúng các hàm OpenGL mà driver GPU hỗ trợ.
-		\item GLM: Thư viện toán học cho đồ họa máy tính, được thiết kế theo chuẩn của GLSL. GLM cung cấp các kiểu dữ liệu và phép toán cho vector, ma trận, quaternion và các phép biến đổi hình học thường dùng trong đồ họa 3D.
+		\item GLM: Thư viện toán học cho đồ họa máy tính, được thiết kế theo chuẩn của GLSL. GLM cung cấp các kiểu dữ liệu và phép toán cho vector, ma trận và các phép biến đổi hình học thường dùng trong đồ họa 3D.
 	\end{itemize}
 \end{frame}
 
@@ -886,6 +962,37 @@
 		\item Dear ImGui: Thư viện giao diện người dùng cho các ứng dụng đồ họa thời gian thực, cho phép xây dựng nhanh các thành phần giao diện.
 	\end{itemize}
 \end{frame}
+
+\begin{frame}{Cài đặt}
+	\begin{columns}[T]
+		
+		% --- LEFT COLUMN ---
+		\begin{column}{0.5\textwidth}
+			
+			% TOP-LEFT CELL
+			\begin{center}
+				\includegraphics[width=0.4\linewidth]{imagens/vertex_processing.png}
+			\end{center}
+			
+		\end{column}
+		
+		% --- RIGHT COLUMN ---
+		\begin{column}{0.5\textwidth}
+			
+			% TOP-RIGHT CELL
+			\begin{center}
+				\includegraphics[height=0.4\textheight]{imagens/coordinate_systems.png}
+			\end{center}
+			
+		\end{column}
+		
+	\end{columns}
+	
+	\begin{center}
+		
+	\end{center}
+\end{frame}
+	
 
 \begin{frame}{Cài đặt}
 	\begin{columns}[T]
