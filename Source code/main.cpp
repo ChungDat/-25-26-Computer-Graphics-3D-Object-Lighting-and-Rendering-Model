@@ -24,15 +24,15 @@
 #include "imgui_impl_opengl3.h"
 
 // custom headers
-#include "Shader.h"
-#include "Camera.h"
-#include "Model.h"
-#include "ControlCollapse.h"
+#include "custom_class/Shader.h"
+#include "custom_class/Camera.h"
+#include "custom_class/Model.h"
+#include "custom_class/ControlCollapse.h"
 #include "utils.h"
-#include "Object.h"
-#include "Light.h"
-#include "Axis.h"
-#include "Container.h"
+#include "custom_class/Object.h"
+#include "custom_class/Light.h"
+#include "custom_class/Axis.h"
+#include "custom_class/Container.h"
 
 // standard
 #include <string>
@@ -157,18 +157,18 @@ int main() {
 	// create texture
 	// --------------
 	// diffuse map
-	unsigned int diffuseMap = createTexture("container2.png");
+	unsigned int diffuseMap = createTexture("custom_texture/container2.png");
 
 	// specular map
-	unsigned int specularMap = createTexture("container2_specular.png");
+	unsigned int specularMap = createTexture("custom_texture/container2_specular.png");
 
 	// emission map
-	unsigned int emissionMap = createTexture("matrix.jpg");
+	unsigned int emissionMap = createTexture("custom_texture/matrix.jpg");
 
 	// normal object
-	Shader PhongShader = Shader("myVertexShader.vert", "PhongFragmentShader.frag");
-	Shader BlinnPhongShader = Shader("myVertexShader.vert", "BlinnPhongFragmentShader.frag");
-	Shader GouraudShader = Shader("GouraudVertexShader.vert", "GouraudFragmentShader.frag");
+	Shader PhongShader = Shader("custom_shader/myVertexShader.vert", "custom_shader/PhongFragmentShader.frag");
+	Shader BlinnPhongShader = Shader("custom_shader/myVertexShader.vert", "custom_shader/BlinnPhongFragmentShader.frag");
+	Shader GouraudShader = Shader("custom_shader/GouraudVertexShader.vert", "custom_shader/GouraudFragmentShader.frag");
 
 	PhongShader.use();
 	PhongShader.setFloat("material.shininess", 32.0f); // Phong uses a lower shininess
@@ -189,10 +189,10 @@ int main() {
 	GouraudShader.setInt("material0.emission", 2); // emission is not used in this lighting model
 
 	// light source
-	Shader lightShader = Shader("lightSourceVertexShader.vert", "lightSourceFragmentShader.frag");
+	Shader lightShader = Shader("custom_shader/lightSourceVertexShader.vert", "custom_shader/lightSourceFragmentShader.frag");
 
 	// axis shader
-	Shader axisShader = Shader("axis.vert", "axis.frag");
+	Shader axisShader = Shader("custom_shader/axis.vert", "custom_shader/axis.frag");
 
 	// model
 	Model backpackModel((char*)"backpack/backpack.obj");
@@ -201,16 +201,16 @@ int main() {
 
 	// create objects
 	std::vector<Object*> objectList = {
-		new Cube("container2.png", "container2_specular.png", "matrix.jpg"),
-		new Cube("container2.png", "container2_specular.png", "matrix.jpg"),
-		new Cube("container2.png", "container2_specular.png", "matrix.jpg"),
-		new Cube("container2.png", "container2_specular.png", "matrix.jpg"),
-		new Cube("container2.png", "container2_specular.png", "matrix.jpg"),
-		new Cube("container2.png", "container2_specular.png", "matrix.jpg"),
-		new Cube("container2.png", "container2_specular.png", "matrix.jpg"),
-		new Cube("container2.png", "container2_specular.png", "matrix.jpg"),
-		new Cube("container2.png", "container2_specular.png", "matrix.jpg"),
-		new Cube("container2.png", "container2_specular.png", "matrix.jpg"),
+		new Cube("custom_texture/container2.png", "custom_texture/container2_specular.png", "custom_texture/matrix.jpg"),
+		new Cube("custom_texture/container2.png", "custom_texture/container2_specular.png", "custom_texture/matrix.jpg"),
+		new Cube("custom_texture/container2.png", "custom_texture/container2_specular.png", "custom_texture/matrix.jpg"),
+		new Cube("custom_texture/container2.png", "custom_texture/container2_specular.png", "custom_texture/matrix.jpg"),
+		new Cube("custom_texture/container2.png", "custom_texture/container2_specular.png", "custom_texture/matrix.jpg"),
+		new Cube("custom_texture/container2.png", "custom_texture/container2_specular.png", "custom_texture/matrix.jpg"),
+		new Cube("custom_texture/container2.png", "custom_texture/container2_specular.png", "custom_texture/matrix.jpg"),
+		new Cube("custom_texture/container2.png", "custom_texture/container2_specular.png", "custom_texture/matrix.jpg"),
+		new Cube("custom_texture/container2.png", "custom_texture/container2_specular.png", "custom_texture/matrix.jpg"),
+		new Cube("custom_texture/container2.png", "custom_texture/container2_specular.png", "custom_texture/matrix.jpg"),
 	};
 
 	//create lights
