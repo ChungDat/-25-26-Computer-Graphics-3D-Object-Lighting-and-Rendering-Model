@@ -34,7 +34,6 @@ public:
     float getZ() const;
     int getID() const;
 
-
     virtual std::string getType() const = 0;
     
     virtual ~Object();

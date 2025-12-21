@@ -74,6 +74,7 @@ Object::Object()
 
 void Object::draw(Shader& shader, const glm::mat4& view, const glm::mat4& projection, const glm::vec3& viewPos, const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) {
 	shader.use();
+	setModelMatrix();
 	shader.setMat4fv("view", view);
 	shader.setMat4fv("projection", projection);
 	shader.setVec3fv("viewPos", viewPos);
@@ -98,17 +99,14 @@ void Object::draw(Shader& shader, const glm::mat4& view, const glm::mat4& projec
 
 void Object::setPosition(const glm::vec3 _pos) {
 	position = _pos;
-	setModelMatrix();
 }
 
 void Object::setScale(const glm::vec3 _scale) {
 	scale = _scale;
-	setModelMatrix();
 }
 
 void Object::setRotation(const glm::vec3 _rotation) {
 	rotation = glm::radians(_rotation);
-	setModelMatrix();
 }
 
 void Object::setModelMatrix() {
@@ -505,6 +503,7 @@ void Sphere::generateSphere(float radius, unsigned int sectorCount, unsigned int
 
 void Sphere::draw(Shader& shader, const glm::mat4& view, const glm::mat4& projection, const glm::vec3& viewPos, const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) {
 	shader.use();
+	setModelMatrix();
 	shader.setMat4fv("view", view);
 	shader.setMat4fv("projection", projection);
 	shader.setVec3fv("viewPos", viewPos);
@@ -698,6 +697,7 @@ void Cylinder::generateCylinder(float radius, float height, unsigned int sectorC
 
 void Cylinder::draw(Shader& shader, const glm::mat4& view, const glm::mat4& projection, const glm::vec3& viewPos, const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) {
 	shader.use();
+	setModelMatrix();
 	shader.setMat4fv("view", view);
 	shader.setMat4fv("projection", projection);
 	shader.setVec3fv("viewPos", viewPos);

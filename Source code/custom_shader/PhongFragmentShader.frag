@@ -1,4 +1,5 @@
 #version 330 core
+
 struct Material {
 	// ambient is usually set to the same as diffuse
 	sampler2D diffuse;
@@ -48,15 +49,12 @@ struct SpotLight {
 #define NR_POINT_LIGHTS 5
 #define NR_SPOT_LIGHTS 1
 
-
-
 in vec2 texCoord;
-in vec3 normal; // world-space normal
+in vec3 fragNormal; // world-space normal
 in vec3 fragPos; // world-space position
 
 uniform Material material;
 uniform vec3 viewPos; // world-space camera position
-uniform mat4 view; // world -> view
 
 uniform DirectionalLight dirLight[NR_DIR_LIGHTS];
 uniform PointLight pointLight[NR_POINT_LIGHTS];
@@ -69,7 +67,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir);
 
 void main() {
-	vec3 norm = normalize(normal);
+	vec3 norm = normalize(fragNormal);
 	vec3 viewDir = normalize(viewPos - fragPos);
 
 	vec3 result = vec3(0.0);

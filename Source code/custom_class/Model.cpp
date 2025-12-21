@@ -4,7 +4,17 @@ Model::Model(char* path) {
 	loadModel(path);
 }
 
-void Model::draw(Shader& shader) {
+Model::~Model() {
+}
+
+void Model::draw(Shader& shader, const glm::mat4& view, const glm::mat4& projection, const glm::vec3& viewPos, const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) {
+	shader.use();
+	shader.setMat4fv("view", view);
+	shader.setMat4fv("projection", projection);
+	shader.setVec3fv("viewPos", viewPos);
+	shader.setMat4fv("horizontalRotate", horizontalRotate);
+	shader.setMat4fv("verticalRotate", verticalRotate);
+	
 	for (unsigned int i = 0; i < meshes.size(); i++) {
 		meshes[i].Draw(shader);
 	}
@@ -180,4 +190,9 @@ unsigned int Model::TextureFromFile(const char* path, const std::string& directo
 	}
 
 	return textureID;
+}
+
+std::string Model::getType() const
+{
+	return "Model";
 }

@@ -32,6 +32,7 @@
 #include "custom_class/Object.h"
 #include "custom_class/Light.h"
 #include "custom_class/Axis.h"
+#include "custom_class/Plane.h"
 #include "custom_class/Container.h"
 
 // standard
@@ -166,8 +167,8 @@ int main() {
 	unsigned int emissionMap = createTexture("custom_texture/matrix.jpg");
 
 	// normal object
-	Shader PhongShader = Shader("custom_shader/myVertexShader.vert", "custom_shader/PhongFragmentShader.frag");
-	Shader BlinnPhongShader = Shader("custom_shader/myVertexShader.vert", "custom_shader/BlinnPhongFragmentShader.frag");
+	Shader PhongShader = Shader("custom_shader/PhongVertexShader.vert", "custom_shader/PhongFragmentShader.frag");
+	Shader BlinnPhongShader = Shader("custom_shader/PhongVertexShader.vert", "custom_shader/BlinnPhongFragmentShader.frag");
 	Shader GouraudShader = Shader("custom_shader/GouraudVertexShader.vert", "custom_shader/GouraudFragmentShader.frag");
 
 	PhongShader.use();
@@ -226,6 +227,7 @@ int main() {
 
 	// create axis
 	Axis axis = Axis(axisShader);
+	Plane plane = Plane(axisShader);
 
 	// set object
 	for (unsigned int i = 0; i < objectList.size(); i++) {
@@ -296,7 +298,6 @@ int main() {
 		objectProperties.show();
 		lightProperties.show();
 
-		ImGui::Separator();
 		ImGui::Separator();
 
 		if (lightList[0]->isEnabled()) {
@@ -376,7 +377,9 @@ int main() {
 
 		// render background
 		// ------
+		// -----
 		glClearColor(0.75f, 0.52f, 0.3f, 1.0f);
+		//glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
@@ -438,10 +441,12 @@ int main() {
 		model = glm::translate(model, glm::vec3(0.0, -1.0, 0.0));
 		model = glm::scale(model, glm::vec3(0.5, 0.5, 0.5));
 		objectShader->setMat4fv("model", model);
-		//backpackModel.draw(objectShader);
+		backpackModel.draw(*objectShader, view, projection, viewPos, horizontalRotate, verticalRotate);
 
-		if (axis.isEnabled())
+		if (axis.isEnabled()) {
 			axis.draw(view, projection);
+			plane.draw(view, projection);
+		}
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

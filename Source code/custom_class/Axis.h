@@ -15,6 +15,7 @@ protected:
 	bool enabled;
 public:
 	Axis(Shader& shader);
+	virtual ~Axis();
 	void draw(const glm::mat4& view, const glm::mat4& projection) ;
 
 	unsigned int getVAO();
