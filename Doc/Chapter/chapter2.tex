@@ -6,32 +6,80 @@
 %Người ta đã làm gì rồi và mình muốn làm gì.
 
 \section{Mô hình chiếu sáng}
-Trong thế giới thực, ánh sáng là các photon di chuyển theo tia trong không gian và phân tán trên bề mặt các vật. Sinh vật có thể nhìn thấy một vật do ánh sáng từ các nguồn sáng (Mặt trời, đèn đường, ...) chiếu đến vật, vật hấp thụ một phần ánh sáng và phản xạ phần còn lại vào mắt. Trong mắt có các tế bào thụ cảm ánh sáng (photoreceptors) chuyển đổi ánh sáng thành tín hiệu điện hoá, gửi đến não để tạo ra hình ảnh thị giác.\\
-Trong đồ hoạ máy tính, các mô hình chiếu sáng mô phỏng nguồn sáng thực bằng việc biểu diễn mức độ năng lượng chiếu qua một điểm trong không gian \cite{principles_1990}. Các mô hình phản xạ (reflectance model) sẽ dựa vào các biểu diễn toán học này để tính toán mối quan hệ tương đối giữa các vật liệu và nguồn sáng khác nhau. \cite{a_reflectance_model_1982}.
+Trong thế giới vật lý, ánh sáng có thể được xem như dòng năng lượng điện từ lan truyền trong không gian và tương tác với vật chất thông qua các quá trình hấp thụ, phản xạ và tán xạ. Con người quan sát được các vật thể là nhờ ánh sáng từ các nguồn phát xạ tự nhiên hoặc nhân tạo chiếu tới bề mặt vật thể, sau đó một phần năng lượng được phản xạ về phía mắt, thông qua các tế bào thụ cảm ánh sáng (photoreceptor) chuyển đổi ánh sáng thành tín hiệu điện hoá, gửi đến não để tạo ra hình ảnh thị giác.
+
+rong đồ họa máy tính, quá trình này được trừu tượng hóa thông qua các mô hình chiếu sáng. Các mô hình này không mô phỏng trực tiếp từng photon riêng lẻ, mà mô tả mức năng lượng bức xạ tại một điểm trong không gian theo một hướng xác định, thường được biểu diễn dưới dạng các đại lượng như irradiance, radiance hoặc intensity \cite{principles_1990}.
+
+Các mô hình phản xạ (reflectance models) sử dụng những biểu diễn này để thiết lập mối quan hệ toán học giữa nguồn sáng, vật liệu bề mặt và hướng quan sát, từ đó xác định đóng góp ánh sáng tại mỗi điểm trên bề mặt \cite{a_reflectance_model_1982}.
 
 \subsection{Nguồn sáng hình học - Geometric Light Source}
-Nguồn sáng hình học là nguồn sáng được đặt trong cảnh và có sự suy giảm độ sáng phụ thuộc khoảng cách giữa nguồn sáng và mặt phẳng phản chiếu\cite{principles_1990}.
+
+Nguồn sáng hình học là các nguồn sáng được gán một vị trí cụ thể trong cảnh ba chiều. Cường độ ánh sáng phát ra từ các nguồn này suy giảm theo khoảng cách tới bề mặt được chiếu sáng, phản ánh quy luật lan truyền năng lượng trong không gian \cite{principles_1990}.
+
+Về mặt toán học, các nguồn sáng hình học thường được đặc trưng bởi:
+\begin{itemize}
+	\item Vị trí không gian $p_i$.
+	\item Cường độ phát xạ $I_i$.
+	\item Hàm suy giảm theo khoảng cách \textit{attenuation} $f_{att}(r)$.
+\end{itemize}
 
 \subsubsection{Nguồn sáng điểm - Point Light}
-Nguồn sáng điểm được đặt trong cảnh và chiếu sáng theo mọi hướng, mô phỏng nguồn sáng như bóng đèn điện \cite{principles_1990}. %Các nguồn sáng lớn hơn có thể được mô hình hoá bằng một nguồn sáng điểm ở trung tâm, được bao quanh bởi các hình học đại diện (proxy geometry) nhằm đánh lừa người xem
+Nguồn sáng điểm là mô hình đơn giản nhất của nguồn sáng hình học, trong đó ánh sáng được phát ra đồng đều theo mọi hướng từ một điểm trong không gian. Mô hình này thường được sử dụng để xấp xỉ các nguồn sáng nhỏ như bóng đèn \cite{principles_1990}.
 % hình: bóng đèn
 
+Đóng góp ánh sáng tại một điểm bề mặt $x$ được tính như sau:
+\begin{gather*}
+	I_o(x) = I_i * f_{att}(r) * max(0, n \cdot l)
+\end{gather*}
+trong đó:
+\begin{gather*}
+	f_{att}(r) = \frac{1}{k_c + k_l * r + k_q * r^2}, \quad
+	l = \frac{(p_i - x)}{||p_i - x||}
+\end{gather*}
+với $r = ||p_i - x||, n$ là vector pháp tuyến bề mặt tại $x$, và các hệ số $k_c, k_l, k_q$ điều chỉnh mức suy giảm cường độ theo khoảng cách.
+
 \subsubsection{Nguồn sáng chiếu điểm - Spot Light}
-Nguồn sáng chiếu điểm là nguồn sáng điểm, với giới hạn chiếu nằm trong một hình nón, mô phỏng nguồn sáng như đèn pha \cite{principles_1990}.
+Nguồn sáng chiếu điểm mở rộng mô hình nguồn sáng điểm bằng cách giới hạn vùng chiếu sáng trong một hình nón, mô phỏng các nguồn sáng có hướng rõ ràng như đèn pha hoặc đèn sân khấu \cite{principles_1990}.
 % hình: máy chiếu, đèn trần
 
+Công thức chiếu sáng được mở rộng thêm một hàm góc:
+\begin{gather*}
+	I_o(x) = I_i * f_{att}(r) * f_{spot}(\theta) * max(0, n \cdot l)\\
+	f_{spot}(\theta) =
+	\begin{cases}
+		1 \qquad cos\theta \ge cos\theta_{in},\\
+		\frac{cos \theta - cos \theta_{out}}{cos \theta_{in} - cos \theta_{out}} \qquad cos \theta_{out} < cos \theta < cos \theta_{in},\\
+		0 \qquad cos(\theta) \le cos(\theta_{out})
+	\end{cases}\\
+	l = \frac{(p_i - x)}{||p_i - x||}\\
+	cos \theta = l \cdot (-d)
+\end{gather*}
+trong đó $d$ là vector hướng phát sáng từ nguồn sáng.
+
 \subsection{Nguồn sáng phi hình học - Non-Geometry Light Source}
-Nguồn sáng phi hình học là nguồn sáng không có vị trí trong cảnh, ánh sáng phát ra không từ một điểm cụ thể trong cảnh và có độ sáng không đổi đến tất cả các mặt phẳng phản chiếu trong cảnh \cite{principles_1990}.
+Nguồn sáng phi hình học là các mô hình chiếu sáng không được gán vị trí cụ thể trong cảnh, có độ sáng không đổi đến tất cả các mặt phẳng phản chiếu trong cảnh \cite{principles_1990}.
 
 \subsubsection{Nguồn sáng định hướng - Directional Light}
-Nguồn sáng định hướng được mô hình hoá dựa trên một mặt trời ở khoảng cách vô hạn. Đây là mô hình cho trường hợp nguồn sáng điểm được đặt ở khoảng cách vô hạn, nghĩa là các tia sáng từ nguồn sáng này được xem như các tia chiếu song song \cite{principles_1990}, mô phỏng ánh sáng từ mặt trời.
+Nguồn sáng định hướng mô phỏng một nguồn sáng ở khoảng cách vô hạn, điển hình là mặt trời. Trong mô hình này, tất cả các tia sáng được giả định là song song và có cùng cường độ tại mọi điểm trong cảnh \cite{principles_1990}.
 % hình: mặt trời
 
+Đóng góp ánh sáng được tính như:
+\begin{gather*}
+	I_o(x) = I_i * max(0, n \cdot l)
+\end{gather*}
+với:
+\begin{gather*}
+	l = -d, \quad
+	||d|| = 1
+\end{gather*}
+
 \subsubsection{Nguồn sáng môi trường - Ambient Light}
-Nguồn sáng môi trường là một lượng ánh sáng được chiếu lên tất cả bề mặt, không phụ thuộc vào hướng và khoảng cách. Nguồn sáng môi trường giúp loại bỏ các vùng "thuần tối" (pure black) ở các bề mặt hướng ra xa nguồn sáng \cite{principles_1990}. Trong thực tế, các bề mặt hướng ra xa nguồn sáng vẫn được chiếu sáng do sự phản xạ từ các vật lân cận trong không gian, nguồn sáng môi trường giúp xấp xỉ hiệu ứng này khi khả năng xử lý của máy tính vẫn còn hạn chế.
+Nguồn sáng môi trường là một mô hình xấp xỉ nhằm biểu diễn ánh sáng gián tiếp từ môi trường xung quanh. Nó cung cấp một lượng chiếu sáng đồng đều lên mọi bề mặt, không phụ thuộc vào hướng hay vị trí, nhằm tránh các vùng tối hoàn toàn trong cảnh, thường ở các bề mặt hướng ra xa khỏi nguồn sáng \cite{principles_1990}.
+
+Trong thực tế, các bề mặt hướng ra xa nguồn sáng vẫn được chiếu sáng do sự phản xạ từ các vật lân cận trong không gian, nguồn sáng môi trường giúp xấp xỉ hiệu ứng này khi khả năng xử lý của máy tính vẫn còn hạn chế.
 
 \subsubsection{Nguồn sáng phát xạ - Emissive Light}
-Nguồn sáng phát xạ được sử dụng để mô tả các bề mặt có khả năng tự phát sáng nhưng không phải một nguồn sáng đúng nghĩa, cho phép bề mặt "phản xạ" ánh sáng ảo dù không tồn tại nguồn sáng trong cảnh \cite{principles_1990}, mô phỏng các vật thể tự phát sáng như đèn neon.
+Nguồn sáng phát xạ mô tả các bề mặt có khả năng tự phát sáng nhưng không phải một nguồn sáng đúng nghĩa, cho phép bề mặt "phản xạ" ánh sáng ảo dù không tồn tại nguồn sáng trong cảnh, mô phỏng các vật thể tự phát sáng như đèn neon \cite{principles_1990}.
 
 \section{Mô hình kết xuất đối tượng}
 
@@ -75,17 +123,18 @@ Nguồn sáng phát xạ được sử dụng để mô tả các bề mặt có
 		\item \textbf{Phương pháp:}\\
 		Tại mỗi đa giác, tồn tại một vector pháp tuyến duy nhất $\vec{N} = \vec{a} \times \vec{b}$, với $\vec{a}, \vec{b}$ là hai vector không song song của đa giác.\\
 		Một phép tính chiếu sáng duy nhất được thực hiện cho toàn bộ đa giác, thường chỉ sử dụng thành phần khuếch tán (diffuse) của một mô hình chiếu sáng đơn giản, tỉ lệ với góc hợp bởi vector pháp tuyến và vector hướng tới nguồn sáng.
-%		\begin{math}
-%			I = k * I_l * max(0, \vec{N} \cdot \vec{L})
-%		\end{math}
-%		
-%		Với:\\
-%		- $I$ là cường độ ánh sáng được tính toán.\\
-%		- $k$ là hệ số phản xạ, xác định mức độ hấp thụ ánh sáng của vật thể.\\
-%		- $I_l$ là cường độ và màu sắc nguồn sáng.\\
-%		- $\vec{N}$ là vector pháp tuyến đơn vị của bề mặt đa giác.\\
-%		- $\vec{L}$ là vector đơn vị chỉ hướng từ điểm đang xét trên bề mặt đa giác đến nguồn sáng.\\
-%		Tất cả các pixel thuộc đa giác sẽ được lấp đầy bằng giá trị $I$.
+		\begin{gather*}
+			I = k * I_l * max(0, \vec{N} \cdot \vec{L})
+		\end{gather*}
+		
+		Với:\\
+		- $I$ là cường độ ánh sáng được tính toán.\\
+		- $k$ là hệ số phản xạ, xác định mức độ hấp thụ ánh sáng của vật thể.\\
+		- $I_l$ là cường độ và màu sắc nguồn sáng.\\
+		- $\vec{N}$ là vector pháp tuyến đơn vị của bề mặt đa giác.\\
+		- $\vec{L}$ là vector đơn vị chỉ hướng từ điểm đang xét trên bề mặt đa giác đến nguồn sáng.\\
+		Tất cả các pixel thuộc đa giác sẽ được lấp đầy bằng giá trị $I$.
+		
 		\item \textbf{Đóng góp:} Hiệu suất tính toán của kết xuất phẳng rất cao. Vì chỉ có một phép tính chiếu sáng cho mỗi đa giác, đây là phương pháp nhanh nhất có thể, cho phép các hệ thống phần cứng sơ khai có thể kết xuất các cảnh 3D rắn trong thời gian thực.
 		 
 		\item \textbf{Hạn chế:} Vì mỗi đa giác có một màu riêng biệt, các bề mặt cong được xấp xỉ bằng lưới đa giác sẽ có vẻ ngoài "gãy khúc" hoặc "khối cạnh" (faceted).
@@ -95,37 +144,38 @@ Nguồn sáng phát xạ được sử dụng để mô tả các bề mặt có
 	\begin{itemize}
 		\item \textbf{Nguyên lý:} Với vật thể được biểu diễn bằng một lưới hình học (mesh), xem mỗi đa giác trong lưới là một mặt phẳng độc lập. Màu sắc tại cạnh đa giác được nội suy từ các đỉnh đa giác, màu sắc tại các pixel bên trong đa giác được nội suy từ giao điểm giữa đường quét và cạnh đa giác\cite{gouraud2}.
 		
-		\item \textbf{Phương pháp:}\\
+		\item \textbf{Phương pháp:}
+		
 		Tại mỗi đỉnh, tồn tại một vector pháp tuyến $\vec{N}$, được tính bằng trung bình của các pháp tuyến của các mặt chung đỉnh.
-%		\begin{math}
-%			\vec{N^*} = \frac{1}{m} \sum_{i=1}^{m} \vec{N_i}\\
-%			\vec{N} = \frac{\vec{N^*}}{||\vec{N^*}||}\\
-%			I_v = k * I_l * max(0, \vec{N} \cdot \vec{L})
-%		\end{math}
-%		
-%		Với:\\
-%		- $\vec{N_i}$ là vector pháp tuyến đơn vị của bề mặt đa giác $i$.\\
-%		- $\vec{N}$ là vector pháp tuyến đơn vị trung bình tại đỉnh đang xét.\\
-%		- $\vec{L}$ là vector đơn vị chỉ hướng từ đỉnh đang xét trên bề mặt đa giác đến nguồn sáng.\\
-%		- $I$ là cường độ ánh sáng được tính toán.\\
-%		- $k$ là hệ số phản xạ, xác định mức độ hấp thụ ánh sáng của vật thể.\\
-%		- $I_l$ là cường độ và màu sắc nguồn sáng.\\
-%		
-%		Tại mỗi dòng quét cắt qua đa giác, cường độ màu tại các giao điểm trên các cạnh của đa giác được nội suy tuyến tính từ màu của các đỉnh tương ứng.\\
-%		\begin{math}
-%			I_i = t * I_A + (1 - t) * I_B \quad t \in [0; 1]
-%		\end{math}
-%		Với:\\
-%		- $I_i$ là cường độ ánh sáng tại một điểm trên cạnh nối giữa đỉnh A và B.\\
-%		- $I_A, I_B$ là cường độ ánh sáng tại hai đỉnh A và B.\\
-%		
-%		Tại mỗi pixel trên dòng quét nằm bên trong đa giác, cường độ màu được nội suy từ màu của các giao điểm trên cạnh.\\
-%		\begin{math}
-%			I_j = t * I_1 + (1 - t) * I_2 \quad t \in [0; 1]
-%		\end{math}
-%		Với:\\
-%		- $I_j$ là cường độ ánh sáng tại một điểm nằm trên dòng quét.\\
-%		- $I_1, I_2$ là cường độ ánh sáng tại hai giao điểm giữa dòng quét và các cạnh đa giác.
+		\begin{gather*}
+			\vec{N^*} = \frac{1}{m} \sum_{i=1}^{m} \vec{N_i}\\
+			\vec{N} = \frac{\vec{N^*}}{||\vec{N^*}||}\\
+			I_v = k * I_l * max(0, \vec{N} \cdot \vec{L})
+		\end{gather*}
+		
+		Với:\\
+		- $\vec{N_i}$ là vector pháp tuyến đơn vị của bề mặt đa giác $i$.\\
+		- $\vec{N}$ là vector pháp tuyến đơn vị trung bình tại đỉnh đang xét.\\
+		- $\vec{L}$ là vector đơn vị chỉ hướng từ đỉnh đang xét trên bề mặt đa giác đến nguồn sáng.\\
+		- $I$ là cường độ ánh sáng được tính toán.\\
+		- $k$ là hệ số phản xạ, xác định mức độ hấp thụ ánh sáng của vật thể.\\
+		- $I_l$ là cường độ và màu sắc nguồn sáng.
+
+		Tại mỗi dòng quét cắt qua đa giác, cường độ màu tại các giao điểm trên các cạnh của đa giác được nội suy tuyến tính từ màu của các đỉnh tương ứng.\\
+		\begin{gather*}
+			I_i = t * I_A + (1 - t) * I_B \quad t \in [0; 1]
+		\end{gather*}
+		Với:\\
+		- $I_i$ là cường độ ánh sáng tại một điểm trên cạnh nối giữa đỉnh A và B.\\
+		- $I_A, I_B$ là cường độ ánh sáng tại hai đỉnh A và B.
+		
+		Tại mỗi pixel trên dòng quét nằm bên trong đa giác, cường độ màu được nội suy từ màu của các giao điểm trên cạnh.\\
+		\begin{gather*}
+			I_j = t * I_1 + (1 - t) * I_2 \quad t \in [0; 1]
+		\end{gather*}
+		Với:\\
+		- $I_j$ là cường độ ánh sáng tại một điểm nằm trên dòng quét.\\
+		- $I_1, I_2$ là cường độ ánh sáng tại hai giao điểm giữa dòng quét và các cạnh đa giác.
 		
 		\item \textbf{Đóng góp:} Đây là một bước đột phá lớn, cho phép các bề mặt đa giác trông mượt mà với chi phí tính toán tăng thêm không đáng kể. Mô hình Gouraud đã giải quyết hiện tượng thay đổi màu sắc đột ngột.
 		
@@ -140,19 +190,19 @@ Nguồn sáng phát xạ được sử dụng để mô tả các bề mặt có
 		\begin{enumerate}
 			\item Xử lý đỉnh\\
 			Tại mỗi đỉnh, tồn tại một vector pháp tuyến $\vec{N}$, được tính bằng trung bình của các pháp tuyến của các mặt chung đỉnh.
-%			\begin{math}
-%				\vec{N^*} = \frac{1}{m} \sum_{i=1}^{m} \vec{N_i}\\
-%				\vec{N} = \frac{\vec{N^*}}{||\vec{N^*}||}\\
-%				I_v = k * I_l * max(0, \vec{N} \cdot \vec{L})
-%			\end{math}
-%			
-%			Với:\\
-%			- $\vec{N_i}$ là vector pháp tuyến đơn vị của bề mặt đa giác $i$.\\
-%			- $\vec{N}$ là vector pháp tuyến đơn vị trung bình tại đỉnh đang xét.\\
-%			- $\vec{L}$ là vector đơn vị chỉ hướng từ đỉnh đang xét trên bề mặt đa giác đến nguồn sáng.\\
-%			- $I$ là cường độ ánh sáng được tính toán.\\
-%			- $k$ là hệ số phản xạ, xác định mức độ hấp thụ ánh sáng của vật thể.\\
-%			- $I_l$ là cường độ và màu sắc nguồn sáng.
+			\begin{gather*}
+				\vec{N^*} = \frac{1}{m} \sum_{i=1}^{m} \vec{N_i}\\
+				\vec{N} = \frac{\vec{N^*}}{||\vec{N^*}||}\\
+				I_v = k * I_l * max(0, \vec{N} \cdot \vec{L})
+			\end{gather*}
+			
+			Với:\\
+			- $\vec{N_i}$ là vector pháp tuyến đơn vị của bề mặt đa giác $i$.\\
+			- $\vec{N}$ là vector pháp tuyến đơn vị trung bình tại đỉnh đang xét.\\
+			- $\vec{L}$ là vector đơn vị chỉ hướng từ đỉnh đang xét trên bề mặt đa giác đến nguồn sáng.\\
+			- $I$ là cường độ ánh sáng được tính toán.\\
+			- $k$ là hệ số phản xạ, xác định mức độ hấp thụ ánh sáng của vật thể.\\
+			- $I_l$ là cường độ và màu sắc nguồn sáng.
 			
 			\item Tạo lưới và nội suy (Rasterization and Interpolation)\\
 			Tạo lưới nhằm xác định tất cả các pixel trên màn hình được bao phủ bởi đa giác. Các pixel này được gọi là mảnh (fragment) trong quá trình tính toán.\\
@@ -160,22 +210,22 @@ Nguồn sáng phát xạ được sử dụng để mô tả các bề mặt có
 			
 			\item Tính toán chiếu sáng\\
 			Tại mỗi mảnh, mô hình Phong được áp dụng và tính toán cường độ sáng.\\
-%			\begin{math}
-%				\vec{R^*} = 2 * (\vec{L} \cdot \vec{N}) * \vec{N} - \vec{L}\\
-%				\vec{R} = \frac{\vec{R^*}}{||\vec{R^*}||}\\
-%				Ambient = k_a * I_a\\
-%				Diffuse = k_d * I_d * max(0, \vec{N} \cdot \vec{L})\\
-%				Specular = k_s * I_s * max(0, \vec{R} \cdot \vec{V})^n\\
-%				I = Ambient + Diffuse + Specular
-%			\end{math}
-%			
-%			Với:\\
-%			- $k_a, k_d, k_s$ là hệ số phản xạ môi trường, khuếch tán, phản xạ gương tương ứng với các thành phần ánh sáng.\\
-%			- $I_a, I_d, I_s$ là cường độ của các thành phần ánh sáng.\\
-%			- $\vec{N}$ là vector pháp tuyến đơn vị của mảnh.\\
-%			- $\vec{L}$ là vector đơn vị chỉ hướng từ mảnh đang xét đến nguồn sáng.\\
-%			- $\vec{R}$ là vector đơn vị phản xạ hướng chiếu sáng.\\
-%			- $\vec{V}$ là vector đơn vị từ vị trí của mảnh đến camera.
+			\begin{gather*}
+				\vec{R^*} = 2 * (\vec{L} \cdot \vec{N}) * \vec{N} - \vec{L}\\
+				\vec{R} = \frac{\vec{R^*}}{||\vec{R^*}||}\\
+				Ambient = k_a * I_a\\
+				Diffuse = k_d * I_d * max(0, \vec{N} \cdot \vec{L})\\
+				Specular = k_s * I_s * max(0, \vec{R} \cdot \vec{V})^n\\
+				I = Ambient + Diffuse + Specular
+			\end{gather*}
+			
+			Với:\\
+			- $k_a, k_d, k_s$ là hệ số phản xạ môi trường, khuếch tán, phản xạ gương tương ứng với các thành phần ánh sáng.\\
+			- $I_a, I_d, I_s$ là cường độ của các thành phần ánh sáng.\\
+			- $\vec{N}$ là vector pháp tuyến đơn vị của mảnh.\\
+			- $\vec{L}$ là vector đơn vị chỉ hướng từ mảnh đang xét đến nguồn sáng.\\
+			- $\vec{R}$ là vector đơn vị phản xạ hướng chiếu sáng.\\
+			- $\vec{V}$ là vector đơn vị từ vị trí của mảnh đến camera.
 		\end{enumerate}
 		
 		\item \textbf{Đóng góp:} Kết xuất Phong tạo ra các đốm sáng phản xạ gương mượt mà và chính xác hơn nhiều. Mô hình đã trở thành tiêu chuẩn trong nhiều thập kỷ cho cả đồ họa thời gian thực và ngoại tuyến.
@@ -197,19 +247,19 @@ Nguồn sáng phát xạ được sử dụng để mô tả các bề mặt có
 			
 			\item Tính toán chiếu sáng\\
 			Tương tự mô hình của Phong. Tại thành phần phản xạ gương, thay thế vector phản xạ $\vec{R}$ bằng vector nửa góc (Halfway vector) $\vec{H}$.
-%			\begin{math}
-%				\vec{H} = \frac{\vec{L} + \vec{V}}{||\vec{L} + \vec{V}||}\\
-%				Specular = k_s * I_s * max(0, \vec{R} \cdot \vec{V})^n\\
-%				I = Ambient + Diffuse + Specular
-%			\end{math}
-%			
-%			Với:\\
-%			- $k_s$ là hệ số phản xạ gương tương ứng với thành phần ánh sáng.\\
-%			- $I_s$ là cường độ của thành phần ánh sáng.\\
-%			- $\vec{L}$ là vector đơn vị chỉ hướng từ mảnh đang xét đến nguồn sáng.\\
-%			- $\vec{R}$ là vector đơn vị phản xạ hướng chiếu sáng.\\
-%			- $\vec{V}$ là vector đơn vị từ vị trí của mảnh đến camera.\\
-%			- $\vec{H}$ là vector đơn vị nửa góc.
+			\begin{gather*}
+				\vec{H} = \frac{\vec{L} + \vec{V}}{||\vec{L} + \vec{V}||}\\
+				Specular = k_s * I_s * max(0, \vec{R} \cdot \vec{V})^n\\
+				I = Ambient + Diffuse + Specular
+			\end{gather*}
+			
+			Với:\\
+			- $k_s$ là hệ số phản xạ gương tương ứng với thành phần ánh sáng.\\
+			- $I_s$ là cường độ của thành phần ánh sáng.\\
+			- $\vec{L}$ là vector đơn vị chỉ hướng từ mảnh đang xét đến nguồn sáng.\\
+			- $\vec{R}$ là vector đơn vị phản xạ hướng chiếu sáng.\\
+			- $\vec{V}$ là vector đơn vị từ vị trí của mảnh đến camera.\\
+			- $\vec{H}$ là vector đơn vị nửa góc.
 		\end{enumerate}
 		
 		\item \textbf{Đóng góp:} Việc tính toán $\vec{H}$ thường hiệu quả hơn $\vec{R}$. Mô hình này cũng cho kết quả trông tự nhiên hơn trong một số trường hợp. Do hiệu quả của mô hình, Blinn-Phong đã được sử dụng rộng rãi làm mô hình chiếu sáng mặc định trong các API đồ họa đời đầu như OpenGL và Direct3D.
