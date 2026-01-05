@@ -1,77 +1,136 @@
 \chapter{Phương pháp}
-Trước sự ra đời của mô hình Cook-Torance vào năm 1982, các mô hình quan sát thực nghiệm như Phong \cite{phong2} và Blinn \cite{blinn_phong3} dù đạt hiệu quả về mặt tính toán, chúng thường cho ra hình ảnh trông giống nhựa (plastic-looking) và không mô phỏng chính xác tính chất vật lý của kim loại hay sự thay đổi màu sắc tại các góc nhìn nghiêng (grazing angles).\\
-Bài báo \textit{"A Reflectance Model for Computer Graphics"} \cite{a_reflectance_model_1982} của Cook và Torrance đề xuất một phương pháp tiếp cận mới dựa trên vật lý (Physically Based Rendering - PBR). Mô hình này xem xét độc lập hai thành phần: sự phân bố năng lượng quang phổ (màu sắc) và sự phân bố định hướng của ánh sáng phản xạ. Đây là nền tảng cho các kỹ thuật kết xuất hiện đại ngày nay.\\
+Trước sự ra đời của mô hình Cook-Torance vào năm 1982, các mô hình quan sát thực nghiệm như Phong \cite{phong2} và Blinn \cite{blinn_phong3} dù đạt hiệu quả về mặt tính toán, chúng thường cho ra hình ảnh trông giống nhựa (plastic-looking) và không mô phỏng chính xác tính chất vật lý của kim loại hay sự thay đổi màu sắc tại các góc nhìn nghiêng (grazing angles).
+
+Bài báo \textit{"A Reflectance Model for Computer Graphics"} \cite{a_reflectance_model_1982} của Cook và Torrance đề xuất một phương pháp tiếp cận mới dựa trên vật lý (Physically Based Rendering - PBR). Mô hình này xem xét độc lập hai thành phần: sự phân bố năng lượng quang phổ (màu sắc) và sự phân bố định hướng của ánh sáng phản xạ. Đây là nền tảng cho các kỹ thuật kết xuất hiện đại ngày nay.
 
 \section{Cơ sở Vật lý và Lý thuyết Vi bề mặt (Physics Basis and Microfacet Theory)}
 
-Nguyên lý cốt lõi của mô hình Cook-Torrance dựa trên quang học hình học (ray theory) và mô hình vi bề mặt (microfacet model).
+Mô hình Cook--Torrance là một mô hình phản xạ dựa trên vật lý, được xây dựng từ quang học hình học (ray theory) và lý thuyết vi bề mặt (microfacet theory). Mục tiêu của mô hình là mô tả chính xác cách ánh sáng tương tác với các bề mặt thô nhám ở cấp độ vi mô, đồng thời vẫn đảm bảo tính khả thi trong tính toán.
 
 \subsection{Lý thuyết Vi bề mặt (Microfacet Theory)}
-Mô hình giả định rằng một bề mặt thô nhám (rough surface) được cấu tạo từ vô số các mặt phẳng gương siêu nhỏ gọi là các vi bề mặt (microfacets). 
+
+Lý thuyết vi bề mặt giả định rằng một bề mặt thô nhám (rough surface) ở cấp độ vĩ mô thực chất được cấu tạo từ vô số các mặt phẳng gương siêu nhỏ gọi là các vi bề mặt (microfacets). Mỗi vi bề mặt này có pháp tuyến riêng và phản xạ ánh sáng theo định luật phản xạ gương lý tưởng.
+
 \begin{itemize}
-    \item Các vi bề mặt này phản xạ ánh sáng theo định luật phản xạ gương lý tưởng (ideal specular reflection).
-    \item Chỉ những vi bề mặt nào có vectơ pháp tuyến hướng đúng về phía vectơ trung gian (halfway vector) giữa nguồn sáng và người quan sát mới đóng góp vào thành phần phản xạ gương nhìn thấy được.
+	\item Sự thô nhám của bề mặt được biểu diễn thông qua phân bố thống kê của các pháp tuyến vi bề mặt.
+    \item Chỉ những vi bề mặt nào có vector pháp tuyến hướng đúng về phía vector nửa góc (halfway vector) giữa nguồn sáng và người quan sát mới đóng góp vào thành phần phản xạ gương nhìn thấy được.
+    \begin{equation}
+		\mathbf{H} = \frac{\mathbf{L} + \mathbf{V}}{||\mathbf{L} + \mathbf{V}||}
+    \end{equation}
+    trong đó, $\mathbf{L}$ là vector hướng nguồn sáng đơn vị và $\mathbf{V}$ là vector hướng người quan sát đơn vị.
 \end{itemize}
 
 \subsection{Các thành phần của sự phản xạ}
-Mô hình chia sự phản xạ thành hai thành phần chính:
+Dựa trên cơ chế tương tác ánh sáng với vật liệu, mô hình Cook--Torrance chia sự phản xạ thành hai thành phần chính:
 \begin{enumerate}
-    \item \textbf{Phản xạ gương (Specular Reflection):} Xảy ra ngay tại bề mặt phân cách giữa không khí và vật liệu. Nó chịu trách nhiệm cho các điểm sáng (highlights) và bị ảnh hưởng mạnh bởi độ nhám bề mặt.
-    \item \textbf{Phản xạ khuếch tán (Diffuse Reflection):} Xảy ra do tán xạ bên trong (internal scattering) hoặc phản xạ nhiều lần trên bề mặt thô. Ánh sáng xâm nhập vào vật liệu, tán xạ và thoát ra theo mọi hướng.
+    \item \textbf{Phản xạ gương (Specular Reflection):}\\
+    Xảy ra tại bề mặt phân cách giữa không khí và vật liệu. Thành phần này mô tả ánh sáng phản xạ trực tiếp từ các vi bề mặt theo định luật phản xạ gương. Nó chịu ảnh hưởng mạnh bởi độ nhám bề mặt và chiết suất của vật liệu, đồng thời tạo ra các điểm sáng đặc trưng (specular highlights).
+
+    \item \textbf{Phản xạ khuếch tán (Diffuse Reflection):}\\
+    Xảy ra khi ánh sáng xâm nhập vào bên trong vật liệu, bị tán xạ nhiều lần và thoát ra ngoài theo nhiều hướng khác nhau. Thành phần này thường được giả định là khuếch tán đẳng hướng và ít phụ thuộc vào góc nhìn.
 \end{enumerate}
 
 \section{Mô hình Cook-Torrance (The Cook-Torrance Model)}
 
-Mô hình Cook-Torrance định nghĩa cường độ ánh sáng phản xạ $I_r$ tới mắt người quan sát từ một nguồn sáng có cường độ $I_i$ như sau:
+Mô hình Cook-Torrance định nghĩa cường độ ánh sáng phản xạ $I_r$ tới mắt người quan sát dưới tác động của nhiều nguồn sáng như sau:
 
 \begin{equation}
-I_r = I_{ia}R_a + \sum_{l} I_{il} (N \cdot L_l) d\omega_{il} (sR_s + dR_d)
+I_r = I_{ia}R_a + \sum_{l} I_{il} (\mathbf{N} \cdot \mathbf{L}_l) d\omega_{il} (sR_s + dR_d)
 \end{equation}
 
 Trong đó:
 \begin{itemize}
-	\item $R_a$: Hệ số phản xạ môi trường (Ambient reflectance).
-    \item $R_s$: Hệ số phản xạ gương (Specular bidirectional reflectance).
-    \item $R_d$: Hệ số phản xạ khuếch tán (Diffuse bidirectional reflectance).
-    \item $d\omega_{i}$: Góc khối của nguồn sáng, $d\omega_{i}=\frac{A}{r^2}$ với $A$ là diện tích mặt chiếu, $r$ là khoảng cách chiếu.
-    \item $s, d$: Trọng số của thành phần gương và khuếch tán ($s + d = 1$).
-    \item $N, L, V$: Lần lượt là vectơ pháp tuyến bề mặt, vectơ hướng nguồn sáng và vectơ hướng người nhìn.
+	\item $I_{ia}$ là cường độ ánh sáng môi trường (ambient light intensity).
+	\item $I_{il}$ là cường độ của nguồn sáng thứ $l$.
+	\item $R_a$ là hệ số phản xạ môi trường (ambient reflectance).
+	\item $R_s$ là hệ số phản xạ gương hai chiều (specular bidirectional reflectance).
+	\item $R_d$ là hệ số phản xạ khuếch tán hai chiều (diffuse bidirectional reflectance).
+	\item $\mathbf{N}$ là vector pháp tuyến bề mặt đơn vị.
+	\item $\mathbf{L}_l$ là vector hướng tới nguồn sáng đơn vị thứ $l$.
+	\item $d\omega_{il}$ là góc khối của nguồn sáng, được xác định bởi:
+	\begin{equation}
+		d\omega_{il} = \frac{A}{r^2}
+	\end{equation}
+	với $A$ là diện tích bề mặt phát sáng và $r$ là khoảng cách tới điểm đang xét.
+	\item $s$ và $d$ là trọng số của thành phần gương và khuếch tán, thỏa mãn $s + d = 1$.
 \end{itemize}
 
-Trọng tâm của bài báo nằm ở việc xây dựng thành phần phản xạ gương $R_s$:
+Thành phần môi trường và khuếch tán phản xạ ánh sáng đẳng hướng, do đó $R_a$ và $R_d$ không phụ thuộc vào vị trí người quan sát. Mặt khác, thành phần phản xạ gương phản xạ ánh sáng tại một số hướng nhiều hơn phần còn lại, do đó $R_s$ phụ thuộc vào vị trí người quan sát.
+
+Trọng tâm của mô hình Cook--Torrance nằm ở việc xây dựng hàm phản xạ gương $R_s$ dựa trên lý thuyết vi bề mặt. Thành phần này được biểu diễn dưới dạng BRDF như sau:
 
 \begin{equation}
-R_s = \frac{F D G}{\pi (N \cdot L)(N \cdot V)}
+	R_s = \frac{F(\mathbf{V} \cdot \mathbf{H})}{\pi} \frac{D(\mathbf{H})\,G(\mathbf{N}, \mathbf{H}, \mathbf{V}, \mathbf{L})}{(\mathbf{N} \cdot \mathbf{L})(\mathbf{N} \cdot \mathbf{V})}
 \end{equation}
 
-\subsection{Hàm phân bố vi bề mặt $D$ (Distribution Function)}
-Hàm $D$ mô tả tỷ lệ các vi bề mặt có hướng pháp tuyến trùng với vectơ trung gian $H$ (vectơ phân giác của $L$ và $V$). %Bài báo đề xuất sử dụng hàm phân bố Beckmann thay vì hàm Gaussian như Blinn, vì nó dựa trên lý thuyết tán xạ sóng điện từ:
+Trong đó:
+
+\begin{itemize}
+	\item $D(\mathbf{H})$ là hàm phân bố vi bề mặt (Facet slope distribution), biểu diễn xác suất tồn tại của các vi bề mặt có pháp tuyến cùng hướng với $\mathbf{H}$. Hàm này đặc trưng cho độ nhám bề mặt.
+	\item $F(\mathbf{V}, \mathbf{H})$ là hệ số Fresnel, mô tả tỉ lệ ánh sáng bị phản xạ tại bề mặt phân cách, phụ thuộc vào góc tới và chiết suất của vật liệu.
+	\item $G(\mathbf{N}, \mathbf{H}, \mathbf{V}, \mathbf{L})$ là hệ số che khuất và che bóng, mô tả hiện tượng các vi bề mặt tự che khuất hoặc che bóng lẫn nhau.
+	\item $(\mathbf{N} \cdot \mathbf{L})(\mathbf{N} \cdot \mathbf{V})$ đảm bảo tính bảo toàn năng lượng và chuẩn hóa BRDF.
+\end{itemize}
+
+\subsection{Hàm phân bố vi bề mặt $D$ (Normal Distribution Function)}
+
+Hàm phân bố vi bề mặt $D$ mô tả mật độ xác suất của các vi bề mặt có pháp tuyến trùng với vector nửa góc $\mathbf{H}$, tức là mức độ “phổ biến” của các vi bề mặt đang ở trạng thái phản xạ gương lý tưởng đối với cặp hướng $(\mathbf{L}, \mathbf{V})$. Nói cách khác, $D$ quyết định cường độ của thành phần phản xạ gương thông qua việc xác định bao nhiêu vi bề mặt có thể đóng góp vào phản xạ theo hướng quan sát.
+
+Trong mô hình Cook–Torrance, hàm phân bố Beckmann được sử dụng nhằm mô tả các bề mặt có độ nhám tuân theo phân bố Gaussian của độ dốc vi mô, dựa trên các kết quả từ lý thuyết tán xạ sóng điện từ. Hàm Beckmann được viết dưới dạng:
 
 \begin{equation}
-D = \frac{1}{m^2 \cos^4 \alpha} e^{-[(\tan \alpha)/m]^2}
+	D(\mathbf{H}) = \frac{1}{m^2 \cos^4 \alpha} \exp^{[-(\frac{\tan \alpha}{m})^2]}
 \end{equation}
 
 Trong đó:
 \begin{itemize}
-    \item $m$: Độ dốc trung bình bình phương (root mean square slope), đại diện cho độ nhám của bề mặt (giá trị $m$ nhỏ ứng với bề mặt bóng, $m$ lớn ứng với bề mặt nhám).
-    \item $\alpha$: Góc giữa pháp tuyến bề mặt $N$ và vectơ trung gian $H$.
+	\item $m$ là độ dốc trung bình bình phương (root mean square slope), đại diện cho mức độ nhám vi mô của bề mặt. Giá trị $m$ nhỏ tương ứng với bề mặt bóng, tập trung nhiều vi bề mặt quanh pháp tuyến trung bình. Giá trị $m$ lớn biểu thị bề mặt thô, với các vi bề mặt phân bố rộng theo nhiều hướng khác nhau.
+	\item $\alpha$ là góc giữa pháp tuyến trung bình của bề mặt $\mathbf{N}$ và vector nửa góc $\mathbf{H}$, với $\cos \alpha = \mathbf{N} \cdot \mathbf{H}$.
 \end{itemize}
+
+Hàm $D$ đạt giá trị lớn nhất khi $\mathbf{H}$ gần trùng với $\mathbf{N}$, và giảm nhanh khi góc lệch tăng, phản ánh trực tiếp ảnh hưởng của độ nhám lên độ sắc nét của vùng lóe sáng gương.
 
 \subsection{Hệ số suy hao hình học $G$ (Geometrical Attenuation Factor)}
-Hệ số $G$ tính đến việc ánh sáng bị che khuất bởi chính các cấu trúc gồ ghề của bề mặt. Nó bao gồm hai hiện tượng:
+
+Hệ số suy hao hình học $G$ mô hình hóa các hiện tượng che chắn hình học xảy ra trên bề mặt thô nhám, nơi các vi bề mặt có thể cản trở lẫn nhau trong quá trình truyền ánh sáng. Thành phần này đảm bảo rằng mô hình phản xạ tuân thủ các ràng buộc hình học thực tế của bề mặt vi mô.
+
+Hai hiện tượng chính được xét đến là:
 \begin{itemize}
-    \item \textbf{Che bóng (Shadowing):} Ánh sáng tới bị chặn trước khi đến vi bề mặt.
-    \item \textbf{Che khuất (Masking):} Ánh sáng phản xạ bị chặn trước khi đến mắt người nhìn.
+	\item \textbf{Che bóng (shadowing):} Một vi bề mặt có hướng phản xạ phù hợp nhưng bị các vi bề mặt lân cận che khuất khỏi nguồn sáng, khiến ánh sáng tới không thể tiếp cận nó.
+	\item \textbf{Che khuất (masking):} Ánh sáng đã phản xạ từ một vi bề mặt nhưng bị chặn trước khi có thể truyền đến mắt người quan sát.
 \end{itemize}
-%Công thức được sử dụng là:
+
+Cook và Torrance đề xuất một dạng xấp xỉ cho $G$ dựa trên các ràng buộc hình học:
+
 \begin{equation}
-G = \min \left\{ 1, \frac{2(N \cdot H)(N \cdot V)}{(V \cdot H)}, \frac{2(N \cdot H)(N \cdot L)}{(V \cdot H)} \right\}
+	G = \min \left\{
+	1,\;
+	\frac{2(\mathbf{N} \cdot \mathbf{H})(\mathbf{N} \cdot \mathbf{V})}{\mathbf{V} \cdot \mathbf{H}},\;
+	\frac{2(\mathbf{N} \cdot \mathbf{H})(\mathbf{N} \cdot \mathbf{L})}{\mathbf{V} \cdot \mathbf{H}}
+	\right\}
 \end{equation}
 
-\subsection{Hệ số Fresnel $F$ (Fresnel Term)}
-Đây là điểm cải tiến quan trọng nhất so với các mô hình cũ. $F$ mô tả tỷ lệ ánh sáng được phản xạ so với ánh sáng bị khúc xạ hấp thụ, phụ thuộc vào góc tới và bước sóng ánh sáng.
+Biểu thức này đảm bảo rằng đóng góp phản xạ gương bị suy giảm khi điều kiện hình học không cho phép cả ánh sáng tới và ánh sáng phản xạ cùng tiếp cận một vi bề mặt. Khi bề mặt trở nên bóng hơn, ảnh hưởng của $G$ giảm đi, và giá trị của nó tiến gần tới 1.
 
-Theo phương trình Fresnel, khi góc tới ($\theta$) tiến gần đến $90^\circ$ (grazing angle), hệ số phản xạ $F$ của mọi vật liệu đều tiến tới 1 (phản xạ toàn phần). Điều này giải thích tại sao màu sắc của điểm phản xạ gương thay đổi theo góc nhìn, đặc biệt là ở kim loại.
+\subsection{Hệ số Fresnel $F$ (Fresnel Term)}
+
+Hệ số Fresnel $F$ mô tả tỷ lệ ánh sáng bị phản xạ tại ranh giới giữa hai môi trường, thường là không khí và vật liệu, so với phần ánh sáng bị khúc xạ và hấp thụ vào bên trong vật liệu. Đây là thành phần phụ thuộc mạnh vào góc tới và bản chất quang học của vật liệu.
+
+Theo các phương trình Fresnel trong quang học cổ điển, hệ số phản xạ tăng khi góc tới tăng và tiến gần đến $90^\circ$ (grazing angle), và tiến tới 1 khi ánh sáng chiếu gần song song với bề mặt. Điều này giải thích vì sao ngay cả các vật liệu kém phản xạ ở góc vuông cũng trở nên phản xạ mạnh ở các góc xiên.
+
+Trong thực hành đồ họa máy tính, $F$ thường được xấp xỉ bằng công thức Schlick:
+
+\begin{equation}
+	F(\theta) = F_0 + (1 - F_0)(1 - \cos \theta)^5
+\end{equation}
+
+Trong đó:
+\begin{itemize}
+	\item $F_0$ là hệ số phản xạ tại góc tới vuông góc, đặc trưng cho tính chất vật liệu. Đối với vật liệu điện môi, $F_0$ thường nhỏ và gần như không đổi theo bước sóng. Đối với kim loại, $F_0$ lớn và phụ thuộc mạnh vào bước sóng, tạo nên màu sắc đặc trưng của phản xạ gương.
+	\item $\theta$ là góc giữa vector quan sát $\mathbf{V}$ và vector nửa góc $\mathbf{H}$, với $\cos \theta = \mathbf{V} \cdot \mathbf{H}$.
+\end{itemize}
+
+Sự kết hợp của ba thành phần $D$, $G$ và $F$ tạo nên lõi vật lý của mô hình Cook–Torrance, cho phép mô phỏng phản xạ gương một cách nhất quán với các định luật quang học và là nền tảng cho các mô hình PBR hiện đại.
 
 \section{Quy trình Kết xuất và Màu sắc (Rendering Pipeline and Color)}
 

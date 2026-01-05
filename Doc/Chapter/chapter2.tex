@@ -91,7 +91,7 @@ Nguồn sáng phát xạ mô tả các bề mặt có khả năng tự phát sá
 		Flat & Màu sắc tại đa giác là đồng nhất, dựa trên góc giữa pháp tuyến mặt và hướng sáng. & Tính toán phương trình ánh sáng một lần duy nhất cho một đa giác (thường dùng pháp tuyến tại tâm). \\ \hline
 		Gouraud & Ánh sáng được tính tại các đỉnh đa giác, sau đó màu sắc được nội suy dần vào bên trong. & Tính cường độ sáng tại đỉnh, sau đó nội suy song tuyến tính màu sắc qua các pixel bên trong. \\ \hline
 		Phong & Xấp xỉ ánh sáng phản xạ từ 3 thành phần độc lập: Môi trường (Ambient), Khuếch tán (Diffuse), và Phản xạ gương (Specular). & Nội suy vector pháp tuyến trên từng pixel, sau đó tính toán phương trình ánh sáng cho từng pixel. \\ \hline
-		Blinn-Phong & Biến thể của Phong, sử dụng vector trung gian (Halfway vector) để tối ưu hóa việc tính toán phản xạ gương. & Tính tích vô hướng giữa pháp tuyến ($N$) và vector Halfway ($H$) thay vì vector phản xạ ($R$) và hướng nhìn ($V$). \\ \hline
+		Blinn-Phong & Biến thể của Phong, sử dụng vector nửa góc (halfway vector) để tối ưu hóa việc tính toán phản xạ gương. & Tính tích vô hướng giữa pháp tuyến ($N$) và vector halfway ($H$) thay vì vector phản xạ ($R$) và hướng nhìn ($V$). \\ \hline
 		Rendering Equation & Ánh sáng đi ra từ điểm $x$ bằng tổng ánh sáng tự phát ra cộng với tích phân ánh sáng đi tới từ mọi hướng. & Giải phương trình tích phân vô hạn thông qua các thuật toán xác suất như Monte Carlo, Path Tracing. \\ \hline
 		Radiosity & Mô hình hóa cân bằng năng lượng nhiệt/ánh sáng cho các bề mặt phản xạ khuếch tán lý tưởng (Diffuse surfaces only). & Chia nhỏ bề mặt thành các miếng (patches), tính hệ số hình học (Form Factors) và giải hệ phương trình tuyến tính ma trận lớn. \\ \hline
 		PBR & Mô phỏng tương tác ánh sáng dựa trên vật lý vi mô bề mặt (Microfacet Theory), tuân thủ bảo toàn năng lượng và hiệu ứng Fresnel. & Sử dụng các hàm phân bố phản xạ hai chiều (BRDF) phức tạp (như Cook-Torrance) kết hợp với các bản đồ (maps): Albedo, Normal, Roughness, Metalness. \\ \hline
@@ -263,7 +263,7 @@ Nguồn sáng phát xạ mô tả các bề mặt có khả năng tự phát sá
 			Tương tự mô hình của Phong.
 			
 			\item \textit{Tính toán chiếu sáng}\\
-			Tương tự mô hình của Phong. Tại thành phần phản xạ gương, thay thế vector phản xạ $\vec{R}$ bằng vector nửa góc (Halfway vector) $\vec{H}$.
+			Tương tự mô hình của Phong. Tại thành phần phản xạ gương, thay thế vector phản xạ $\vec{R}$ bằng vector nửa góc (halfway vector) $\vec{H}$.
 			\begin{gather*}
 				\vec{H} = \frac{\vec{L} + \vec{V}}{||\vec{L} + \vec{V}||}\\
 				Specular = k_s * I_s * max(0, \vec{R} \cdot \vec{V})^\alpha\\
