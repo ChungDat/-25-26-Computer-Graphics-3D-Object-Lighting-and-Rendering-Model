@@ -186,9 +186,18 @@ Nguồn sáng phát xạ mô tả các bề mặt có khả năng tự phát sá
 	\begin{itemize}
 		\item \textbf{Nguyên lý:} Mô hình Phong xấp xỉ ánh sáng phản xạ từ một điểm trên bề mặt thành ba thành phần độc lập: Môi trường (Ambient), Khuếch tán (Diffuse), và Phản xạ gương (Specular)\cite{phong2}.
 		
+		\textbf{Ambient:}
+		Thành phần ambient biểu diễn một mức chiếu sáng nền đồng đều tồn tại trong toàn bộ cảnh, không phụ thuộc vào vị trí nguồn sáng, hướng chiếu hay hướng quan sát. Thành phần này được đưa vào nhằm tránh các vùng tối hoàn toàn trên bề mặt, hiện tượng thường xảy ra khi chỉ xét các mô hình chiếu sáng cục bộ. Về bản chất, ambient đóng vai trò như một xấp xỉ đơn giản cho ánh sáng gián tiếp trong môi trường.
+		
+		\textbf{Diffuse:}
+		Thành phần diffuse mô phỏng sự phản xạ ánh sáng trên các bề mặt nhám lý tưởng, thường được gọi là phản xạ Lambert. Khi ánh sáng chiếu tới bề mặt nhám, năng lượng ánh sáng bị tán xạ theo nhiều hướng do tương tác với cấu trúc vi mô của bề mặt, trong khi một phần khác bị hấp thụ. Kết quả là cường độ ánh sáng phản xạ quan sát được không phụ thuộc vào hướng nhìn, mà chỉ phụ thuộc vào góc giữa pháp tuyến bề mặt và hướng chiếu sáng. Thành phần diffuse đóng vai trò quan trọng trong việc thể hiện hình dạng và khối của vật thể, vì nó làm nổi bật các biến thiên hình học dưới tác động của ánh sáng.
+		
+		\textbf{Specular:}
+		Thành phần specular mô phỏng các vùng lóe sáng xuất hiện trên các bề mặt nhẵn hoặc bóng, nơi ánh sáng được phản xạ tập trung theo một hướng ưu tiên. Trong trường hợp lý tưởng, như bề mặt gương, ánh sáng phản xạ tuân theo định luật phản xạ, với góc phản xạ bằng góc tới. Trong mô hình Phong, hiện tượng này được xấp xỉ nhằm tái tạo cảm giác về độ bóng và độ nhẵn của vật liệu, đồng thời cung cấp các tín hiệu thị giác quan trọng để phân biệt các loại bề mặt khác nhau.
+		
 		\item \textbf{Phương pháp:}
 		\begin{enumerate}
-			\item Xử lý đỉnh\\
+			\item \textit{Xử lý đỉnh}\\
 			Tại mỗi đỉnh, tồn tại một vector pháp tuyến $\vec{N}$, được tính bằng trung bình của các pháp tuyến của các mặt chung đỉnh.
 			\begin{gather*}
 				\vec{N^*} = \frac{1}{m} \sum_{i=1}^{m} \vec{N_i}\\
@@ -204,18 +213,18 @@ Nguồn sáng phát xạ mô tả các bề mặt có khả năng tự phát sá
 			- $k$ là hệ số phản xạ, xác định mức độ hấp thụ ánh sáng của vật thể.\\
 			- $I_l$ là cường độ và màu sắc nguồn sáng.
 			
-			\item Tạo lưới và nội suy (Rasterization and Interpolation)\\
+			\item \textit{Tạo lưới và nội suy (Rasterization and Interpolation)}\\
 			Tạo lưới nhằm xác định tất cả các pixel trên màn hình được bao phủ bởi đa giác. Các pixel này được gọi là mảnh (fragment) trong quá trình tính toán.\\
 			Vector pháp tuyến của mỗi mảnh được nội suy tuyến tính từ các vector pháp tuyến tại các đỉnh của đa giác.
 			
-			\item Tính toán chiếu sáng\\
+			\item \textit{Tính toán chiếu sáng}\\
 			Tại mỗi mảnh, mô hình Phong được áp dụng và tính toán cường độ sáng.\\
 			\begin{gather*}
 				\vec{R^*} = 2 * (\vec{L} \cdot \vec{N}) * \vec{N} - \vec{L}\\
 				\vec{R} = \frac{\vec{R^*}}{||\vec{R^*}||}\\
 				Ambient = k_a * I_a\\
 				Diffuse = k_d * I_d * max(0, \vec{N} \cdot \vec{L})\\
-				Specular = k_s * I_s * max(0, \vec{R} \cdot \vec{V})^n\\
+				Specular = k_s * I_s * max(0, \vec{R} \cdot \vec{V})^\alpha\\
 				I = Ambient + Diffuse + Specular
 			\end{gather*}
 			
@@ -228,9 +237,17 @@ Nguồn sáng phát xạ mô tả các bề mặt có khả năng tự phát sá
 			- $\vec{V}$ là vector đơn vị từ vị trí của mảnh đến camera.
 		\end{enumerate}
 		
-		\item \textbf{Đóng góp:} Kết xuất Phong tạo ra các đốm sáng phản xạ gương mượt mà và chính xác hơn nhiều. Mô hình đã trở thành tiêu chuẩn trong nhiều thập kỷ cho cả đồ họa thời gian thực và ngoại tuyến.
+		\item \textbf{Đóng góp:}
+		Kết xuất Phong tạo ra các đốm sáng phản xạ gương mượt mà và chính xác hơn nhiều. Mô hình đã trở thành tiêu chuẩn trong nhiều thập kỷ cho cả đồ họa thời gian thực và ngoại tuyến.
 		
-		\item \textbf{Hạn chế:} Chi phí tính toán cao hơn đáng kể so với Gouraud. Mô hình vẫn mang tính thực nghiệm và không tuân thủ các nguyên tắc vật lý.
+		\item \textbf{Hạn chế:} 
+		
+		Trong mô hình chiếu sáng Phong, các đặc tính vật liệu và màu sắc của bề mặt không được mô tả thông qua các đại lượng vật lý cơ bản, mà được biểu diễn gián tiếp bằng các hệ số thực nghiệm. Cụ thể, bề mặt vật thể được đặc trưng bởi các tham số \(k_a\), \(k_d\), \(k_s\) và hệ số bóng \(\alpha\), tương ứng với các thành phần ambient, diffuse và specular. Những tham số này không xuất phát từ các tính chất vật lý đo được như độ nhám vi mô, chiết suất hay phổ phản xạ của vật liệu, mà được lựa chọn thủ công nhằm đạt được hiệu ứng thị giác mong muốn.
+		
+		Màu sắc của vật thể trong mô hình Phong thường được gán trực tiếp cho các hệ số \(k_d\) và đôi khi \(k_a\), trong khi thành phần specular thường được giả định có màu trắng hoặc một màu cố định, không phụ thuộc vào màu sắc thực của vật liệu. Do đó, màu sắc quan sát được không phải là kết quả của sự tương tác giữa ánh sáng và vật chất, mà là kết quả của việc nhân các hệ số màu thực nghiệm với cường độ nguồn sáng.
+		
+		Cách biểu diễn này dẫn đến nhiều hạn chế về mặt vật lý, bao gồm việc không bảo toàn năng lượng, khó phân biệt một cách nhất quán giữa các loại vật liệu khác nhau, và không thể tái hiện các hiệu ứng phụ thuộc góc quan sát. Mặc dù vậy, nhờ tính đơn giản và hiệu quả tính toán, mô hình Phong vẫn giữ vai trò quan trọng trong lịch sử phát triển của đồ họa máy tính, đồng thời tạo tiền đề cho sự ra đời của các mô hình chiếu sáng dựa trên vật lý và các biểu diễn BRDF hiện đại.
+		
 	\end{itemize}
 	
 	\item Mô hình của Blinn-Phong
@@ -239,17 +256,17 @@ Nguồn sáng phát xạ mô tả các bề mặt có khả năng tự phát sá
 		
 		\item \textbf{Phương pháp:}
 		\begin{enumerate}
-			\item Xử lý đỉnh\\
+			\item \textit{Xử lý đỉnh}\\
 			Tương tự mô hình của Phong.
 			
-			\item Rời rạc hoá và nội suy (Rasterization and Interpolation)\\
+			\item \textit{Rời rạc hoá và nội suy (Rasterization and Interpolation)}\\
 			Tương tự mô hình của Phong.
 			
-			\item Tính toán chiếu sáng\\
+			\item \textit{Tính toán chiếu sáng}\\
 			Tương tự mô hình của Phong. Tại thành phần phản xạ gương, thay thế vector phản xạ $\vec{R}$ bằng vector nửa góc (Halfway vector) $\vec{H}$.
 			\begin{gather*}
 				\vec{H} = \frac{\vec{L} + \vec{V}}{||\vec{L} + \vec{V}||}\\
-				Specular = k_s * I_s * max(0, \vec{R} \cdot \vec{V})^n\\
+				Specular = k_s * I_s * max(0, \vec{R} \cdot \vec{V})^\alpha\\
 				I = Ambient + Diffuse + Specular
 			\end{gather*}
 			
@@ -262,107 +279,114 @@ Nguồn sáng phát xạ mô tả các bề mặt có khả năng tự phát sá
 			- $\vec{H}$ là vector đơn vị nửa góc.
 		\end{enumerate}
 		
-		\item \textbf{Đóng góp:} Việc tính toán $\vec{H}$ thường hiệu quả hơn $\vec{R}$. Mô hình này cũng cho kết quả trông tự nhiên hơn trong một số trường hợp. Do hiệu quả của mô hình, Blinn-Phong đã được sử dụng rộng rãi làm mô hình chiếu sáng mặc định trong các API đồ họa đời đầu như OpenGL và Direct3D.
+		\item \textbf{Đóng góp:}
+		Việc tính toán $\vec{H}$ thường hiệu quả hơn $\vec{R}$. Mô hình này cũng cho kết quả trông tự nhiên hơn trong một số trường hợp. Do hiệu quả của mô hình, Blinn-Phong đã được sử dụng rộng rãi làm mô hình chiếu sáng mặc định trong các API đồ họa đời đầu như OpenGL và Direct3D.
 		
-		\item \textbf{Hạn chế:} Tương tự như mô hình Phong, đây vẫn là một mô hình thực nghiệm và không có cơ sở vật lý.
+		\item \textbf{Hạn chế:}
+		Tương tự như mô hình Phong, đây vẫn là một mô hình thực nghiệm và không có cơ sở vật lý.
 	\end{itemize}
 	
 \end{enumerate}
+
 \subsection{Mô hình vật lý}
 \begin{enumerate}
-	\item Phương trình kết xuất
+	\item \textbf{Phương trình kết xuất (Rendering Equation)}
 	\begin{itemize}
-		\item \textbf{Nguyên lý:} Phương trình Kết xuất là một biểu thức vật lý mô tả trạng thái cân bằng của bức xạ ánh sáng tại mọi điểm trong một cảnh. Nó phát biểu rằng, ánh sáng đi ra $(L_o)$ từ một điểm x theo một hướng $\omega_o$ bằng tổng của ánh sáng do chính điểm đó phát ra $(L_e)$ và tích phân của tất cả ánh sáng đi tới $(L_i)$ từ mọi hướng $\omega_i$ trên bán cầu $\Omega$ xung quanh điểm đó, được điều chỉnh bởi hàm phân bố tán xạ hai chiều (BRDF) của bề mặt\cite{render_equa2}.
+		\item \textbf{Nguyên lý:}  
+		Phương trình kết xuất là một biểu thức vật lý mô tả trạng thái cân bằng của bức xạ ánh sáng tại mọi điểm trong một cảnh. Phương trình phát biểu rằng bức xạ đi ra $L_o$ từ một điểm $x$ theo hướng $\omega_o$ bằng tổng của bức xạ do chính điểm đó phát ra $L_e$ và tổng đóng góp của toàn bộ bức xạ đi tới $L_i$ từ mọi hướng $\omega_i$ trên bán cầu $\Omega$ xung quanh điểm đó, được điều chỉnh bởi hàm phân bố phản xạ hai chiều (BRDF) của bề mặt \cite{render_equa2}.
 		
-		\item \textbf{Phương pháp:}\\
-		Phương trình có dạng tích phân Fredholm loại thứ hai:\\
-		\begin{math}
-			L_o(x, \omega_o) = L_e(x, \omega_o) + \int_\Omega f_r(x, \omega_i, \omega_o) * L_i(x, \omega_i)(n \cdot \omega_i) d\omega_i
-		\end{math}
+		\item \textbf{Phương pháp:}  
+		Phương trình kết xuất có dạng một tích phân Fredholm loại thứ hai:
+		\begin{gather*}
+			L_o(x, \omega_o) = L_e(x, \omega_o)
+			+ \int_{\Omega} f_r(x, \omega_i, \omega_o)\,
+			L_i(x, \omega_i)\,
+			(\mathbf{n} \cdot \omega_i)\, d\omega_i
+		\end{gather*}
 		
-		Do tính phức tạp và đệ quy, phương trình này không có lời giải giải tích cho các cảnh thông thường. Kajiya đã đề xuất sử dụng các phương pháp Monte Carlo để xấp xỉ giá trị của tích phân.\\
-		Thuật toán thực tế để giải phương trình này được gọi là Dò đường (Path Tracing).
-		%		1. Đối với mỗi pixel, một hoặc nhiều tia sáng được bắn từ camera vào cảnh.\\
-		%		2. Khi một tia chạm vào một bề mặt, một tia mới được tạo ra và bắn đi theo một hướng ngẫu nhiên, được lấy mẫu dựa trên hàm BRDF của bề mặt đó.\\
-		%		3. Tại mỗi điểm giao cắt, thuật toán tính toán sự đóng góp ánh sáng trực tiếp từ các nguồn sáng.\\
-		%		4. Quá trình "nảy bật" ngẫu nhiên này được lặp lại nhiều lần, tạo thành một "đường đi" (path) của ánh sáng.\\
-		%		5. Cường độ sáng của pixel được tính bằng cách lấy trung bình kết quả của nhiều đường đi như vậy.
+		Trong đó $f_r$ là BRDF của bề mặt tại điểm $x$, và $\mathbf{n}$ là vector pháp tuyến đơn vị tại điểm đó.
 		
-		\item \textbf{Đóng góp:}\\
-		Cung cấp một nền tảng lý thuyết thống nhất cho tất cả các thuật toán kết xuất dựa trên vật lý.\\
-		Cho phép mô phỏng một cách tự nhiên và toàn diện tất cả các hiện tượng quang học phức tạp, bao gồm bóng đổ mềm, phản xạ gương và khuếch tán, hiện tượng tụ quang (caustics), chiếu sáng gián tiếp, và độ sâu trường ảnh (depth of field) trong cùng một khuôn khổ.\\
-		Là nền tảng cho hầu hết các trình kết xuất quang thực hiện đại được sử dụng trong sản xuất phim ảnh và hiệu ứng kỹ xảo.
+		Do tính chất đệ quy và không gian nghiệm rất lớn, phương trình kết xuất không có lời giải giải tích cho các cảnh thông thường. Kajiya đã đề xuất sử dụng các phương pháp Monte Carlo để xấp xỉ giá trị của tích phân này.
 		
-		\item \textbf{Hạn chế:}\\
-		Chi phí tính toán cực kỳ cao. Các phương pháp Monte Carlo hội tụ rất chậm, đòi hỏi phải lấy hàng trăm hoặc hàng nghìn mẫu (đường đi) cho mỗi pixel để tạo ra một hình ảnh không bị nhiễu (noise).\\
-		Bản chất ngẫu nhiên của thuật toán tạo ra nhiễu trong hình ảnh, đặc biệt là ở các khu vực có các đường đi ánh sáng phức tạp (ví dụ: tụ quang).\\
-		Không phù hợp cho các ứng dụng thời gian thực do tốc độ hội tụ chậm.
+		Một trong những thuật toán thực tế phổ biến nhất để xấp xỉ nghiệm của phương trình kết xuất là \textbf{Dò đường (Path Tracing)}, với quy trình cơ bản như sau:
+		\begin{enumerate}
+			\item Với mỗi pixel, một hoặc nhiều tia được bắn từ camera vào cảnh.
+			\item Khi tia giao với một bề mặt, một hướng mới được lấy mẫu ngẫu nhiên dựa trên BRDF của bề mặt đó.
+			\item Tại mỗi điểm giao, thuật toán tính toán đóng góp ánh sáng trực tiếp từ các nguồn sáng.
+			\item Quá trình lấy mẫu và phản xạ được lặp lại nhiều lần, tạo thành một đường đi ánh sáng.
+			\item Giá trị pixel cuối cùng được ước lượng bằng trung bình thống kê của nhiều đường đi như vậy.
+		\end{enumerate}
+		
+		\item \textbf{Đóng góp:}  
+		Phương trình kết xuất cung cấp một khuôn khổ lý thuyết thống nhất cho hầu hết các thuật toán kết xuất dựa trên vật lý. Nó cho phép mô phỏng một cách tự nhiên và toàn diện các hiện tượng quang học phức tạp như chiếu sáng gián tiếp, bóng đổ mềm, phản xạ gương và khuếch tán, tụ quang (caustic) và độ sâu trường ảnh (depth of field). Phương trình này là nền tảng của hầu hết các trình kết xuất quang thực hiện đại trong điện ảnh và kỹ xảo.
+		
+		\item \textbf{Hạn chế:}  
+		Chi phí tính toán rất cao do tốc độ hội tụ chậm của các phương pháp Monte Carlo. Bản chất ngẫu nhiên của quá trình lấy mẫu dẫn đến nhiễu (noise) trong hình ảnh, đặc biệt ở các vùng có đường đi ánh sáng phức tạp. Do đó, các phương pháp dựa trực tiếp trên phương trình kết xuất thường không phù hợp cho các ứng dụng thời gian thực.
 	\end{itemize}
 	
 	\item Phương pháp Radiosity
 	\begin{itemize}
-		\item \textbf{Nguyên lý:} Nguyên lý cốt lõi là sự bảo toàn năng lượng trong một hệ thống khép kín bao gồm các bề mặt phản xạ khuếch tán hoàn hảo (perfectly diffuse). Nó mô hình hóa sự cân bằng năng lượng ánh sáng, trong đó tổng năng lượng ánh sáng rời khỏi một bề mặt (radiosity) bằng tổng năng lượng do chính nó phát ra với năng lượng nó phản xạ lại từ tất cả các bề mặt khác trong cảnh. Đặc điểm quan trọng nhất là nó tính toán sự tương tác ánh sáng gián tiếp giữa các bề mặt, tạo ra các hiệu ứng như chảy máu màu (color bleeding)\cite{radiosity1}.
+		\item \textbf{Nguyên lý:}
+		Radiosity dựa trên nguyên lý bảo toàn năng lượng trong một hệ thống gồm các bề mặt phản xạ khuếch tán hoàn hảo. Phương pháp này mô hình hóa trạng thái cân bằng năng lượng ánh sáng, trong đó tổng năng lượng rời khỏi một bề mặt bằng tổng năng lượng do chính nó phát ra và năng lượng phản xạ từ tất cả các bề mặt khác trong cảnh. Radiosity đặc biệt chú trọng đến việc mô phỏng chiếu sáng gián tiếp, tạo ra các hiệu ứng như chảy máu màu (color bleeding) \cite{radiosity1}.
 		
 		\item \textbf{Phương pháp:}
 		\begin{enumerate}
-			\item Rời rạc hóa (Discretization)\\
-			Toàn bộ các bề mặt trong cảnh được chia nhỏ thành một tập hợp các ô (patches) đa giác phẳng.
+			\item \textit{Rời rạc hóa}\\
+			Các bề mặt trong cảnh được chia thành một tập hữu hạn các ô phẳng (patches).
 			
-			\item Tính toán Hệ số Hình dạng (Form Factors)\\
-			Đối với mỗi cặp ô (i, j), một "hệ số hình dạng" $F_{ij}$ được tính toán. Giá trị này biểu thị phần trăm năng lượng rời khỏi ô j và chiếu tới được ô i, có tính đến khoảng cách, định hướng và sự che khuất giữa chúng.
+			\item \textit{Tính toán Hệ số Hình dạng (Form Factors)}\\
+			Với mỗi cặp ô $i, j$, hệ số hình dạng $F_{ij}$ được tính toán, biểu diễn tỷ lệ năng lượng rời khỏi ô $j$ và tới được ô $i$.
 			
-			\item Thiết lập hệ phương trình tuyến tính\\
+			\item \textit{Thiết lập hệ phương trình năng lượng}\\
 			Dựa trên nguyên lý cân bằng năng lượng, thiết lập hệ phương trình tuyến tính.
-%			\begin{math}
-%				B_i = E_i + \rho_i * \sum_{j=1}^{n}B_j * F_{ij}
-%			\end{math}
-%			
-%			Với:\\
-%			- $B_i$ là radiosity của ô $i$ (ẩn số cần tìm).\\
-%			- $E_i$ là năng lượng phát ra của ô $i$.\\
-%			- $\rho_i$ là hệ số phản xạ của ô $i$.
+			\[
+			B_i = E_i + \rho_i \sum_{j=1}^{n} B_j F_{ij}
+			\]
+			trong đó \(B_i\) là radiosity của ô \(i\), \(E_i\) là năng lượng phát xạ, và \(\rho_i\) là hệ số phản xạ khuếch tán.
 			
-			\item Giải hệ phương trình\\
+			\item \textit{Giải hệ phương trình}\\
 			Hệ phương trình này thường được giải bằng các phương pháp lặp (ví dụ: Gauss-Seidel), mô phỏng quá trình ánh sáng "nảy bật" giữa các bề mặt qua nhiều lần lặp cho đến khi đạt được trạng thái hội tụ.
 			
 		\end{enumerate}
 		
 		\item \textbf{Đóng góp:}\\
-		Đây là phương pháp đầu tiên mô phỏng thành công các hiệu ứng chiếu sáng khuếch tán gián tiếp một cách tinh tế, tạo ra các bóng đổ mềm mại và hiện tượng chảy máu màu cực kỳ chân thực, điều mà các mô hình chiếu sáng cục bộ không thể làm được\cite{radiosity1}.\\
+		Đây là phương pháp đầu tiên mô phỏng thành công các hiệu ứng chiếu sáng khuếch tán gián tiếp một cách tinh tế, tạo ra các bóng đổ mềm mại và hiện tượng chảy máu màu cực kỳ chân thực, điều mà các mô hình chiếu sáng cục bộ không thể làm được\cite{radiosity1}.
+		
 		Kết quả tính toán độc lập với góc nhìn. Sau khi giải hệ phương trình, các giá trị chiếu sáng được lưu lại trên các ô, cho phép người dùng di chuyển camera và kết xuất cảnh từ các góc nhìn khác nhau trong thời gian thực mà không cần tính toán lại.
 		
 		\item \textbf{Hạn chế:}\\
-		Mô hình giả định tất cả các bề mặt đều là phản xạ khuếch tán hoàn hảo. Do đó, Radiosity không thể mô phỏng các hiện tượng phụ thuộc vào góc nhìn như phản xạ gương, bề mặt bóng loáng, hay các vật liệu trong suốt.\\
-		Chi phí tính toán và lưu trữ rất cao, đặc biệt là ma trận hệ số hình dạng có kích thước $n * n$ với $n$ là số lượng ô.\\
+		Mô hình giả định tất cả các bề mặt đều là phản xạ khuếch tán hoàn hảo. Do đó, Radiosity không thể mô phỏng các hiện tượng phụ thuộc vào góc nhìn như phản xạ gương, bề mặt bóng loáng, hay các vật liệu trong suốt.
+		
+		Chi phí tính toán và lưu trữ rất cao, đặc biệt là ma trận hệ số hình dạng có kích thước $n * n$ với $n$ là số lượng ô.
+		
 		Chỉ áp dụng được cho các cảnh tĩnh (static scenes). Bất kỳ sự thay đổi nào về hình học hoặc vật liệu đều đòi hỏi phải tính toán lại toàn bộ.
 	\end{itemize}
 
 	\item Phương pháp PBR (Physically Based Rendering)
 	\begin{itemize}
-		\item \textbf{Nguyên lý:} Nguyên lý cốt lõi là việc tìm kiếm giải pháp cho Phương trình kết xuất sao cho vẫn tuân thủ nghiêm ngặt các định luật vật lý.
+		\item \textbf{Nguyên lý:} Kết xuất dựa trên vật lý là một cách tiếp cận nhằm xấp xỉ nghiệm của Phương trình kết xuất sao cho vẫn tuân thủ các định luật vật lý cơ bản của sự truyền năng lượng ánh sáng.
+		
 		\begin{enumerate}
-			\item Mô hình vật liệu\\
-			PBR sử dụng các mô hình vật liệu mô tả cách các đối tượng phản xạ ánh sáng. Những mô hình thương được đại diện bằng \texit{Hàm phân bố phản xạ hai chiều (BRDF)}, đặc trưng cho sự phân bố ánh sáng đi ra dựa trên hướng ánh sáng đi vào. 
+			\item \textit{Mô hình vật liệu}\\ 
+			Vật liệu được mô tả thông qua các mô hình BRDF, đặc trưng cho sự phân bố ánh sáng phản xạ dựa trên hướng ánh sáng tới và hướng quan sát.
 			
-			\item Bảo toàn năng lượng\\
+			\item \textit{Bảo toàn năng lượng}\\
 			Năng lượng phản xạ ra khỏi bề mặt phải luôn nhỏ hơn hoặc bằng năng lượng ánh sáng chiếu tới.
 
-			\item Đối ứng Helmholtz\\
+			\item \textit{Đối ứng Helmholtz}\\
 			Việc hoán đổi hướng ánh sáng tới và hướng ánh sáng phản xạ sẽ không làm thay đổi giá trị của BDRF.
 
-			\item Tính Tuyến tính và Nguyên lý chồng chất\\
+			\item \textit{Tính Tuyến tính và Nguyên lý chồng chất}\\
 			Tổng độ sáng phản xạ của một bề mặt phải bằng tổng độ phản xạ riêng lẻ từ các thành phần khác nhau.
 
-			\item Giải Phương trình kết xuất\\
+			\item \textit{Giải Phương trình kết xuất}\\
 			Sử dụng các kĩ thuật xấp xỉ được giải nghiệm cho Phương trình kết xuất. 
-			
 		\end{enumerate}
 		
-		\item \textbf{Đóng góp:}\\
-		Tạo ra hình ảnh nhất quán trong mọi điều kiện ánh sáng; chuẩn hóa quy trình sản xuất (workflow) giữa các phần mềm khác nhau.
+		\item \textbf{Đóng góp:}
+		PBR tạo ra hình ảnh nhất quán trong các điều kiện chiếu sáng khác nhau và chuẩn hóa quy trình mô tả vật liệu, cho phép chia sẻ tài nguyên giữa các hệ thống và phần mềm khác nhau.
 
-		\item \textbf{Hạn chế:}\\
-		Chi phí tính toán cao; đòi hỏi quy trình tạo Texture maps phức tạp và chính xác hơn.
+		\item \textbf{Hạn chế:}
+		Chi phí tính toán cao và yêu cầu quy trình xây dựng dữ liệu vật liệu phức tạp và chính xác hơn so với các mô hình thực nghiệm.
 	\end{itemize}
-	
 \end{enumerate}
