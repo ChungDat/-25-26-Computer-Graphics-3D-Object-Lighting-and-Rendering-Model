@@ -30,6 +30,71 @@ Dựa trên cơ chế tương tác ánh sáng với vật liệu, mô hình Cook
     Xảy ra khi ánh sáng xâm nhập vào bên trong vật liệu, bị tán xạ nhiều lần và thoát ra ngoài theo nhiều hướng khác nhau. Thành phần này thường được giả định là khuếch tán đẳng hướng và ít phụ thuộc vào góc nhìn.
 \end{enumerate}
 
+\section{Hàm phân bố phản xạ hai chiều (Bidirectional Reflectance Distribution Function – BRDF)}
+
+Hàm BRDF (Bidirectional Reflectance Distribution Function) là một mô hình toán học trung tâm trong kết xuất dựa trên vật lý, dùng để mô tả cách một bề mặt phản xạ ánh sáng tại một điểm xác định. BRDF thiết lập mối quan hệ giữa ánh sáng đi tới bề mặt từ một hướng cho trước và ánh sáng được phản xạ ra khỏi bề mặt theo một hướng quan sát cụ thể. Thông qua BRDF, các đặc tính quang học của vật liệu được mã hóa một cách độc lập với hình học cảnh và nguồn sáng.
+
+\subsection{Định nghĩa và ý nghĩa vật lý}
+
+Xét một điểm $p$ trên bề mặt vật thể, với pháp tuyến đơn vị $\mathbf{N}$. Một chùm ánh sáng có độ chói vi phân $dL_i$ đi tới điểm $p$ theo hướng $\omega_i$, tạo ra một độ rọi vi phân $dE_i$ trên bề mặt. Phần ánh sáng này sau đó được phản xạ và tạo ra độ chói vi phân $dL_o$ theo hướng quan sát $\omega_o$. BRDF được định nghĩa là tỷ lệ giữa hai đại lượng này:
+
+\begin{equation}
+	f_r(p, \omega_i, \omega_o) = \frac{dL_o(p, \omega_o)}{dE_i(p, \omega_i)}
+\end{equation}
+
+Trong đó:
+\begin{itemize}
+	\item $p$ là điểm đang xét trên bề mặt.
+	\item $\omega_i$ là hướng ánh sáng tới.
+	\item $\omega_o$ là hướng ánh sáng phản xạ hay hướng quan sát.
+	\item $dL_o$ là độ chói phản xạ theo hướng $\omega_o$.
+	\item $dE_i$ là độ rọi do ánh sáng tới từ hướng $\omega_i$ gây ra.
+\end{itemize}
+
+Độ rọi vi phân có thể được viết dưới dạng:
+\begin{equation}
+	dE_i = L_i(p, \omega_i) (\mathbf{N} \cdot \omega_i) \, d\omega_i
+\end{equation}
+
+Từ đó, BRDF đóng vai trò như một hàm phân bố, quyết định ánh sáng tới từ mỗi hướng được “chia” như thế nào cho các hướng phản xạ khác nhau. Trong thực tế Đồ họa máy tính, $f_r$ thường được biểu diễn dưới dạng một vector RGB, trong đó mỗi kênh màu có hành vi phản xạ riêng biệt.
+
+\subsection{Các tính chất vật lý cơ bản}
+
+Một hàm BRDF có ý nghĩa vật lý cần thỏa mãn các ràng buộc sau:
+
+\begin{itemize}
+	\item \textbf{Tính đối ứng (Reciprocity):} Dựa trên nguyên lý Helmholtz, BRDF không thay đổi khi hoán đổi hướng tới và hướng phản xạ:
+	\begin{equation}
+		f_r(p, \omega_i, \omega_o) = f_r(p, \omega_o, \omega_i)
+	\end{equation}
+	
+	\item \textbf{Bảo toàn năng lượng (Energy Conservation):} Tổng năng lượng phản xạ ra khỏi bề mặt theo mọi hướng không được vượt quá năng lượng ánh sáng đi tới:
+	\begin{equation}
+		\int_{\Omega} f_r(p, \omega_i, \omega_o) (\mathbf{N} \cdot \omega_o) \, d\omega_o \le 1
+	\end{equation}
+	
+	\item \textbf{Tính tuyến tính (Linearity):} Độ chói phản xạ tổng cộng có thể được biểu diễn như tổng của nhiều thành phần phản xạ độc lập. Điều này cho phép mô hình hóa vật liệu bằng cách cộng các BRDF thành phần.
+\end{itemize}
+
+Các tính chất này đảm bảo rằng BRDF không chỉ cho kết quả thị giác hợp lý mà còn tuân thủ các định luật cơ bản của quang học.
+
+\subsection{Phân rã thành các thành phần cơ bản}
+
+Trong phần lớn các mô hình chiếu sáng và kết xuất, BRDF được phân tách thành hai thành phần chính:
+
+\begin{equation}
+	f_r = R_d + R_s
+\end{equation}
+
+Trong đó:
+\begin{itemize}
+	\item \textbf{Thành phần khuếch tán $R_d$ (Diffuse):} Mô tả sự tán xạ ánh sáng gần như đồng đều theo mọi hướng. Thành phần này thường gắn với các vật liệu điện môi, ánh sáng xâm nhập vào vật liệu, tán xạ nội tại và thoát ra ngoài. Mô hình Lambert là ví dụ đơn giản nhất của $R_d$.
+	
+	\item \textbf{Thành phần gương $R_s$ (Specular):} Mô tả sự phản xạ tập trung quanh hướng phản xạ gương lý tưởng. Thành phần này chịu trách nhiệm cho các vùng lóe sáng và phụ thuộc mạnh vào góc nhìn cũng như độ nhám vi mô của bề mặt. Các mô hình vi bề mặt như Cook–Torrance là những biểu diễn vật lý cho $R_s$.
+\end{itemize}
+
+Sự kết hợp của hai thành phần này cho phép BRDF mô phỏng một phổ rộng các vật liệu trong thế giới thực, từ bề mặt nhám mờ như phấn hoặc bê tông, đến các vật liệu bóng và dẫn điện như kim loại, nhựa hoặc sơn phủ. Nhờ đó, BRDF trở thành nền tảng lý thuyết cốt lõi cho hầu hết các hệ thống kết xuất dựa trên vật lý hiện đại.
+
 \section{Mô hình Cook-Torrance (The Cook-Torrance Model)}
 
 Mô hình Cook-Torrance định nghĩa cường độ ánh sáng phản xạ $I_r$ tới mắt người quan sát dưới tác động của nhiều nguồn sáng như sau:
@@ -85,7 +150,7 @@ Trong mô hình Cook–Torrance, hàm phân bố Beckmann được sử dụng n
 Trong đó:
 \begin{itemize}
 	\item $m$ là độ dốc trung bình bình phương (root mean square slope), đại diện cho mức độ nhám vi mô của bề mặt. Giá trị $m$ nhỏ tương ứng với bề mặt bóng, tập trung nhiều vi bề mặt quanh pháp tuyến trung bình. Giá trị $m$ lớn biểu thị bề mặt thô, với các vi bề mặt phân bố rộng theo nhiều hướng khác nhau.
-	\item $\alpha$ là góc giữa pháp tuyến trung bình của bề mặt $\mathbf{N}$ và vector nửa góc $\mathbf{H}$, với $\cos \alpha = \mathbf{N} \cdot \mathbf{H}$.
+	\item $\alpha$ là góc giữa pháp tuyến trung bình $\mathbf{N}$ của bề mặt và vector nửa góc $\mathbf{H}$, với $\cos \alpha = \mathbf{N} \cdot \mathbf{H}$.
 \end{itemize}
 
 Hàm $D$ đạt giá trị lớn nhất khi $\mathbf{H}$ gần trùng với $\mathbf{N}$, và giảm nhanh khi góc lệch tăng, phản ánh trực tiếp ảnh hưởng của độ nhám lên độ sắc nét của vùng lóe sáng gương.
@@ -116,21 +181,137 @@ Biểu thức này đảm bảo rằng đóng góp phản xạ gương bị suy 
 
 Hệ số Fresnel $F$ mô tả tỷ lệ ánh sáng bị phản xạ tại ranh giới giữa hai môi trường, thường là không khí và vật liệu, so với phần ánh sáng bị khúc xạ và hấp thụ vào bên trong vật liệu. Đây là thành phần phụ thuộc mạnh vào góc tới và bản chất quang học của vật liệu.
 
-Theo các phương trình Fresnel trong quang học cổ điển, hệ số phản xạ tăng khi góc tới tăng và tiến gần đến $90^\circ$ (grazing angle), và tiến tới 1 khi ánh sáng chiếu gần song song với bề mặt. Điều này giải thích vì sao ngay cả các vật liệu kém phản xạ ở góc vuông cũng trở nên phản xạ mạnh ở các góc xiên.
+Khác với các mô hình chiếu sáng cổ điển giả định thành phần phản xạ gương chỉ mang màu của nguồn sáng, mô hình Cook-Torrance khẳng định rằng $F$ phụ thuộc đồng thời vào góc tới và bước sóng ánh sáng. Điều này dẫn đến hiện tượng thay đổi màu sắc của điểm phản xạ gương khi góc quan sát tiến gần đến góc nghiêng lớn (grazing angle), một hiện tượng phổ biến trên các vật liệu kim loại và bề mặt bóng.
 
-Trong thực hành đồ họa máy tính, $F$ thường được xấp xỉ bằng công thức Schlick:
+Theo các phương trình Fresnel trong quang học cổ điển, hệ số phản xạ tăng khi góc tới tăng, $F$ tăng từ giá trị $F_0$ và tiến tới 1 khi góc tới tăng từ $0$ và tiến gần đến $90^\circ$ (grazing angle), ánh sáng chiếu gần song song với bề mặt. Điều này giải thích vì sao ngay cả các vật liệu kém phản xạ ở góc vuông cũng trở nên phản xạ mạnh ở các góc xiên.
+
+\subsubsection{Xác định $F$ dựa trên lý thuyết Fresnel}
+
+Về mặt lý thuyết, hệ số Fresnel có thể được tính trực tiếp từ các phương trình Fresnel trong quang học, nếu biết:
+\begin{itemize}
+	\item $n$: chỉ số khúc xạ của vật liệu.
+	\item $k$: hệ số tuyệt chủng (extinction coefficient), mô tả mức độ hấp thụ ánh sáng trong vật liệu.
+\end{itemize}
+
+Với giả định ánh sáng không phân cực và $k = 0$, hệ số Fresnel được tính theo công thức:
+
+\begin{equation}\label{eq:fresnel}
+	F = \frac{1}{2}
+	\left[
+	\left( \frac{g - c}{g + c} \right)^2
+	\left(
+	1 +
+	\left(
+	\frac{c(g + c) - 1}{c(g - c) + 1}
+	\right)^2
+	\right)
+	\right]
+\end{equation}
+
+Trong đó:
+\begin{itemize}
+	\item $c = \cos \theta = \mathbf{V} \cdot \mathbf{H}$.
+	\item $g^2 = n^2 + c^2 - 1$.
+\end{itemize}
+
+Hai đại lượng này phụ thuộc vào bước sóng ánh sáng và cho phép tính chính xác lượng ánh sáng phản xạ và khúc xạ tại mọi góc tới. Tuy nhiên, trong thực tế Đồ họa máy tính, các giá trị $n$ và $k$ theo phổ bước sóng thường khó thu thập và không sẵn có cho đa số vật liệu.
+
+\subsubsection{Xác định $F$ từ dữ liệu đo lường thực tế}
+
+Một cách tiếp cận thực tiễn hơn là sử dụng giá trị phản xạ tại góc tới vuông góc, ký hiệu là $F_0$. Giá trị này biểu diễn tỷ lệ ánh sáng bị phản xạ khi ánh sáng chiếu vuông góc với bề mặt và đã được đo đạc, tổng hợp trong nhiều bảng tra cứu vật liệu.
+
+Đối với vật liệu điện môi, $F_0$ thường nhỏ và gần như không đổi theo bước sóng. Đối với kim loại, $F_0$ lớn và phụ thuộc mạnh vào bước sóng, tạo nên màu sắc đặc trưng của phản xạ gương.
+
+Trong Đồ họa máy tính, $F_0$ thường được biểu diễn dưới dạng một vector RGB ($F_0 = (F_{0, R}, F_{0, G}, F_{0, B})$), phản ánh sự phụ thuộc của phản xạ gương vào bước sóng ánh sáng. Cách tiếp cận này đặc biệt phổ biến vì:
+\begin{itemize}
+	\item $F_0$ dễ thu thập hơn so với $n$ và $k$.
+	\item Nó cho phép mô tả trực tiếp màu sắc đặc trưng của phản xạ gương, đặc biệt là đối với kim loại.
+\end{itemize}
+
+\subsubsection{Phương pháp thỏa hiệp thực tế (Practical Compromise)}
+
+Trong trường hợp không có đầy đủ dữ liệu vật lý, Cook và Torrance đề xuất một phương pháp thỏa hiệp mang tính thực dụng, gồm các bước sau:
+
+\begin{enumerate}
+	\item \textbf{Xác định $F_0$:} Lấy giá trị phản xạ tại góc tới bình thường từ bảng tra cứu vật liệu.
+	
+	\item \textbf{Ước tính chỉ số khúc xạ $n$:} Với giả định đơn giản hóa $k = 0$:
+	\begin{equation}
+		F_0 = \left(\frac{n - 1}{n + 1}\right)^2
+	\end{equation}
+	
+	Chỉ số khúc xạ hiệu dụng được suy ra từ $F_0$ theo công thức:
+	\begin{equation}
+		n = \frac{1 - \sqrt{F_0}}{1 + \sqrt{F_0}}
+	\end{equation}
+	
+	\item \textbf{Tính $F$ cho các góc khác:} Giá trị $n$ vừa ước tính được đưa trở lại phương trình Fresnel tổng quát \eqref{eq:fresnel} để xác định $F$ tại các góc tới $\theta$ khác nhau. Quá trình này sẽ tổng hợp nên phổ phản xạ của vật liệu.
+\end{enumerate}
+
+Cách tiếp cận này cho phép mô phỏng hợp lý sự thay đổi phản xạ gương theo góc nhìn ngay cả khi thiếu dữ liệu quang học đầy đủ.
+
+\subsubsection{Xấp xỉ để tối ưu hóa tính toán}
+
+Việc tính toán phương trình Fresnel đầy đủ cho mọi bước sóng là tốn kém về mặt tính toán. Do đó, trong thực tế kết xuất, người ta thường sử dụng các xấp xỉ:
+
+\begin{itemize}
+	\item Tính $F$ dựa trên chỉ số khúc xạ trung bình.
+	\item Nội suy tuyến tính giữa màu phản xạ tại góc $0^\circ$ (khi $F = F_0$) và màu phản xạ tại góc $90^\circ$ (khi $F \rightarrow 1$ tại mọi bước sóng).
+\end{itemize}
+\begin{equation}
+	Red_{\theta} = Red_0 + (Red_{\frac{\pi}{2}} - Red_0) \frac{max(0, F_\theta - F_0)}{F_{\frac{\pi}{2}} - F_0}
+\end{equation}
+
+Cách làm này cho phép giữ lại hành vi vật lý quan trọng của hiệu ứng Fresnel, đồng thời giảm đáng kể chi phí tính toán, đặc biệt phù hợp cho các hệ thống kết xuất thời gian thực.
+
+Mặt khác, $F$ còn có thể được xấp xỉ bằng công thức Schlick \cite{schlick_inexpensive_1994}:
 
 \begin{equation}
 	F(\theta) = F_0 + (1 - F_0)(1 - \cos \theta)^5
 \end{equation}
 
-Trong đó:
+Sự kết hợp của ba thành phần $D$, $G$ và $F$ tạo nên lõi vật lý của mô hình Cook–Torrance, cho phép mô phỏng phản xạ gương một cách nhất quán với các định luật quang học và là nền tảng cho các mô hình PBR hiện đại.
+
+\subsection{Giải thích các thành phần chuẩn hóa trong công thức phản xạ gương Cook-Torrance}
+
+Trong thành phần phản xạ gương $R_s$, các thừa số ở tử số $(F, D, G)$ mô tả các đặc tính vật lý vi mô của vật liệu, còn các thành phần ở mẫu số $\pi (\mathbf{N} \cdot \mathbf{L})(\mathbf{N} \cdot \mathbf{V})$ đóng vai trò chuẩn hóa hình học và năng lượng. Chúng đảm bảo rằng phản xạ gương thu được là nhất quán về mặt vật lý khi được tích hợp trên toàn bộ bề mặt vĩ mô.
+
+\subsubsection{Vai trò của hằng số $\pi$}
+
+Hằng số $\pi$ xuất hiện trong mẫu số như một hệ số chuẩn hóa năng lượng. Nguồn gốc của nó xuất phát từ mối liên hệ giữa độ chói (radiance) và độ rọi (irradiance) trong quang học.
+
+Trong các phép đo quang học thực nghiệm, đặc tính phản xạ của vật liệu thường được đo trong điều kiện tới vuông góc (normal incidence) và được biểu diễn dưới dạng các đại lượng tích phân trên bán cầu. Khi chuyển từ mô hình phản xạ gương lý tưởng của các vi bề mặt sang phản xạ hai chiều trên một bề mặt thô, cần có hệ số $1/\pi$ để đảm bảo rằng năng lượng phản xạ tổng cộng không vượt quá năng lượng chiếu tới.
+
+Do đó, thành phần $\pi$ giúp:
 \begin{itemize}
-	\item $F_0$ là hệ số phản xạ tại góc tới vuông góc, đặc trưng cho tính chất vật liệu. Đối với vật liệu điện môi, $F_0$ thường nhỏ và gần như không đổi theo bước sóng. Đối với kim loại, $F_0$ lớn và phụ thuộc mạnh vào bước sóng, tạo nên màu sắc đặc trưng của phản xạ gương.
-	\item $\theta$ là góc giữa vector quan sát $\mathbf{V}$ và vector nửa góc $\mathbf{H}$, với $\cos \theta = \mathbf{V} \cdot \mathbf{H}$.
+	\item Đưa BRDF về đúng đơn vị vật lý.
+	\item Đảm bảo điều kiện bảo toàn năng lượng khi tích phân phản xạ trên toàn bộ bán cầu chiếu sáng.
+	\item Tạo sự tương thích giữa mô hình vi bề mặt và các định nghĩa chuẩn của BRDF trong Phương trình kết xuất.
 \end{itemize}
 
-Sự kết hợp của ba thành phần $D$, $G$ và $F$ tạo nên lõi vật lý của mô hình Cook–Torrance, cho phép mô phỏng phản xạ gương một cách nhất quán với các định luật quang học và là nền tảng cho các mô hình PBR hiện đại.
+\subsubsection{Ý nghĩa của $(\mathbf{N} \cdot \mathbf{L})$}
+
+Thành phần $(\mathbf{N} \cdot \mathbf{L})$ là cosine của góc tới, với $\mathbf{N}$ là pháp tuyến đơn vị của bề mặt và $\mathbf{L}$ là vector đơn vị chỉ hướng ánh sáng tới. Đây là hệ quả trực tiếp của định luật cosine của Lambert.
+
+Thừa số này biểu diễn độ rọi thực tế trên bề mặt:
+\begin{itemize}
+	\item Khi ánh sáng chiếu vuông góc với bề mặt, $(\mathbf{N} \cdot \mathbf{L}) = 1$, năng lượng tập trung tối đa.
+	\item Khi ánh sáng chiếu xiên, cùng một lượng năng lượng bị phân bố trên một diện tích bề mặt lớn hơn, làm giảm cường độ tại điểm xét.
+\end{itemize}
+
+Do đó, $(\mathbf{N} \cdot \mathbf{L})$ điều chỉnh lượng năng lượng ánh sáng hiệu dụng mà các vi bề mặt thực sự nhận được.
+
+\subsubsection{Ý nghĩa của $(\mathbf{N} \cdot \mathbf{V})$}
+
+Thành phần $(\mathbf{N} \cdot \mathbf{V})$ là cosine của góc nhìn, với $\mathbf{V}$ là vector đơn vị hướng về phía người quan sát. Thành phần này liên quan đến hiệu ứng thu hẹp hình ảnh (foreshortening).
+
+Cụ thể:
+\begin{itemize}
+	\item Khi bề mặt được quan sát trực diện, diện tích hình chiếu trùng với diện tích thực.
+	\item Khi quan sát từ góc xiên, diện tích hình chiếu nhỏ hơn diện tích thực của bề mặt.
+\end{itemize}
+
+Thừa số $(\mathbf{N} \cdot \mathbf{V})$ chuyển đổi lượng ánh sáng phản xạ tính trên diện tích vi bề mặt thực sang lượng ánh sáng mà người quan sát thực sự thu nhận được theo hướng $\mathbf{V}$.
 
 \section{Quy trình Kết xuất và Màu sắc (Rendering Pipeline and Color)}
 
