@@ -181,9 +181,14 @@ Biểu thức này đảm bảo rằng đóng góp phản xạ gương bị suy 
 
 Hệ số Fresnel $F$ mô tả tỷ lệ ánh sáng bị phản xạ tại ranh giới giữa hai môi trường, thường là không khí và vật liệu, so với phần ánh sáng bị khúc xạ và hấp thụ vào bên trong vật liệu. Đây là thành phần phụ thuộc mạnh vào góc tới và bản chất quang học của vật liệu.
 
-Khác với các mô hình chiếu sáng cổ điển giả định thành phần phản xạ gương chỉ mang màu của nguồn sáng, mô hình Cook-Torrance khẳng định rằng $F$ phụ thuộc đồng thời vào góc tới và bước sóng ánh sáng. Điều này dẫn đến hiện tượng thay đổi màu sắc của điểm phản xạ gương khi góc quan sát tiến gần đến góc nghiêng lớn (grazing angle), một hiện tượng phổ biến trên các vật liệu kim loại và bề mặt bóng.
+Khác với các mô hình chiếu sáng cổ điển giả định thành phần phản xạ gương chỉ mang màu của nguồn sáng, mô hình Cook-Torrance khẳng định rằng $F=F(\lambda, \theta)$ phụ thuộc đồng thời vào góc tới và bước sóng ánh sáng. Điều này có nghĩa là:
 
-Theo các phương trình Fresnel trong quang học cổ điển, hệ số phản xạ tăng khi góc tới tăng, $F$ tăng từ giá trị $F_0$ và tiến tới 1 khi góc tới tăng từ $0$ và tiến gần đến $90^\circ$ (grazing angle), ánh sáng chiếu gần song song với bề mặt. Điều này giải thích vì sao ngay cả các vật liệu kém phản xạ ở góc vuông cũng trở nên phản xạ mạnh ở các góc xiên.
+\begin{itemize}
+	\item Tại cùng một góc quan sát, các thành phần màu Đỏ, Xanh lá và Xanh dương có thể có giá trị Fresnel khác nhau, tạo ra hiện tượng dịch chuyển màu (color shift), đặc biệt rõ rệt đối với vật liệu kim loại.
+	\item Khi góc quan sát tiến gần đến góc xiên lớn (grazing angle), hệ số phản xạ tăng mạnh và phản xạ gương dần mang màu của nguồn sáng.
+\end{itemize}
+
+Theo lý thuyết Fresnel trong quang học cổ điển, hệ số phản xạ tăng khi góc tới tăng, $F$ tăng từ giá trị $F_0$ và tiến tới 1 khi góc tới tăng từ $0$ và tiến gần đến $90^\circ$ (grazing angle), ánh sáng chiếu gần song song với bề mặt. Điều này giải thích vì sao ngay cả các vật liệu kém phản xạ ở góc vuông cũng trở nên phản xạ mạnh ở các góc xiên.
 
 \subsubsection{Xác định $F$ dựa trên lý thuyết Fresnel}
 
@@ -207,7 +212,6 @@ Với giả định ánh sáng không phân cực và $k = 0$, hệ số Fresnel
 	\right)
 	\right]
 \end{equation}
-
 Trong đó:
 \begin{itemize}
 	\item $c = \cos \theta = \mathbf{V} \cdot \mathbf{H}$.
@@ -218,15 +222,15 @@ Hai đại lượng này phụ thuộc vào bước sóng ánh sáng và cho ph�
 
 \subsubsection{Xác định $F$ từ dữ liệu đo lường thực tế}
 
-Một cách tiếp cận thực tiễn hơn là sử dụng giá trị phản xạ tại góc tới vuông góc, ký hiệu là $F_0$. Giá trị này biểu diễn tỷ lệ ánh sáng bị phản xạ khi ánh sáng chiếu vuông góc với bề mặt và đã được đo đạc, tổng hợp trong nhiều bảng tra cứu vật liệu.
-
-Đối với vật liệu điện môi, $F_0$ thường nhỏ và gần như không đổi theo bước sóng. Đối với kim loại, $F_0$ lớn và phụ thuộc mạnh vào bước sóng, tạo nên màu sắc đặc trưng của phản xạ gương.
-
-Trong Đồ họa máy tính, $F_0$ thường được biểu diễn dưới dạng một vector RGB ($F_0 = (F_{0, R}, F_{0, G}, F_{0, B})$), phản ánh sự phụ thuộc của phản xạ gương vào bước sóng ánh sáng. Cách tiếp cận này đặc biệt phổ biến vì:
+Một cách tiếp cận thực tiễn hơn là sử dụng giá trị phản xạ tại góc tới vuông góc, ký hiệu là $F_0$. Giá trị này biểu diễn tỷ lệ ánh sáng bị phản xạ khi ánh sáng chiếu vuông góc với bề mặt và đã được đo đạc, tổng hợp trong nhiều bảng tra cứu vật liệu. Cách tiếp cận này đặc biệt phổ biến vì:
 \begin{itemize}
 	\item $F_0$ dễ thu thập hơn so với $n$ và $k$.
 	\item Nó cho phép mô tả trực tiếp màu sắc đặc trưng của phản xạ gương, đặc biệt là đối với kim loại.
 \end{itemize}
+
+Đối với vật liệu điện môi, $F_0$ thường nhỏ và gần như không đổi theo bước sóng. Đối với kim loại, $F_0$ lớn và phụ thuộc mạnh vào bước sóng, tạo nên màu sắc đặc trưng của phản xạ gương.
+
+Trong Đồ họa máy tính, $F_0$ thường được biểu diễn dưới dạng một vector RGB ($F_0 = (F_{0, R}, F_{0, G}, F_{0, B})$), phản ánh sự phụ thuộc của phản xạ gương vào bước sóng ánh sáng.
 
 \subsubsection{Phương pháp thỏa hiệp thực tế (Practical Compromise)}
 
@@ -252,19 +256,55 @@ Cách tiếp cận này cho phép mô phỏng hợp lý sự thay đổi phản 
 
 \subsubsection{Xấp xỉ để tối ưu hóa tính toán}
 
-Việc tính toán phương trình Fresnel đầy đủ cho mọi bước sóng là tốn kém về mặt tính toán. Do đó, trong thực tế kết xuất, người ta thường sử dụng các xấp xỉ:
+Việc tính $F(\lambda, \theta)$ cho toàn bộ phổ là không khả thi. Về mặt lý thuyết, để tính toán chính xác màu sắc phản xạ gương, cần phải:
+
+\begin{enumerate}
+	\item Tính hệ số Fresnel cho nhiều bước sóng liên tục trong phổ khả kiến.
+	\item Nhân từng giá trị này với các thành phần hình học $D$ và $G$.
+	\item Tích phân phổ để thu được giá trị RGB cuối cùng.
+\end{enumerate}
+
+Cách tiếp cận này tuy chính xác về mặt vật lý nhưng không khả thi về mặt tính toán trong đồ họa thời gian thực. Vì vậy, Cook và Torrance đề xuất một phương pháp xấp xỉ thực tế dựa trên nội hệ số phản xạ Fresnel cho từng kênh màu.
+
+Theo \eqref{eq:fresnel}:
+\begin{itemize}
+	\item $D$ và $G$ chỉ phụ thuộc vào hình học vi bề mặt và góc chiếu sáng, không phụ thuộc vào bước sóng ánh sáng nên tác động giống nhau lên mọi kênh màu.
+	\item $F$ là thành phần phụ thuộc vào màu sắc và góc chiếu sáng.
+\end{itemize}
+
+Từ đó, có thể tách quá trình tính toán thành hai phần:
+\begin{enumerate}
+	\item Phần hình học (Geometric Term) quyết định độ sáng và hình dạng của điểm sáng phản xạ.
+	\item Phần màu sắc (Color Term) quyết định tỉ lệ phản xạ của từng kênh màu.
+\end{enumerate}
+
+Thay vì tính $F(\lambda, \theta)$ cho từng màu, ta sử dụng một hệ số Fresnel trung bình $F_\theta$ để làm biến điều khiển nội suy.
 
 \begin{itemize}
-	\item Tính $F$ dựa trên chỉ số khúc xạ trung bình.
+	\item Tính $F_\theta$ dùng chung cho ba kênh màu dựa trên chỉ số khúc xạ hiệu dụng $n$.
 	\item Nội suy tuyến tính giữa màu phản xạ tại góc $0^\circ$ (khi $F = F_0$) và màu phản xạ tại góc $90^\circ$ (khi $F \rightarrow 1$ tại mọi bước sóng).
 \end{itemize}
 \begin{equation}
 	Red_{\theta} = Red_0 + (Red_{\frac{\pi}{2}} - Red_0) \frac{max(0, F_\theta - F_0)}{F_{\frac{\pi}{2}} - F_0}
 \end{equation}
 
+Trong đó:
+\begin{itemize}
+	\item $Red_0$ là giá trị màu đỏ của vật liệu. $Red_0 = I_{Red} * F_0$.
+	\item $Red_{\frac{\pi}{2}}$ là giá trị màu đỏ của nguồn sáng. $Red_{\frac{\pi}{2}} = I_{Red} * F_{\frac{\pi}{2}} \approx I_{Red} * 1$.
+\end{itemize}
+
+Mặc dù được ký hiệu như một giá trị màu, $Red_\theta$ thực chất là hệ số phản xạ Fresnel của kênh Đỏ tại góc $\theta$. Giá trị này không phải là màu thuần túy, mà là tỉ lệ phản xạ của ánh sáng đỏ, sau khi đã gộp thông tin vật liệu và nguồn sáng. Khi đưa vào công thức phản xạ gương, ta có:
+
+\begin{equation}
+	R_s(Red) = \frac{Red_\theta * D * G}{\pi (\mathbf{N} \cdot \mathbf{L})(\mathbf{N} \cdot \mathbf{V})}
+\end{equation}
+
+Tương tự cho các kênh Xanh lá và Xanh dương.
+
 Cách làm này cho phép giữ lại hành vi vật lý quan trọng của hiệu ứng Fresnel, đồng thời giảm đáng kể chi phí tính toán, đặc biệt phù hợp cho các hệ thống kết xuất thời gian thực.
 
-Mặt khác, $F$ còn có thể được xấp xỉ bằng công thức Schlick \cite{schlick_inexpensive_1994}:
+Mặt khác, $F_\theta$ còn có thể được xấp xỉ bằng công thức Schlick \cite{schlick_inexpensive_1994}:
 
 \begin{equation}
 	F(\theta) = F_0 + (1 - F_0)(1 - \cos \theta)^5
@@ -272,7 +312,7 @@ Mặt khác, $F$ còn có thể được xấp xỉ bằng công thức Schlick 
 
 Sự kết hợp của ba thành phần $D$, $G$ và $F$ tạo nên lõi vật lý của mô hình Cook–Torrance, cho phép mô phỏng phản xạ gương một cách nhất quán với các định luật quang học và là nền tảng cho các mô hình PBR hiện đại.
 
-\subsection{Giải thích các thành phần chuẩn hóa trong công thức phản xạ gương Cook-Torrance}
+\subsection{Các thành phần chuẩn hóa trong công thức phản xạ gương Cook-Torrance}
 
 Trong thành phần phản xạ gương $R_s$, các thừa số ở tử số $(F, D, G)$ mô tả các đặc tính vật lý vi mô của vật liệu, còn các thành phần ở mẫu số $\pi (\mathbf{N} \cdot \mathbf{L})(\mathbf{N} \cdot \mathbf{V})$ đóng vai trò chuẩn hóa hình học và năng lượng. Chúng đảm bảo rằng phản xạ gương thu được là nhất quán về mặt vật lý khi được tích hợp trên toàn bộ bề mặt vĩ mô.
 
@@ -315,43 +355,112 @@ Thừa số $(\mathbf{N} \cdot \mathbf{V})$ chuyển đổi lượng ánh sáng 
 
 \section{Quy trình Kết xuất và Màu sắc (Rendering Pipeline and Color)}
 
-Một đóng góp lớn của Cook và Torrance là phương pháp mô phỏng màu sắc dựa trên quang phổ (spectral energy distribution).
+Một đóng góp quan trọng của Cook và Torrance là việc đưa khái niệm phân bố năng lượng phổ (spectral energy distribution) vào quá trình kết xuất, thay vì làm việc trực tiếp trong không gian màu RGB ngay từ đầu. Cách tiếp cận này cho phép mô hình hóa màu sắc dựa trên các nguyên lý quang học và sinh lý thị giác, từ đó tạo ra hình ảnh có mức độ chân thực cao hơn.
 
 \subsection{Sự phụ thuộc vào bước sóng}
-Khác với mô hình Phong gán một màu cố định cho phản xạ gương (thường là màu trắng cho nhựa hoặc màu vật liệu cho kim loại), Cook-Torrance tính toán $F$ tại từng bước sóng khả kiến.
-\begin{itemize}
-    \item Với \textbf{Kim loại (Metals):} Phản xạ chủ yếu diễn ra ở bề mặt. Hệ số $F$ biến đổi mạnh theo bước sóng tại góc tới thẳng đứng (tạo nên màu đặc trưng của kim loại như vàng hay đồng).
-    \item Với \textbf{Phi kim/Nhựa (Plastics/Dielectrics):} $F$ gần như không đổi theo bước sóng ở góc thẳng đứng (thường là màu trắng/xám). Màu sắc của vật thể chủ yếu đến từ thành phần khuếch tán $R_d$ (do các hạt sắc tố bên dưới bề mặt).
-\end{itemize}
 
-%\subsection{Chuyển đổi sang không gian màu RGB}
-%Để hiển thị trên màn hình, phân bố năng lượng quang phổ $E(\lambda)$ của ánh sáng phản xạ phải được chuyển đổi sang không gian màu XYZ (sử dụng các hàm phối màu - matching functions) và sau đó sang RGB.
-
-\section{Ứng dụng và Kết quả (Applications and Results)}
-
-Mô hình đã được áp dụng để mô phỏng sự khác biệt giữa kim loại và nhựa, điều mà các mô hình trước đó thường thất bại.
+Khác với các mô hình chiếu sáng cổ điển như Phong, trong đó thành phần phản xạ gương thường được gán một màu cố định, mô hình Cook--Torrance xem phản xạ ánh sáng là một hiện tượng phụ thuộc liên tục vào bước sóng. Cụ thể, hệ số Fresnel $F(\lambda, \theta)$ được tính cho từng bước sóng trong vùng phổ khả kiến.
 
 \begin{itemize}
-    \item \textbf{Mô phỏng Nhựa (Plastics):} Sử dụng thành phần gương màu trắng (do $F$ phẳng theo bước sóng) và thành phần khuếch tán có màu. Điều này tái tạo chính xác hiệu ứng "bóng loáng" của nhựa màu.
-    \item \textbf{Mô phỏng Kim loại (Metals):} Loại bỏ thành phần khuếch tán ($d \approx 0$). Thành phần gương mang màu sắc của vật liệu (ví dụ: Đồng) và thay đổi màu nhẹ khi góc nhìn chuyển sang góc nghiêng (do sự thay đổi của $F$).
+	\item \textbf{Đối với kim loại (Metals):}  
+	Phản xạ ánh sáng xảy ra chủ yếu tại bề mặt. Hệ số Fresnel tại góc tới vuông góc đã phụ thuộc mạnh vào bước sóng, do chỉ số khúc xạ phức $(n, k)$ của kim loại biến thiên theo $\lambda$. Sự khác biệt phản xạ giữa các bước sóng này tạo nên màu sắc đặc trưng của kim loại như vàng, đồng hoặc bạc. Thành phần khuếch tán trong trường hợp này thường không đáng kể.
+	
+	\item \textbf{Đối với phi kim và nhựa (Dielectrics/Plastics):}  
+	Hệ số Fresnel tại góc vuông gần như không đổi theo bước sóng và thường có giá trị nhỏ. Do đó, phản xạ gương ở góc nhìn trực diện thường có màu trung tính. Màu sắc quan sát được của vật thể chủ yếu đến từ thành phần khuếch tán $R_d$, là kết quả của ánh sáng xuyên vào vật liệu, tương tác với các hạt sắc tố bên trong, rồi tán xạ trở lại.
 \end{itemize}
 
-%\section{Ưu điểm và Hạn chế}
-%
-%\subsection{Ưu điểm}
-%\begin{enumerate}
-%    \item \textbf{Tính chân thực vật lý:} Mô hình giải thích được hành vi ánh sáng dựa trên tính chất vật liệu thực tế (chỉ số khúc xạ $n$, hệ số tắt dần $k$).
-%    \item \textbf{Thay đổi màu sắc theo góc (Color Shift):} Tái hiện chính xác hiện tượng Fresnel, làm cho kim loại trông "thực" hơn tại các cạnh viền.
-%    \item \textbf{Linh hoạt:} Có thể mô phỏng đa dạng vật liệu từ nhựa bóng, cao su nhám đến kim loại rỉ sét bằng cách điều chỉnh tham số $m, s, d$.
-%\end{enumerate}
-%
-%\subsection{Hạn chế}
-%\begin{enumerate}
-%    \item \textbf{Chi phí tính toán:} Tại thời điểm năm 1982, việc tính toán $F$ theo bước sóng và tích phân quang phổ rất tốn kém tài nguyên.
-%    \item \textbf{Phức tạp:} Yêu cầu dữ liệu đầu vào là các chỉ số vật lý ($n, k$) hoặc quang phổ phản xạ thực nghiệm, không phải lúc nào cũng có sẵn.
-%    \item \textbf{Giả định đơn giản hóa:} Mô hình vẫn giả định $R_a$ (ambient) là hằng số và bỏ qua tương tác phản xạ giữa các vật thể (inter-object reflection) ngoại trừ qua thành phần môi trường.
-%\end{enumerate}
+Cách mô hình hóa này phản ánh chính xác hơn cơ chế vật lý sinh ra màu sắc của vật liệu trong thế giới thực.
 
-%\section{Kết luận (Conclusion)}
-%
-%Mô hình phản xạ Cook-Torrance đã đặt nền móng cho kỷ nguyên Kết xuất dựa trên vật lý (PBR). Bằng cách kết hợp lý thuyết vi bề mặt, phương trình Fresnel và dữ liệu quang phổ, mô hình đã chứng minh rằng việc mô phỏng chính xác các hiện tượng vật lý là chìa khóa để đạt được hình ảnh đồ họa chân thực. Các nguyên lý được trình bày trong bài báo này—đặc biệt là sự phân tách giữa thành phần gương/khuếch tán dựa trên cấu trúc vật liệu và việc sử dụng hàm phân bố $D$—vẫn là thành phần cốt lõi trong các công cụ kết xuất hiện đại (như Unreal Engine, Unity hay Blender).
+\subsection{Mục tiêu tái tạo màu sắc và nguyên lý tam sắc}
+
+Mục tiêu cuối cùng của kết xuất màu sắc không phải là tái tạo chính xác phổ ánh sáng phản xạ, mà là tạo ra cảm giác màu sắc trên màn hình tương đương với cảm giác mà người quan sát có được khi nhìn vật thể thật. Nguyên lý này dựa trên lý thuyết thị giác tam sắc, theo đó hệ thị giác con người chỉ có ba loại tế bào nón nhạy cảm với các vùng bước sóng khác nhau.
+
+Do đó, mọi phân bố năng lượng phổ có thể được ánh xạ vào một không gian màu ba chiều mà không làm mất thông tin cảm nhận màu sắc.
+
+\subsection{Chuyển đổi từ phổ sang không gian màu XYZ}
+
+Mỗi phân bố năng lượng phổ của ánh sáng phản xạ tại một điểm trên bề mặt được chuyển đổi sang không gian màu chuẩn CIE XYZ thông qua các hàm phối hợp màu (color matching functions). Quá trình này bao gồm:
+
+\begin{enumerate}
+	\item Nhân phổ năng lượng phản xạ $E(\lambda)$ với từng hàm phối hợp màu $\overline{X}(\lambda)$, $\overline{Y}(\lambda)$ và $\overline{Z}(\lambda)$.
+	\item Tích phân các tích này trên toàn bộ dải phổ khả kiến để thu được ba giá trị kích thích tam sắc:
+	\[
+	X = \int E(\lambda)\,\overline{X}(\lambda)\,d\lambda,\quad
+	Y = \int E(\lambda)\,\overline{Y}(\lambda)\,d\lambda,\quad
+	Z = \int E(\lambda)\,\overline{Z}(\lambda)\,d\lambda
+	\]
+\end{enumerate}
+
+Không gian XYZ đóng vai trò trung gian độc lập với thiết bị hiển thị và phản ánh trực tiếp đặc tính cảm nhận màu sắc của con người.
+
+\subsection{Chuyển đổi từ XYZ sang RGB của màn hình}
+
+Các giá trị XYZ thu được tiếp tục được chuyển đổi sang không gian RGB của màn hình cụ thể thông qua phép nhân ma trận tuyến tính. Ma trận này phụ thuộc vào đặc tính phốt pho hoặc đèn nền của màn hình và điểm trắng (white point) được lựa chọn.
+
+Sau đó, các giá trị RGB tuyến tính được ánh xạ sang tín hiệu điều khiển điện áp của màn hình, có tính đến đặc tính phi tuyến của hệ thống hiển thị và điều kiện quan sát. Bước này đảm bảo rằng độ sáng và màu sắc hiển thị phù hợp với cảm nhận thị giác thực tế.
+
+\subsection{Xử lý các màu nằm ngoài dải màu hiển thị}
+
+Trong quá trình chuyển đổi, một số màu có thể nằm ngoài dải màu (gamut) mà màn hình có thể tái tạo. Cook và Torrance đề xuất các chiến lược xử lý như sau:
+
+\begin{itemize}
+	\item \textbf{Tỷ lệ độ chói:}  
+	Nếu các giá trị XYZ vượt quá khả năng hiển thị độ chói tối đa của màn hình, toàn bộ các giá trị trong cảnh được tỷ lệ lại đồng đều để đảm bảo tính nhất quán tương đối về độ sáng.
+	
+	\item \textbf{Điều chỉnh độ tinh khiết màu:}  
+	Đối với các màu vượt gamut do độ bão hòa quá cao, hệ thống giảm độ tinh khiết của màu trong khi giữ nguyên bước sóng chủ đạo, tương ứng với việc bảo toàn sắc thái (hue) nhưng giảm độ bão hòa (saturation) cho đến khi màu nằm trong dải có thể hiển thị.
+\end{itemize}
+
+Những bước xử lý này đảm bảo rằng hình ảnh kết xuất vừa trung thành về mặt cảm nhận màu sắc, vừa tương thích với các giới hạn vật lý của thiết bị hiển thị.
+
+Tổng thể, cách tiếp cận dựa trên phổ của Cook-Torrance đặt nền móng cho các hệ thống kết xuất dựa trên vật lý hiện đại, trong đó màu sắc không còn là tham số trang trí mà là hệ quả trực tiếp của tương tác quang học giữa ánh sáng và vật liệu.
+
+\section{Ứng dụng và Kết quả}
+
+Mô hình Cook-Torrance đã được áp dụng để mô phỏng và phân biệt chính xác hai nhóm vật liệu quan trọng trong đồ họa máy tính là kim loại và phi kim (đặc biệt là nhựa). Đây là một điểm cải tiến then chốt so với các mô hình chiếu sáng cổ điển như Phong hoặc Blinn--Phong, vốn thường không thể tái tạo đúng bản chất phản xạ của các vật liệu này.
+
+\begin{itemize}
+	\item \textbf{Mô phỏng Nhựa (Plastics):}  
+	Đối với các vật liệu phi kim như nhựa hoặc sơn, mô hình giả định rằng hệ số Fresnel tại góc tới vuông gần như không đổi theo bước sóng. Do đó, thành phần phản xạ gương có màu trung tính, thường được xem là màu trắng hoặc xám nhạt. Màu sắc quan sát được của vật thể chủ yếu đến từ thành phần khuếch tán $R_d$, phản ánh ánh sáng đã xuyên vào bên trong vật liệu, tương tác với các hạt sắc tố, rồi tán xạ trở lại bề mặt.  
+	
+	Sự kết hợp giữa một thành phần gương không màu và một thành phần khuếch tán có màu cho phép mô hình tái tạo chính xác cảm giác “bóng loáng” đặc trưng của nhựa màu, trong đó các vùng highlight sáng nhưng không mang màu của vật liệu, trong khi phần còn lại của bề mặt thể hiện màu sắc ổn định.
+	
+	\item \textbf{Mô phỏng Kim loại (Metals):}  
+	Đối với kim loại, ánh sáng hầu như không xuyên sâu vào bên trong vật liệu. Do đó, thành phần khuếch tán có thể được bỏ qua hoặc xem là không đáng kể ($d \approx 0$). Toàn bộ màu sắc quan sát được đến từ thành phần phản xạ gương.  
+	
+	Trong trường hợp này, hệ số Fresnel phụ thuộc mạnh vào bước sóng ngay tại góc tới vuông, khiến thành phần gương mang màu đặc trưng của vật liệu, ví dụ như màu vàng của đồng hoặc màu bạc của nhôm. Khi góc nhìn chuyển dần sang góc nghiêng lớn, giá trị Fresnel tăng lên và tiến gần đến 1 cho mọi bước sóng, làm cho màu phản xạ gương có xu hướng dịch chuyển nhẹ về phía màu của nguồn sáng. Hiện tượng này tái tạo chính xác hiệu ứng thay đổi màu theo góc nhìn thường thấy trên các bề mặt kim loại bóng.
+\end{itemize}
+
+Những kết quả trên cho thấy mô hình Cook--Torrance không chỉ cải thiện chất lượng thị giác, mà còn cung cấp một khuôn khổ thống nhất để mô phỏng các loại vật liệu khác nhau dựa trên cùng một nền tảng vật lý. Khả năng phân biệt rõ ràng giữa kim loại và phi kim đã khiến mô hình này trở thành nền tảng cho các hệ thống kết xuất dựa trên vật lý hiện đại và các workflow PBR được sử dụng rộng rãi ngày nay.
+
+\section{Ưu điểm và Hạn chế}
+
+\subsection{Ưu điểm}
+\begin{enumerate}
+	\item \textbf{Tính chân thực vật lý (Physical Plausibility):}  
+	Mô hình Cook--Torrance được xây dựng trực tiếp từ các nguyên lý quang học và lý thuyết vi bề mặt, cho phép giải thích hành vi phản xạ ánh sáng dựa trên các đại lượng vật lý có ý nghĩa rõ ràng như chỉ số khúc xạ $n$ và hệ số tuyệt chủng $k$. Nhờ đó, các hiện tượng như sự tăng phản xạ ở góc nghiêng lớn hay sự khác biệt bản chất giữa kim loại và phi kim không còn là các giả định kinh nghiệm, mà được suy ra một cách nhất quán từ cơ sở vật lý.
+	
+	\item \textbf{Khả năng tái hiện hiện tượng Fresnel và dịch chuyển màu (Color Shift):}  
+	Việc đưa hệ số Fresnel $F(\lambda, \theta)$ vào thành phần phản xạ gương cho phép mô hình tái hiện chính xác sự thay đổi cường độ và màu sắc của phản xạ theo góc nhìn. Đặc biệt đối với kim loại, nơi phản xạ phụ thuộc mạnh vào bước sóng, mô hình tạo ra hiệu ứng viền sáng và dịch chuyển màu tự nhiên ở các góc quan sát xiên, điều mà các mô hình cổ điển như Phong không thể mô phỏng được.
+	
+	\item \textbf{Tính linh hoạt và khả năng mở rộng:}  
+	Bằng cách điều chỉnh các tham số như độ nhám vi bề mặt $m$ và trọng số giữa thành phần gương và khuếch tán $(s, d)$, mô hình có thể mô phỏng một phổ rộng các vật liệu khác nhau, từ nhựa bóng, cao su mờ đến kim loại nhẵn hoặc thô. Quan trọng hơn, các tham số này có mối liên hệ trực tiếp với đặc tính vật lý hoặc hình học của bề mặt, giúp việc điều chỉnh mang tính hệ thống hơn so với các mô hình thuần thực nghiệm.
+\end{enumerate}
+
+\subsection{Hạn chế}
+\begin{enumerate}
+	\item \textbf{Chi phí tính toán cao:}  
+	Tại thời điểm công bố ban đầu vào năm 1982, việc tính toán hệ số Fresnel theo bước sóng và thực hiện các phép tích phân quang phổ để xác định màu sắc phản xạ là rất tốn kém về mặt tài nguyên tính toán. Điều này khiến mô hình khó áp dụng trực tiếp cho các hệ thống kết xuất thời gian thực với phần cứng hạn chế của thời kỳ đó.
+	
+	\item \textbf{Yêu cầu dữ liệu đầu vào phức tạp:}  
+	Mô hình lý tưởng đòi hỏi các thông số quang học của vật liệu như $n(\lambda)$ và $k(\lambda)$ hoặc dữ liệu quang phổ phản xạ được đo đạc thực nghiệm. Trong thực tế, những dữ liệu này không phải lúc nào cũng sẵn có cho mọi vật liệu, buộc người sử dụng phải áp dụng các xấp xỉ hoặc bảng tra cứu đơn giản hóa.
+	
+	\item \textbf{Các giả định đơn giản hóa ở mức cảnh toàn cục:}  
+	Mặc dù mô hình xử lý chi tiết phản xạ cục bộ tại một điểm trên bề mặt, nó vẫn giả định thành phần ánh sáng môi trường $R_a$ là hằng số và không mô phỏng trực tiếp các tương tác phản xạ phức tạp giữa các vật thể trong cảnh, chẳng hạn như phản xạ gián tiếp nhiều lần hoặc hiện tượng trao đổi năng lượng ánh sáng giữa các bề mặt. Những hiện tượng này chỉ được xấp xỉ gián tiếp thông qua thành phần môi trường.
+\end{enumerate}
+
+\section{Kết luận (Conclusion)}
+
+Mô hình phản xạ Cook--Torrance đã đánh dấu một bước chuyển quan trọng trong lịch sử đồ họa máy tính, từ các mô hình chiếu sáng mang tính thực nghiệm sang các mô hình dựa trên cơ sở vật lý. Thông qua việc kết hợp lý thuyết vi bề mặt, phương trình Fresnel và cách tiếp cận quang phổ đối với màu sắc, mô hình đã chứng minh rằng việc mô phỏng trung thực các hiện tượng vật lý là chìa khóa để đạt được hình ảnh có độ chân thực cao.
+
+Những nguyên lý cốt lõi được trình bày trong mô hình này, bao gồm sự phân tách rõ ràng giữa phản xạ gương và khuếch tán dựa trên cấu trúc vật liệu, cũng như vai trò trung tâm của hàm phân bố vi bề mặt $D$, đã trở thành nền tảng cho các phương pháp kết xuất dựa trên vật lý hiện đại. Dù đã trải qua nhiều cải tiến và đơn giản hóa để phù hợp với yêu cầu tính toán ngày nay, tinh thần và cấu trúc vật lý của Cook--Torrance vẫn được bảo toàn và tiếp tục ảnh hưởng sâu rộng đến các hệ thống kết xuất và nghiên cứu đồ họa đương đại.
