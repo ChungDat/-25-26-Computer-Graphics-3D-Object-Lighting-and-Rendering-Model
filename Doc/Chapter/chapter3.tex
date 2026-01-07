@@ -124,7 +124,7 @@ Thành phần môi trường và khuếch tán phản xạ ánh sáng đẳng h�
 
 Trọng tâm của mô hình Cook--Torrance nằm ở việc xây dựng hàm phản xạ gương $R_s$ dựa trên lý thuyết vi bề mặt. Thành phần này được biểu diễn dưới dạng BRDF như sau:
 
-\begin{equation}
+\begin{equation}\label{eq:specular}
 	R_s = \frac{F(\mathbf{V} \cdot \mathbf{H})}{\pi} \frac{D(\mathbf{H})\,G(\mathbf{N}, \mathbf{H}, \mathbf{V}, \mathbf{L})}{(\mathbf{N} \cdot \mathbf{L})(\mathbf{N} \cdot \mathbf{V})}
 \end{equation}
 
@@ -155,6 +155,30 @@ Trong đó:
 
 Hàm $D$ đạt giá trị lớn nhất khi $\mathbf{H}$ gần trùng với $\mathbf{N}$, và giảm nhanh khi góc lệch tăng, phản ánh trực tiếp ảnh hưởng của độ nhám lên độ sắc nét của vùng lóe sáng gương.
 
+Mặc dù hàm phân bố Beckmann có nền tảng vật lý vững chắc và phản ánh tốt các bề mặt có độ nhám tuân theo phân bố Gaussian, trong thực tế kết xuất hiện đại, một hàm phân bố khác đã trở nên phổ biến hơn, đó là hàm GGX (còn gọi là Trowbridge--Reitz).
+
+Lý do chính cho sự thay thế này xuất phát từ quan sát thực nghiệm: nhiều vật liệu trong thế giới thực, đặc biệt là kim loại và bề mặt được đánh bóng không hoàn hảo, thể hiện vùng lóe sáng gương có phần đuôi kéo dài (long tail) rõ rệt hơn so với dự đoán của phân bố Gaussian. Hàm Beckmann suy giảm quá nhanh khi góc lệch lớn, dẫn đến vùng highlight bị cắt gọn và trông kém tự nhiên ở các góc nhìn xiên.
+
+Hàm phân bố GGX được thiết kế để giải quyết vấn đề này bằng cách sử dụng phân bố có đuôi nặng hơn, cho phép nhiều vi bề mặt có độ lệch lớn vẫn đóng góp vào phản xạ gương. Dạng phổ biến của hàm GGX được viết như sau:
+\begin{equation}
+	D_{\text{GGX}}(\mathbf{H}) =
+	\frac{\alpha^2}
+	{\pi \left[ (\mathbf{N} \cdot \mathbf{H})^2 (\alpha^2 - 1) + 1 \right]^2}
+\end{equation}
+
+trong đó \(\alpha\) là tham số độ nhám vi mô, thường được ánh xạ trực tiếp từ tham số roughness trong các công cụ đồ họa hiện đại.
+
+So với Beckmann, GGX có các đặc điểm nổi bật:
+\begin{itemize}
+	\item Vùng lóe sáng gương có đuôi kéo dài tự nhiên hơn, đặc biệt ở các góc nhìn xiên.
+	\item Tái hiện tốt hơn hiện tượng phản xạ mạnh tại rìa vật thể (edge highlight), vốn rất quan trọng đối với cảm nhận thị giác về kim loại.
+	\item Ổn định và dễ kiểm soát hơn trong môi trường kết xuất thời gian thực.
+\end{itemize}
+
+Chính vì những ưu điểm này, GGX đã trở thành lựa chọn tiêu chuẩn trong các hệ thống PBR hiện đại như Unreal Engine, Unity HDRP, Frostbite và Blender Cycles. Mặc dù không xuất phát trực tiếp từ mô hình Gaussian cổ điển như Beckmann, GGX vẫn thỏa mãn các yêu cầu quan trọng của một hàm phân bố vi bề mặt, bao gồm tính không âm, khả năng chuẩn hóa và tương thích với các hàm che khuất $G$ và Fresnel $F$ trong khung Cook--Torrance.
+
+Việc chuyển từ Beckmann sang GGX phản ánh xu hướng chung của đồ họa máy tính hiện đại: ưu tiên các mô hình vừa đảm bảo tính nhất quán vật lý, vừa phù hợp với cảm nhận thị giác và hiệu quả tính toán trong các ứng dụng thực tế.
+
 \subsection{Hệ số suy hao hình học $G$ (Geometrical Attenuation Factor)}
 
 Hệ số suy hao hình học $G$ mô hình hóa các hiện tượng che chắn hình học xảy ra trên bề mặt thô nhám, nơi các vi bề mặt có thể cản trở lẫn nhau trong quá trình truyền ánh sáng. Thành phần này đảm bảo rằng mô hình phản xạ tuân thủ các ràng buộc hình học thực tế của bề mặt vi mô.
@@ -176,6 +200,44 @@ Cook và Torrance đề xuất một dạng xấp xỉ cho $G$ dựa trên các 
 \end{equation}
 
 Biểu thức này đảm bảo rằng đóng góp phản xạ gương bị suy giảm khi điều kiện hình học không cho phép cả ánh sáng tới và ánh sáng phản xạ cùng tiếp cận một vi bề mặt. Khi bề mặt trở nên bóng hơn, ảnh hưởng của $G$ giảm đi, và giá trị của nó tiến gần tới 1.
+
+Mặc dù biểu thức $G$ ban đầu của Cook–Torrance đảm bảo các ràng buộc hình học cơ bản, nó vẫn là một xấp xỉ thô và không trực tiếp liên kết với hàm phân bố vi bề mặt $D$. Trong các mô hình vi bề mặt hiện đại, hệ số suy hao hình học thường được xây dựng theo khuôn khổ của Smith Geometry, cho phép mô hình hóa hiện tượng che bóng và che khuất một cách nhất quán hơn với phân bố pháp tuyến vi mô.
+
+Ý tưởng cốt lõi của mô hình Smith là tách hệ số hình học tổng thể thành tích của hai thành phần độc lập, tương ứng với hướng ánh sáng tới và hướng quan sát:
+\begin{equation}
+	G(\mathbf{L}, \mathbf{V}) = G_1(\mathbf{L}) \cdot G_1(\mathbf{V})
+\end{equation}
+
+Trong đó, $G_1(\omega)$ biểu diễn xác suất mà một vi bề mặt có pháp tuyến phù hợp không bị che chắn theo hướng $\omega$. Cách tiếp cận này cho phép mô hình hóa riêng rẽ hiện tượng shadowing và masking, đồng thời đảm bảo rằng khi một trong hai hướng không thỏa điều kiện hình học, đóng góp phản xạ gương sẽ tự động suy giảm.
+
+Khi kết hợp với hàm phân bố GGX, một dạng xấp xỉ hiệu quả và ổn định của $G_1$ được Schlick đề xuất, thường được gọi là Schlick--GGX. Dạng phổ biến của hàm này là:
+\begin{equation}
+	G_1(\omega) =
+	\frac{\mathbf{N} \cdot \omega}
+	{(\mathbf{N} \cdot \omega)(1 - k) + k}
+\end{equation}
+
+với
+\begin{equation}
+	k = \frac{\alpha^2}{2}
+\end{equation}
+
+trong đó $\alpha$ là tham số độ nhám vi mô, đồng nhất với tham số sử dụng trong hàm phân bố GGX. Việc lựa chọn $k$ theo $\alpha^2 / 2$ giúp Schlick--GGX tái hiện tốt hành vi che chắn của mô hình Smith-GGX đầy đủ, trong khi vẫn giữ chi phí tính toán thấp.
+
+Hệ số hình học hoàn chỉnh trong mô hình Cook--Torrance hiện đại khi sử dụng GGX được viết dưới dạng:
+\begin{equation}
+	G_{\text{Smith}}(\mathbf{L}, \mathbf{V}) =
+	G_1(\mathbf{L}) \cdot G_1(\mathbf{V})
+\end{equation}
+
+So với biểu thức $G$ gốc của Cook–Torrance, mô hình Smith kết hợp với Schlick--GGX có các ưu điểm sau:
+\begin{itemize}
+	\item Nhất quán toán học với hàm phân bố vi bề mặt GGX.
+	\item Tái hiện tốt hơn hiện tượng suy giảm phản xạ gương ở các góc nhìn xiên.
+	\item Ổn định số học và phù hợp với kết xuất thời gian thực.
+\end{itemize}
+
+Nhờ những đặc tính này, Smith Geometry với Schlick--GGX đã trở thành tiêu chuẩn trong hầu hết các pipeline PBR hiện đại. Khi kết hợp với hàm Fresnel xấp xỉ Schlick và hàm phân bố GGX, toàn bộ mô hình Cook--Torrance đạt được sự cân bằng giữa tính chân thực vật lý, cảm nhận thị giác và hiệu quả tính toán.
 
 \subsection{Hệ số Fresnel $F$ (Fresnel Term)}
 
@@ -316,18 +378,19 @@ Sự kết hợp của ba thành phần $D$, $G$ và $F$ tạo nên lõi vật l
 
 Trong thành phần phản xạ gương $R_s$, các thừa số ở tử số $(F, D, G)$ mô tả các đặc tính vật lý vi mô của vật liệu, còn các thành phần ở mẫu số $\pi (\mathbf{N} \cdot \mathbf{L})(\mathbf{N} \cdot \mathbf{V})$ đóng vai trò chuẩn hóa hình học và năng lượng. Chúng đảm bảo rằng phản xạ gương thu được là nhất quán về mặt vật lý khi được tích hợp trên toàn bộ bề mặt vĩ mô.
 
-\subsubsection{Vai trò của hằng số $\pi$}
+\subsubsection{Vai trò lịch sử của hằng số $\pi$ và sự thay thế bằng $4$}
 
-Hằng số $\pi$ xuất hiện trong mẫu số như một hệ số chuẩn hóa năng lượng. Nguồn gốc của nó xuất phát từ mối liên hệ giữa độ chói (radiance) và độ rọi (irradiance) trong quang học.
+Trong các phiên bản ban đầu của mô hình Cook--Torrance (1982), hằng số $\pi$ xuất hiện trong mẫu số của thành phần phản xạ gương như một hệ số chuẩn hóa năng lượng. Cách biểu diễn này chịu ảnh hưởng trực tiếp từ mô hình phản xạ khuếch tán Lambert, nơi $\pi$ xuất hiện tự nhiên khi tích phân một BRDF hằng trên toàn bộ bán cầu chiếu sáng, phản ánh mối liên hệ giữa độ chói (radiance) và độ rọi (irradiance) trong quang học cổ điển.
 
-Trong các phép đo quang học thực nghiệm, đặc tính phản xạ của vật liệu thường được đo trong điều kiện tới vuông góc (normal incidence) và được biểu diễn dưới dạng các đại lượng tích phân trên bán cầu. Khi chuyển từ mô hình phản xạ gương lý tưởng của các vi bề mặt sang phản xạ hai chiều trên một bề mặt thô, cần có hệ số $1/\pi$ để đảm bảo rằng năng lượng phản xạ tổng cộng không vượt quá năng lượng chiếu tới.
+Trong bối cảnh lịch sử, các đặc tính phản xạ của vật liệu thường được đo trong điều kiện tới vuông góc và được biểu diễn dưới dạng các đại lượng tích phân trên bán cầu. Việc đưa hệ số $1/\pi$ vào công thức phản xạ gương khi đó nhằm đảm bảo rằng năng lượng phản xạ tổng cộng không vượt quá năng lượng chiếu tới, đồng thời duy trì sự nhất quán với các định nghĩa BRDF phổ biến trong Phương trình kết xuất.
 
-Do đó, thành phần $\pi$ giúp:
-\begin{itemize}
-	\item Đưa BRDF về đúng đơn vị vật lý.
-	\item Đảm bảo điều kiện bảo toàn năng lượng khi tích phân phản xạ trên toàn bộ bán cầu chiếu sáng.
-	\item Tạo sự tương thích giữa mô hình vi bề mặt và các định nghĩa chuẩn của BRDF trong Phương trình kết xuất.
-\end{itemize}
+Tuy nhiên, các nghiên cứu sau này chỉ ra rằng việc sử dụng $\pi$ trong thành phần phản xạ gương của mô hình vi bề mặt là không chính xác về mặt toán học. Trong quá trình suy diễn BRDF vi bề mặt, phép tích phân không còn được thực hiện trực tiếp trong không gian hướng bề mặt (theo pháp tuyến $\mathbf{N}$), mà được chuyển sang không gian vector nửa góc (half-vector) $\mathbf{H}$. Sự thay đổi biến này dẫn đến một hệ số Jacobian bằng $1/4$, do vector $\mathbf{H}$ chỉ thay đổi với tốc độ bằng một nửa so với hướng ánh sáng và hướng nhìn.
+
+Vì lý do đó, trong các mô hình Cook-Torrance hiện đại, hằng số $\pi$ trong thành phần phản xạ gương đã được thay thế bằng hệ số 4, do đó \eqref{eq:specular} trở thành:
+\begin{equation}
+	R_s = \frac{F(\mathbf{V} \cdot \mathbf{H})}{4} \frac{D(\mathbf{H})\,G(\mathbf{N}, \mathbf{H}, \mathbf{V}, \mathbf{L})}{(\mathbf{N} \cdot \mathbf{L})(\mathbf{N} \cdot \mathbf{V})}
+\end{equation}
+Sự thay thế này đảm bảo tính đúng đắn về mặt vật lý, bảo toàn năng lượng và phù hợp với lý thuyết vi bề mặt. Ngày nay, cách biểu diễn này được chấp nhận rộng rãi và sử dụng trong các hệ thống kết xuất dựa trên vật lý hiện đại, trong khi vai trò của $\pi$ được giới hạn đúng ở thành phần phản xạ khuếch tán Lambert.
 
 \subsubsection{Ý nghĩa của $(\mathbf{N} \cdot \mathbf{L})$}
 
@@ -352,6 +415,34 @@ Cụ thể:
 \end{itemize}
 
 Thừa số $(\mathbf{N} \cdot \mathbf{V})$ chuyển đổi lượng ánh sáng phản xạ tính trên diện tích vi bề mặt thực sang lượng ánh sáng mà người quan sát thực sự thu nhận được theo hướng $\mathbf{V}$.
+
+\subsection{Thành phần phản xạ khuếch tán $R_d$ và vai trò của $\pi$}
+
+Thành phần phản xạ khuếch tán $R_d$ trong mô hình Cook-Torrance thường được mô tả bằng mô hình Lambert, trong đó ánh sáng tới được tán xạ đều theo mọi hướng trên bán cầu phía trên bề mặt. Đặc trưng quan trọng của phản xạ Lambert là BRDF có giá trị không phụ thuộc vào hướng quan sát, mà chỉ phụ thuộc vào màu sắc (albedo) của vật liệu.
+
+Về mặt toán học, BRDF khuếch tán được giả định là một hằng số:
+\[
+f_d = C_d
+\]
+Để đảm bảo điều kiện bảo toàn năng lượng, tổng năng lượng phản xạ tích phân trên toàn bộ bán cầu phải bằng hoặc nhỏ hơn năng lượng chiếu tới:
+\[
+\int_{\Omega} f_d \cos\theta \, d\omega \le 1
+\]
+Với tích phân trên bán cầu:
+\[
+\int_{\Omega} \cos\theta \, d\omega = \pi
+\]
+suy ra giá trị chuẩn hóa của BRDF khuếch tán phải thỏa mãn:
+\[
+C_d = \frac{\rho_d}{\pi}
+\]
+trong đó \(\rho_d\) là hệ số phản xạ khuếch tán (diffuse reflectance), thường được hiểu là màu cơ sở của vật liệu.
+
+Do đó, thành phần phản xạ khuếch tán được viết dưới dạng:
+\[
+R_d = \frac{\rho_d}{\pi} (\vec{n} \cdot \vec{l})
+\]
+Trong mô hình Cook--Torrance, việc giữ nguyên dạng Lambert cho $R_d$ có ý nghĩa vật lý rõ ràng: phản xạ khuếch tán đại diện cho sự tán xạ ánh sáng trong lớp vật liệu bên dưới bề mặt (subsurface scattering ở mức vi mô), nơi ánh sáng mất thông tin về hướng tới ban đầu. Vì vậy, khác với thành phần phản xạ gương $R_s$, $R_d$ không phụ thuộc vào Fresnel $F$, hàm phân bố vi bề mặt $D$ hay hàm che khuất $G$, và hằng số $\pi$ tiếp tục giữ vai trò chuẩn hóa năng lượng như trong mô hình Lambert cổ điển.
 
 \section{Quy trình Kết xuất và Màu sắc (Rendering Pipeline and Color)}
 
