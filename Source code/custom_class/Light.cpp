@@ -222,6 +222,8 @@ std::string DirectionalLight::getType() const {
 void DirectionalLight::updateObjectShader(Shader& objectShader, unsigned int typeCount) const {
 	objectShader.use();
 	objectShader.setVec3fv("dirLight[" + std::to_string(typeCount) + "].direction", direction);
+
+	objectShader.setVec3fv("dirLight[" + std::to_string(typeCount) + "].color", color);
 	objectShader.setVec3fv("dirLight[" + std::to_string(typeCount) + "].ambient", ambient);
 	objectShader.setVec3fv("dirLight[" + std::to_string(typeCount) + "].diffuse", diffuse);
 	objectShader.setVec3fv("dirLight[" + std::to_string(typeCount) + "].specular", specular);
@@ -323,12 +325,15 @@ std::string PointLight::getType() const {
 void PointLight::updateObjectShader(Shader& objectShader, unsigned int typeCount) const {
 	objectShader.use();
 	objectShader.setVec3fv("pointLight[" + std::to_string(typeCount) + "].position", position);
-	objectShader.setVec3fv("pointLight[" + std::to_string(typeCount) + "].ambient", ambient);
-	objectShader.setVec3fv("pointLight[" + std::to_string(typeCount) + "].diffuse", diffuse);
-	objectShader.setVec3fv("pointLight[" + std::to_string(typeCount) + "].specular", specular);
+
 	objectShader.setFloat("pointLight[" + std::to_string(typeCount) + "].constant", constant);
 	objectShader.setFloat("pointLight[" + std::to_string(typeCount) + "].linear", linear);
 	objectShader.setFloat("pointLight[" + std::to_string(typeCount) + "].quadratic", quadratic);
+
+	objectShader.setVec3fv("pointLight[" + std::to_string(typeCount) + "].color", color);
+	objectShader.setVec3fv("pointLight[" + std::to_string(typeCount) + "].ambient", ambient);
+	objectShader.setVec3fv("pointLight[" + std::to_string(typeCount) + "].diffuse", diffuse);
+	objectShader.setVec3fv("pointLight[" + std::to_string(typeCount) + "].specular", specular);
 }
 
 // Spot Light class
@@ -373,12 +378,16 @@ void SpotLight::updateObjectShader(Shader& objectShader, unsigned int typeCount)
 	objectShader.use();
 	objectShader.setVec3fv("spotLight[" + std::to_string(typeCount) + "].position", position);
 	objectShader.setVec3fv("spotLight[" + std::to_string(typeCount) + "].direction", direction);
-	objectShader.setVec3fv("spotLight[" + std::to_string(typeCount) + "].ambient", ambient);
-	objectShader.setVec3fv("spotLight[" + std::to_string(typeCount) + "].diffuse", diffuse);
-	objectShader.setVec3fv("spotLight[" + std::to_string(typeCount) + "].specular", specular);
+
 	objectShader.setFloat("spotLight[" + std::to_string(typeCount) + "].constant", constant);
 	objectShader.setFloat("spotLight[" + std::to_string(typeCount) + "].linear", linear);
 	objectShader.setFloat("spotLight[" + std::to_string(typeCount) + "].quadratic", quadratic);
+
 	objectShader.setFloat("spotLight[" + std::to_string(typeCount) + "].innerCutOff", glm::cos(glm::radians(innerCutOff)));
 	objectShader.setFloat("spotLight[" + std::to_string(typeCount) + "].outerCutOff", glm::cos(glm::radians(outerCutOff)));
+
+	objectShader.setVec3fv("spotLight[" + std::to_string(typeCount) + "].color", color);
+	objectShader.setVec3fv("spotLight[" + std::to_string(typeCount) + "].ambient", ambient);
+	objectShader.setVec3fv("spotLight[" + std::to_string(typeCount) + "].diffuse", diffuse);
+	objectShader.setVec3fv("spotLight[" + std::to_string(typeCount) + "].specular", specular);
 }

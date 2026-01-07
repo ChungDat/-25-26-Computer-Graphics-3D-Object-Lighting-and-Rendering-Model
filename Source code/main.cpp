@@ -1,13 +1,3 @@
-// ============================
-// TINH LAI ORBITAL MOTION GUI
-// TODO:	THEM CHUC NANG XOA
-//			THEM PRESET SCENE
-//			SUA KICH THUOC CONTROL WINDOW
-//			THEM BLINN PHONG
-//			THEM GOURAUD
-//			THEM PBR
-//			THEM 3D OBJJECT LIGHTING
-// ============================
 #define _CRT_SECURE_NO_WARNINGS
 
 // openGL libraries
@@ -170,6 +160,7 @@ int main() {
 	Shader PhongShader = Shader("custom_shader/PhongVertexShader.vert", "custom_shader/PhongFragmentShader.frag");
 	Shader BlinnPhongShader = Shader("custom_shader/PhongVertexShader.vert", "custom_shader/BlinnPhongFragmentShader.frag");
 	Shader GouraudShader = Shader("custom_shader/GouraudVertexShader.vert", "custom_shader/GouraudFragmentShader.frag");
+	Shader CookTorranceShader = Shader("custom_shader/PhongVertexShader.vert", "custom_shader/CookTorranceFragmentShader.frag");
 
 	PhongShader.use();
 	PhongShader.setFloat("material.shininess", 32.0f); // Phong uses a lower shininess
@@ -188,6 +179,11 @@ int main() {
 	GouraudShader.setInt("material.diffuse", 0);
 	GouraudShader.setInt("material.specular", 1);
 	GouraudShader.setInt("material0.emission", 2); // emission is not used in this lighting model
+
+	CookTorranceShader.use();
+	CookTorranceShader.setVec3f("albedo", 1.0f, 1.0f, 1.0f);
+	CookTorranceShader.setFloat("roughness", 0.5f);
+	CookTorranceShader.setFloat("metallic", 0.3f);
 
 	// light source
 	Shader lightShader = Shader("custom_shader/lightSourceVertexShader.vert", "custom_shader/lightSourceFragmentShader.frag");
@@ -256,14 +252,11 @@ int main() {
 	}
 
 	// Lighting method
-	std::vector<std::string> lightingMethods = { "Phong", "Gouraud", "Blinn Phong" };
+	std::vector<std::string> lightingMethods = { "Phong", "Gouraud", "Blinn Phong", "Cook Torrance"};
 	int currentLighting = 0;
 
 	// ImGui Settings
 	bool controlWindowOpened = true;
-	/*int redValue = 25;
-	int greenValue = 25;
-	int blueValue = 25;*/
 	int currentRasterizationMode = 0;
 
 	PresetScenesCollapse presetScenesCollapse = PresetScenesCollapse("Preset Scenes");
@@ -278,7 +271,6 @@ int main() {
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
-		//ImGui::ShowDemoWindow(); // Show demo window! :)
 
 		// ============================================
 		// Start Dear ImGui control
@@ -353,6 +345,9 @@ int main() {
 					case 2:
 						objectShader = &BlinnPhongShader;
 						break;
+					case 3:
+						objectShader = &CookTorranceShader;
+						break;
 					}
 				}
 				printf("Select %s\n", type);
@@ -378,8 +373,8 @@ int main() {
 		// render background
 		// ------
 		// -----
-		glClearColor(0.75f, 0.52f, 0.3f, 1.0f);
-		//glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
+		//glClearColor(0.75f, 0.52f, 0.3f, 1.0f);
+		glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
