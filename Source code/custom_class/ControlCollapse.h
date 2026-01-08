@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include "Light.h"
+#include "Axis.h"
 #include "Object.h"
 
 class ControlCollapse
@@ -14,6 +15,8 @@ protected:
 public:
 	ControlCollapse();
 	ControlCollapse(const char*);
+	virtual ~ControlCollapse() {};
+
 	virtual void show() = 0;
 };
 
@@ -23,6 +26,7 @@ protected:
 	int currentSelect = 0;
 public:
 	PresetScenesCollapse(const char*);
+	virtual ~PresetScenesCollapse() {};
 	void show();
 };
 
@@ -34,6 +38,7 @@ protected:
 	void addLight(const char*);
 public:
 	LightCollapse(const char*, std::vector<Light*>&, Shader&);
+	virtual ~LightCollapse() {};
 	void show();
 };
 
@@ -44,6 +49,7 @@ protected:
 	void addObject(const char*);
 public:
 	ObjectCollapse(const char*, std::vector<Object*>&);
+	virtual ~ObjectCollapse() {};
 	void show();
 };
 
@@ -53,6 +59,7 @@ protected:
 	int currentSelect = 0;
 public:
 	ObjectProperties(const char*, std::vector<Object*>&);
+	virtual ~ObjectProperties() {};
 	void show();
 };
 
@@ -62,5 +69,17 @@ protected:
 	int currentSelect = 0;
 public:
 	LightProperties(const char*, std::vector<Light*>&);
+	virtual ~LightProperties() {};
+	void show();
+};
+
+class Settings : public ControlCollapse {
+protected:
+	Light& flashLight;
+	Axis& axis;
+	int& currentRasterizationMode;
+public:
+	Settings(Light&, Axis&, int&);
+	virtual ~Settings() {};
 	void show();
 };

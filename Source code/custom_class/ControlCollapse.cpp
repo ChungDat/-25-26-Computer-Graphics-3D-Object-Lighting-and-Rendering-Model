@@ -234,3 +234,36 @@ void LightProperties::show() {
 	}
 
 }
+
+Settings::Settings(Light& _flashLight, Axis& _axis, int& rasterizationMode) : flashLight(_flashLight), axis(_axis), currentRasterizationMode(rasterizationMode) {}
+
+void Settings::show() {
+	// flash light
+	if (flashLight.isEnabled()) {
+		if (ImGui::Button("Hide Flash Light")) {
+			flashLight.disable();
+		}
+	}
+	else {
+		if (ImGui::Button("Show Flash Light")) {
+			flashLight.enable();
+		}
+	}
+
+	// axis
+	if (axis.isEnabled()) {
+		if (ImGui::Button("Hide Axis"))
+			axis.disable();
+	}
+	else {
+		if (ImGui::Button("Show Axis"))
+			axis.enable();
+	}
+
+	// rasterization mode
+	ImGui::RadioButton("Fill", &currentRasterizationMode, 0); ImGui::SameLine();
+	ImGui::RadioButton("Wireframe", &currentRasterizationMode, 1); ImGui::SameLine();
+	ImGui::RadioButton("Point", &currentRasterizationMode, 2);
+
+
+}

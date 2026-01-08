@@ -242,6 +242,7 @@ PointLight::PointLight(Shader& shader) : Light(shader) {
 }
 
 void PointLight::draw(const glm::mat4& view, const glm::mat4& projection) const {
+	if (!isEnabled()) return;
 	shader.use();
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, position);
@@ -255,7 +256,7 @@ void PointLight::draw(const glm::mat4& view, const glm::mat4& projection) const 
 	glDrawArrays(GL_TRIANGLES, 0, getVertexCount());
 }
 
-void PointLight::update(float time) {
+void PointLight::updatePosition(float time) {
 	if (!orbitalMotion) return;
 
 	// compute angle in radians

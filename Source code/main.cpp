@@ -29,11 +29,12 @@
 #include <string>
 #include <iostream>
 #include <vector>
-#include <unordered_map>
 
 const int WIDTH = 800;
 const int HEIGHT = 600;
 const float RADIUS = 10.0f;
+const std::vector<std::string> MODEL = { "Phong", "Gouraud", "Blinn Phong", "Cook Torrance" };
+
 
 float horizontalRotateRate = 0.0f;
 float verticalRotateRate = 0.0f;
@@ -54,10 +55,6 @@ glm::vec3 cameraPos = glm::vec3(0.0f, 1.0f, 3.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
-// white light cube
-glm::vec3 lightPos = glm::vec3(0.0f, 0.0f, 2.0f);
-glm::vec3 lightColor = glm::vec3(1.0f);
-
 // create camera
 Camera camera = Camera(cameraPos, yaw, pitch);
 
@@ -76,8 +73,8 @@ void mouseControl(GLFWwindow* window, double xpos, double ypos);
 void mouseScrollControl(GLFWwindow* window, double xoffset, double yoffset);
 
 int main() {
-	// set up
-	// ------
+	// set up context
+	// --------------
 	GLFWwindow* window = initWindow(WIDTH, HEIGHT);
 	if (window == NULL)
 	{
@@ -86,7 +83,7 @@ int main() {
 	}
 	glfwMakeContextCurrent(window);
 
-	// glad: load all OpenGL function pointerss
+	// glad: load all OpenGL function pointers
 	// ---------------------------------------
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
@@ -94,8 +91,6 @@ int main() {
 		return -1;
 	}
 
-	std::cout << "OpenGL version: "
-		<< glGetString(GL_VERSION) << std::endl;
 
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetCursorPosCallback(window, mouseControl);
@@ -104,21 +99,27 @@ int main() {
 	//glEnable(GL_CULL_FACE);
 
 	stbi_set_flip_vertically_on_load(true);
-	// wireframe mode
-	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-	// Setup Dear ImGui context
+	// check OpenGL version
+	// --------------------
+	std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
+	
+	// setup Dear ImGui context
+	// ------------------------
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
 	io.ConfigFlags &= ~ImGuiConfigFlags_NavEnableKeyboard;     // Disable Keyboard Controls
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
-	// Setup Platform/Renderer backends
+	// setup Platform/Renderer backends
+	// --------------------------------
 	ImGui_ImplGlfw_InitForOpenGL(window, true);          // Second param install_callback=true will install GLFW callbacks and chain to existing ones.
 	ImGui_ImplOpenGL3_Init();
 
-	glm::vec3 cubePositions[] = {
+	// initial position for objects
+	// ----------------------------
+	glm::vec3 initPositions[] = {
 		glm::vec3(0.0f,  0.0f,  0.0f),
 		glm::vec3(2.0f,  5.0f, -15.0f),
 		glm::vec3(-1.5f, -2.2f, -2.5f),
@@ -131,14 +132,16 @@ int main() {
 		glm::vec3(-1.3f,  1.0f, -1.5f)
 	};
 
-	glm::vec3 pointLightPositions[] = {
+	glm::vec3 lightPositions[] = {
+		glm::vec3(0.0f, 0.0f, 2.0f),
 		glm::vec3(0.7f,  0.2f,  2.0f),
 		glm::vec3(2.3f, -3.3f, -4.0f),
 		glm::vec3(-4.0f,  2.0f, -12.0f),
 		glm::vec3(0.0f,  0.0f, -3.0f)
 	};
 
-	glm::vec3 pointLightColors[] = {
+	glm::vec3 lightColors[] = {
+		glm::vec3(1.0f),
 		glm::vec3(1.0f, 0.6f, 0.0f),
 		glm::vec3(1.0f, 0.0f, 0.0f),
 		glm::vec3(1.0f, 1.0, 0.0),
@@ -148,13 +151,13 @@ int main() {
 	// create texture
 	// --------------
 	// diffuse map
-	unsigned int diffuseMap = createTexture("custom_texture/container2.png");
+	//unsigned int diffuseMap = createTexture("custom_texture/container2.png");
 
 	// specular map
-	unsigned int specularMap = createTexture("custom_texture/container2_specular.png");
+	//unsigned int specularMap = createTexture("custom_texture/container2_specular.png");
 
 	// emission map
-	unsigned int emissionMap = createTexture("custom_texture/matrix.jpg");
+	//unsigned int emissionMap = createTexture("custom_texture/matrix.jpg");
 
 	// normal object
 	Shader PhongShader = Shader("custom_shader/PhongVertexShader.vert", "custom_shader/PhongFragmentShader.frag");
@@ -213,8 +216,8 @@ int main() {
 	//create lights
 	std::vector<Light*> lightList = {
 		new SpotLight(lightShader),       // 0: Flashlight
-		new PointLight(lightShader),      // 1: White orbiting light
 		new DirectionalLight(lightShader),// 2: Main directional light
+		new PointLight(lightShader),      // 1: White orbiting light
 		new PointLight(lightShader),      // 3: Orange point light
 		new PointLight(lightShader),      // 4: Red point light
 		new PointLight(lightShader),      // 5: Yellow point light
@@ -229,45 +232,45 @@ int main() {
 	for (unsigned int i = 0; i < objectList.size(); i++) {
 		//float angle = 20.f * i;
 		if (i < 10)
-			objectList[i]->setPosition(cubePositions[i]);
+			objectList[i]->setPosition(initPositions[i]);
 	}
 
 	// set light
+	// ---------
+	// flash light
 	lightList[0]->setColor(glm::vec3(1.0f));
 
-	lightList[1]->setCircularMotion(true);
-	lightList[1]->setPosition(lightPos);
-	lightList[1]->setCircularMotion(true);
+	// main directional light
+	lightList[1]->setDirection(glm::vec3(-0.2f, -1.0f, -0.3f));
+	lightList[1]->setColor(glm::vec3(1.0f, 1.0f, 1.0f));
 
-	lightList[2]->setDirection(glm::vec3(-0.2f, -1.0f, -0.3f));
-	if (lightList[2]->isEnabled())
-		lightList[2]->setColor(glm::vec3(1.0f, 1.0f, 1.0f));
+	// orbital light
+	lightList[2]->setCircularMotion(true);
 
-	for (int i = 3; i < lightList.size(); i++) {
-		if (i < 7) {
-			if (lightList[i]->isEnabled())
-				lightList[i]->setColor(pointLightColors[i - 3]);
-			lightList[i]->setPosition(pointLightPositions[i - 3]);
-		}
+	for (int i = 2; i < lightList.size(); i++) {
+		lightList[i]->setColor(lightColors[i - 2]);
+		lightList[i]->setPosition(lightPositions[i - 2]);
 	}
 
 	// Lighting method
-	std::vector<std::string> lightingMethods = { "Phong", "Gouraud", "Blinn Phong", "Cook Torrance"};
 	int currentLighting = 0;
 
 	// ImGui Settings
 	bool controlWindowOpened = true;
 	int currentRasterizationMode = 0;
 
-	PresetScenesCollapse presetScenesCollapse = PresetScenesCollapse("Preset Scenes");
+	//PresetScenesCollapse presetScenesCollapse = PresetScenesCollapse("Preset Scenes");
 	LightCollapse lightCollapse = LightCollapse("Add Light", lightList, lightShader);
 	ObjectCollapse objectCollapse = ObjectCollapse("Add Object", objectList);
 	ObjectProperties objectProperties = ObjectProperties("Object Properties", objectList);
 	LightProperties lightProperties = LightProperties("Light Properties", lightList);
+	Settings settings = Settings(*lightList[0], axis, currentRasterizationMode);
+
 	// render loop
 	// -----------
 	while (!glfwWindowShouldClose(window)) {
 		// Start the Dear ImGui frame
+		// --------------------------
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
@@ -284,34 +287,14 @@ int main() {
 		);
 		ImGui::SetNextWindowSize(controlWindowSize);		
 		ImGui::Begin("Control Window", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
-		presetScenesCollapse.show();
+		
+		//presetScenesCollapse.show();
 		lightCollapse.show();
 		objectCollapse.show();
 		objectProperties.show();
 		lightProperties.show();
-
 		ImGui::Separator();
-
-		if (lightList[0]->isEnabled()) {
-			if (ImGui::Button("Hide Flash Light"))
-				lightList[0]->disable();
-		}
-		else {
-			if (ImGui::Button("Show Flash Light"))
-				lightList[0]->enable();
-		}
-
-		if (axis.isEnabled()) {
-			if (ImGui::Button("Hide Axis"))
-				axis.disable();
-		}
-		else {
-			if (ImGui::Button("Show Axis"))
-				axis.enable();
-		}
-		ImGui::RadioButton("Fill", &currentRasterizationMode, 0); ImGui::SameLine();
-		ImGui::RadioButton("Wireframe", &currentRasterizationMode, 1); ImGui::SameLine();
-		ImGui::RadioButton("Point", &currentRasterizationMode, 2);
+		settings.show();
 
 		switch (currentRasterizationMode) {
 		case 0:
@@ -326,8 +309,8 @@ int main() {
 			break;
 		}
 
-		for (int i = 0; i < lightingMethods.size(); i++) {
-			const char* type = lightingMethods[i].c_str();
+		for (int i = 0; i < MODEL.size(); i++) {
+			const char* type = MODEL[i].c_str();
 
 			bool is_selected = (currentLighting == i);
 			ImGui::PushID(i);
@@ -351,7 +334,6 @@ int main() {
 					}
 				}
 				printf("Select %s\n", type);
-				std::cout << "Clicked" << std::endl;
 			}
 			ImGui::PopID();
 		}
@@ -371,7 +353,6 @@ int main() {
 		keyboardInputControl(window);
 
 		// render background
-		// ------
 		// -----
 		//glClearColor(0.75f, 0.52f, 0.3f, 1.0f);
 		glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
@@ -390,20 +371,19 @@ int main() {
 		// ===================================================================
 		// PER-FRAME LIGHT UPDATES (Only for animated lights)
 		// ===================================================================
-		lightList[1]->update(currentFrame); // Keep updating the orbiting one
+		lightList[2]->updatePosition(currentFrame); // Keep updating the orbiting one
 
 		// draw
 
 		for (int i = 0; i < lightList.size(); i++) {
 			if (i == 0) continue;
-			if (lightList[i]->isEnabled())
-				lightList[i]->draw(view, projection);
+			lightList[i]->draw(view, projection);
 		}
 
 		// normal object
 		// -------------
 
-		// extract world-space light position and upload to PhongShader
+		// extract world-space light position and upload to objectShader
 		int n_DirLight = 0, n_PointLight = 0, n_SpotLight = 0;
 		for (int i = 0; i < lightList.size(); i++) {
 			if (DirectionalLight* s = dynamic_cast<DirectionalLight*>(lightList[i])) {
@@ -427,8 +407,7 @@ int main() {
 		for (unsigned int i = 0; i < objectList.size(); i++) {
 			//float angle = 20.f * i;
 			//cubeList[i].setRotation(glm::vec3(angle * 0.2f, angle * 0.5f, angle * 0.8f));
-			if (objectList[i]->isEnabled())
-				objectList[i]->draw(*objectShader, view, projection, viewPos, horizontalRotate, verticalRotate);
+			objectList[i]->draw(*objectShader, view, projection, viewPos, horizontalRotate, verticalRotate);
 		}
 
 		// loaded model
