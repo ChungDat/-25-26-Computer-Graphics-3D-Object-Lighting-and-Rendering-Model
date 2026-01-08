@@ -58,6 +58,7 @@ Object::Object(const std::string& diffusePath, const std::string& specularPath, 
 	scale = glm::vec3(1.0f);
 	rotation = glm::vec3(0.0f);
 
+	albedo = glm::vec3(0.5);
 	roughness = 0.5;
 	metallic = 0.5;
 
@@ -90,6 +91,7 @@ void Object::draw(Shader& shader, const glm::mat4& view, const glm::mat4& projec
 	shader.setInt("material.specular", 1);
 	shader.setInt("material.emission", 2);
 
+	shader.setVec3fv("albedo", albedo);
 	shader.setFloat("roughness", roughness);
 	shader.setFloat("metallic", metallic);
 
@@ -116,11 +118,15 @@ void Object::setRotation(const glm::vec3 _rotation) {
 	rotation = glm::radians(_rotation);
 }
 
-void Object::setRoughness(float _roughness) {
+void Object::setAlbedo(const glm::vec3 _albedo) {
+	albedo = _albedo;
+}
+
+void Object::setRoughness(const float _roughness) {
 	roughness = _roughness;
 }
 
-void Object::setMetallic(float _metallic) {
+void Object::setMetallic(const float _metallic) {
 	metallic = _metallic;
 }
 
@@ -165,6 +171,10 @@ float Object::getY() const {
 
 float Object::getZ() const {
 	return position.z;
+}
+
+glm::vec3 Object::getAlbedo() const {
+	return albedo;
 }
 
 float Object::getRoughness() const {
@@ -535,6 +545,14 @@ void Sphere::draw(Shader& shader, const glm::mat4& view, const glm::mat4& projec
 	shader.setMat4fv("verticalRotate", verticalRotate);
 	shader.setMat4fv("model", model);
 
+	shader.setInt("material.diffuse", 0);
+	shader.setInt("material.specular", 1);
+	shader.setInt("material.emission", 2);
+
+	shader.setVec3fv("albedo", albedo);
+	shader.setFloat("roughness", roughness);
+	shader.setFloat("metallic", metallic);
+
 	glBindVertexArray(getVAO());
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, diffuseMap);
@@ -729,6 +747,14 @@ void Cylinder::draw(Shader& shader, const glm::mat4& view, const glm::mat4& proj
 	shader.setMat4fv("horizontalRotate", horizontalRotate);
 	shader.setMat4fv("verticalRotate", verticalRotate);
 	shader.setMat4fv("model", model);
+
+	shader.setInt("material.diffuse", 0);
+	shader.setInt("material.specular", 1);
+	shader.setInt("material.emission", 2);
+
+	shader.setVec3fv("albedo", albedo);
+	shader.setFloat("roughness", roughness);
+	shader.setFloat("metallic", metallic);
 
 	glBindVertexArray(getVAO());
 	glActiveTexture(GL_TEXTURE0);

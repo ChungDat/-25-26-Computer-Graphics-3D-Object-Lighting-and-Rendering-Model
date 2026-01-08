@@ -23,8 +23,9 @@ public:
     void setPosition(const glm::vec3 _pos);
     void setScale(const glm::vec3 _scale);
     void setRotation(const glm::vec3 _rotation);
-    void setRoughness(float);
-    void setMetallic(float);
+    void setAlbedo(const glm::vec3);
+    void setRoughness(const float);
+    void setMetallic(const float);
     void disable();
     void enable();
     bool isEnabled() const;
@@ -34,6 +35,7 @@ public:
     float getX() const;
     float getY() const;
     float getZ() const;
+    glm::vec3 getAlbedo() const;
     float getRoughness() const;
     float getMetallic() const;
     int getID() const;

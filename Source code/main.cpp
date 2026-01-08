@@ -183,11 +183,6 @@ int main() {
 	GouraudShader.setInt("material.specular", 1);
 	GouraudShader.setInt("material0.emission", 2); // emission is not used in this lighting model
 
-	CookTorranceShader.use();
-	CookTorranceShader.setVec3f("albedo", 1.0f, 1.0f, 1.0f);
-	CookTorranceShader.setFloat("roughness", 0.5f);
-	CookTorranceShader.setFloat("metallic", 0.3f);
-
 	// light source
 	Shader lightShader = Shader("custom_shader/lightSourceVertexShader.vert", "custom_shader/lightSourceFragmentShader.frag");
 
@@ -201,16 +196,16 @@ int main() {
 
 	// create objects
 	std::vector<Object*> objectList = {
-		new Cube("custom_texture/container2.png", "custom_texture/container2_specular.png", "custom_texture/matrix.jpg"),
-		new Cube("custom_texture/container2.png", "custom_texture/container2_specular.png", "custom_texture/matrix.jpg"),
-		new Cube("custom_texture/container2.png", "custom_texture/container2_specular.png", "custom_texture/matrix.jpg"),
-		new Cube("custom_texture/container2.png", "custom_texture/container2_specular.png", "custom_texture/matrix.jpg"),
-		new Cube("custom_texture/container2.png", "custom_texture/container2_specular.png", "custom_texture/matrix.jpg"),
-		new Cube("custom_texture/container2.png", "custom_texture/container2_specular.png", "custom_texture/matrix.jpg"),
-		new Cube("custom_texture/container2.png", "custom_texture/container2_specular.png", "custom_texture/matrix.jpg"),
-		new Cube("custom_texture/container2.png", "custom_texture/container2_specular.png", "custom_texture/matrix.jpg"),
-		new Cube("custom_texture/container2.png", "custom_texture/container2_specular.png", "custom_texture/matrix.jpg"),
-		new Cube("custom_texture/container2.png", "custom_texture/container2_specular.png", "custom_texture/matrix.jpg"),
+		new Cube("custom_texture/container2.png", "custom_texture/container2_specular.png"),//, "custom_texture/matrix.jpg"),
+		new Cube("custom_texture/container2.png", "custom_texture/container2_specular.png"),//, "custom_texture/matrix.jpg"),
+		new Cube("custom_texture/container2.png", "custom_texture/container2_specular.png"),//, "custom_texture/matrix.jpg"),
+		new Cube("custom_texture/container2.png", "custom_texture/container2_specular.png"),//, "custom_texture/matrix.jpg"),
+		new Cube("custom_texture/container2.png", "custom_texture/container2_specular.png"),//, "custom_texture/matrix.jpg"),
+		new Cube("custom_texture/container2.png", "custom_texture/container2_specular.png"),//, "custom_texture/matrix.jpg"),
+		new Cube("custom_texture/container2.png", "custom_texture/container2_specular.png"),//, "custom_texture/matrix.jpg"),
+		new Cube("custom_texture/container2.png", "custom_texture/container2_specular.png"),//, "custom_texture/matrix.jpg"),
+		new Cube("custom_texture/container2.png", "custom_texture/container2_specular.png"),//, "custom_texture/matrix.jpg"),
+		new Cube("custom_texture/container2.png", "custom_texture/container2_specular.png")//, "custom_texture/matrix.jpg"),
 	};
 
 	//create lights
