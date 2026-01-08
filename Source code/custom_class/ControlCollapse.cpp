@@ -93,22 +93,40 @@ void ObjectProperties::show() {
 			if (ImGui::Selectable(type, is_selected)) {
 				currentSelect = i;
 				printf("Select %s\n", type);
-				std::cout << "Clicked" << std::endl;
 			}
 			ImGui::PopID();
 		}
-		ImGui::SeparatorText("Position");
-		if (objectList.size () > 0 && currentSelect < objectList.size()) {
+
+		//if (objectList.size() > 0 && currentSelect < objectList.size()) {
+		if (currentSelect < objectList.size()) {
+			ImGui::SeparatorText("Position");
+
 			float posX = objectList[currentSelect]->getX();
 			float posY = objectList[currentSelect]->getY();
 			float posZ = objectList[currentSelect]->getZ();
-			bool positionChanged = false;
-			positionChanged = ImGui::SliderFloat("X##o", &posX, -10.0f, 10.0f, "%.1f") || positionChanged;
-			positionChanged = ImGui::SliderFloat("Y##o", &posY, -10.0f, 10.0f, "%.1f") || positionChanged;
-			positionChanged = ImGui::SliderFloat("Z##o", &posZ, -10.0f, 10.0f, "%.1f") || positionChanged;
-			if (positionChanged) {
+
+			if (ImGui::SliderFloat("X##o", &posX, -10.0f, 10.0f, "%.1f") ||
+				ImGui::SliderFloat("Y##o", &posY, -10.0f, 10.0f, "%.1f") ||
+				ImGui::SliderFloat("Z##o", &posZ, -10.0f, 10.0f, "%.1f"))
+			{
 				objectList[currentSelect]->setPosition(glm::vec3(posX, posY, posZ));
 			}
+			
+			ImGui::SeparatorText("Physical Attribute");
+			
+			float roughness = objectList[currentSelect]->getRoughness();
+			float metallic = objectList[currentSelect]->getMetallic();
+
+			if (ImGui::SliderFloat("Roughness##o", &roughness, 0.1f, 1.0f, "%.2f"))
+			{
+				objectList[currentSelect]->setRoughness(roughness);
+			}
+			if (ImGui::SliderFloat("Metallic##o", &metallic, 0.0f, 1.0f, "%.2f"))
+			{
+				objectList[currentSelect]->setMetallic(metallic);
+			}
+
+			ImGui::SeparatorText("Visibility");
 
 			if (objectList[currentSelect]->isEnabled()) {
 				if (ImGui::Button("Hide##o")) {
@@ -264,6 +282,5 @@ void Settings::show() {
 	ImGui::RadioButton("Fill", &currentRasterizationMode, 0); ImGui::SameLine();
 	ImGui::RadioButton("Wireframe", &currentRasterizationMode, 1); ImGui::SameLine();
 	ImGui::RadioButton("Point", &currentRasterizationMode, 2);
-
 
 }

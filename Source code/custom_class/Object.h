@@ -23,6 +23,8 @@ public:
     void setPosition(const glm::vec3 _pos);
     void setScale(const glm::vec3 _scale);
     void setRotation(const glm::vec3 _rotation);
+    void setRoughness(float);
+    void setMetallic(float);
     void disable();
     void enable();
     bool isEnabled() const;
@@ -32,6 +34,8 @@ public:
     float getX() const;
     float getY() const;
     float getZ() const;
+    float getRoughness() const;
+    float getMetallic() const;
     int getID() const;
 
     virtual std::string getType() const = 0;
@@ -44,6 +48,9 @@ protected:
     glm::vec3 position;
     glm::vec3 scale;
 	glm::vec3 rotation; // a vector representing rotation angles around x, y, z axes in degrees
+    glm::vec3 albedo;
+    float roughness;
+    float metallic;
     bool enabled;
 
     static int nextID;

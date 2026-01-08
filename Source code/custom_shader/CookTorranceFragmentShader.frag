@@ -125,9 +125,7 @@ vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir, vec3 F0, fl
 	vec3 specular = num / denom;
 	
 	vec3 kS = F;
-	//vec3 kD = vec3(1.0) - kS;
 	vec3 kD = (1.0 - kS) * (1.0 - metallic);
-	kD *= 1.0 - metallic;
 
 	vec3 diffuse = kD * albedo / 3.14159265;
 
@@ -149,9 +147,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, v
 	vec3 specular = num / denom;
 	
 	vec3 kS = F;
-	//vec3 kD = vec3(1.0) - kS;
 	vec3 kD = (1.0 - kS) * (1.0 - metallic);
-	kD *= 1.0 - metallic;
 
 	vec3 diffuse = kD * albedo / 3.14159265;
 
@@ -177,9 +173,7 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 F0, float ro
 	vec3 specular = num / denom;
 	
 	vec3 kS = F;
-	//vec3 kD = vec3(1.0) - kS;
 	vec3 kD = (1.0 - kS) * (1.0 - metallic);
-	kD *= 1.0 - metallic;
 
 	vec3 diffuse = kD * albedo / 3.14159265;
 

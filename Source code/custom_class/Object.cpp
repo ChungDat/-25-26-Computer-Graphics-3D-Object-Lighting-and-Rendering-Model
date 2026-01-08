@@ -58,6 +58,9 @@ Object::Object(const std::string& diffusePath, const std::string& specularPath, 
 	scale = glm::vec3(1.0f);
 	rotation = glm::vec3(0.0f);
 
+	roughness = 0.5;
+	metallic = 0.5;
+
 	enabled = true;
 
 	setModelMatrix();
@@ -87,6 +90,9 @@ void Object::draw(Shader& shader, const glm::mat4& view, const glm::mat4& projec
 	shader.setInt("material.specular", 1);
 	shader.setInt("material.emission", 2);
 
+	shader.setFloat("roughness", roughness);
+	shader.setFloat("metallic", metallic);
+
 	glBindVertexArray(getVAO());
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, diffuseMap);
@@ -108,6 +114,14 @@ void Object::setScale(const glm::vec3 _scale) {
 
 void Object::setRotation(const glm::vec3 _rotation) {
 	rotation = glm::radians(_rotation);
+}
+
+void Object::setRoughness(float _roughness) {
+	roughness = _roughness;
+}
+
+void Object::setMetallic(float _metallic) {
+	metallic = _metallic;
 }
 
 void Object::setModelMatrix() {
@@ -151,6 +165,14 @@ float Object::getY() const {
 
 float Object::getZ() const {
 	return position.z;
+}
+
+float Object::getRoughness() const {
+	return roughness;
+}
+
+float Object::getMetallic() const {
+	return metallic;
 }
 
 int Object::getID() const {
