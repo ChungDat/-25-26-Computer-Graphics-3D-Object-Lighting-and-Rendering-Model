@@ -33,8 +33,6 @@
 const int WIDTH = 800;
 const int HEIGHT = 600;
 const float RADIUS = 10.0f;
-const std::vector<std::string> MODEL = { "Phong", "Gouraud", "Blinn Phong", "Cook Torrance" };
-
 
 float horizontalRotateRate = 0.0f;
 float verticalRotateRate = 0.0f;
@@ -90,7 +88,6 @@ int main() {
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		return -1;
 	}
-
 
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetCursorPosCallback(window, mouseControl);
@@ -148,40 +145,23 @@ int main() {
 		glm::vec3(0.2f, 0.2f, 1.0f)
 	};
 
-	// create texture
-	// --------------
-	// diffuse map
-	//unsigned int diffuseMap = createTexture("custom_texture/container2.png");
-
-	// specular map
-	//unsigned int specularMap = createTexture("custom_texture/container2_specular.png");
-
-	// emission map
-	//unsigned int emissionMap = createTexture("custom_texture/matrix.jpg");
-
 	// normal object
 	Shader PhongShader = Shader("custom_shader/PhongVertexShader.vert", "custom_shader/PhongFragmentShader.frag");
 	Shader BlinnPhongShader = Shader("custom_shader/PhongVertexShader.vert", "custom_shader/BlinnPhongFragmentShader.frag");
 	Shader GouraudShader = Shader("custom_shader/GouraudVertexShader.vert", "custom_shader/GouraudFragmentShader.frag");
 	Shader CookTorranceShader = Shader("custom_shader/PhongVertexShader.vert", "custom_shader/CookTorranceFragmentShader.frag");
 
+	std::vector<std::string> shaderModel = { "Phong", "Gouraud", "Blinn Phong", "Cook Torrance" };
+	std::vector<Shader*> shaderList = { &PhongShader, &BlinnPhongShader, &GouraudShader, &CookTorranceShader };
+
 	PhongShader.use();
 	PhongShader.setFloat("material.shininess", 32.0f); // Phong uses a lower shininess
-	PhongShader.setInt("material.diffuse", 0);
-	PhongShader.setInt("material.specular", 1);
-	PhongShader.setInt("material.emission", 2);
 
 	BlinnPhongShader.use();
 	BlinnPhongShader.setFloat("material.shininess", 128.0f); // Blinn-Phong needs a higher value
-	BlinnPhongShader.setInt("material.diffuse", 0);
-	BlinnPhongShader.setInt("material.specular", 1);
-	BlinnPhongShader.setInt("material.emission", 2);
 
 	GouraudShader.use();
 	GouraudShader.setFloat("material.shininess", 32.0f); // Gouraud uses similar shininess to Phong
-	GouraudShader.setInt("material.diffuse", 0);
-	GouraudShader.setInt("material.specular", 1);
-	GouraudShader.setInt("material0.emission", 2); // emission is not used in this lighting model
 
 	// light source
 	Shader lightShader = Shader("custom_shader/lightSourceVertexShader.vert", "custom_shader/lightSourceFragmentShader.frag");
@@ -208,7 +188,7 @@ int main() {
 		new Cube("custom_texture/container2.png", "custom_texture/container2_specular.png")//, "custom_texture/matrix.jpg"),
 	};
 
-	//create lights
+	// create lights
 	std::vector<Light*> lightList = {
 		new SpotLight(lightShader),       // 0: Flashlight
 		new DirectionalLight(lightShader),// 2: Main directional light
@@ -223,32 +203,31 @@ int main() {
 	Axis axis = Axis(axisShader);
 	Plane plane = Plane(axisShader);
 
-	// set object
+	// set object positions
+	// --------------------
 	for (unsigned int i = 0; i < objectList.size(); i++) {
 		//float angle = 20.f * i;
 		if (i < 10)
 			objectList[i]->setPosition(initPositions[i]);
 	}
 
-	// set light
+	// set light color and positions
 	// ---------
-	// flash light
+	// flash spot light
 	lightList[0]->setColor(glm::vec3(1.0f));
 
 	// main directional light
 	lightList[1]->setDirection(glm::vec3(-0.2f, -1.0f, -0.3f));
 	lightList[1]->setColor(glm::vec3(1.0f, 1.0f, 1.0f));
 
-	// orbital light
+	// orbital point light
 	lightList[2]->setCircularMotion(true);
 
+	// point light
 	for (int i = 2; i < lightList.size(); i++) {
 		lightList[i]->setColor(lightColors[i - 2]);
 		lightList[i]->setPosition(lightPositions[i - 2]);
 	}
-
-	// Lighting method
-	int currentLighting = 0;
 
 	// ImGui Settings
 	bool controlWindowOpened = true;
@@ -259,7 +238,7 @@ int main() {
 	ObjectCollapse objectCollapse = ObjectCollapse("Add Object", objectList);
 	ObjectProperties objectProperties = ObjectProperties("Object Properties", objectList);
 	LightProperties lightProperties = LightProperties("Light Properties", lightList);
-	Settings settings = Settings(*lightList[0], axis, currentRasterizationMode);
+	Settings settings = Settings("Settings", lightList[0], axis, objectShader, shaderModel, shaderList, currentRasterizationMode);
 
 	// render loop
 	// -----------
@@ -288,7 +267,6 @@ int main() {
 		objectCollapse.show();
 		objectProperties.show();
 		lightProperties.show();
-		ImGui::Separator();
 		settings.show();
 
 		switch (currentRasterizationMode) {
@@ -302,35 +280,6 @@ int main() {
 			glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
 			glPointSize(2.0f);
 			break;
-		}
-
-		for (int i = 0; i < MODEL.size(); i++) {
-			const char* type = MODEL[i].c_str();
-
-			bool is_selected = (currentLighting == i);
-			ImGui::PushID(i);
-			if (ImGui::Selectable(type, is_selected)) {
-				if (currentLighting != i) {
-					currentLighting = i;
-					// The ONLY thing we do now is change where the pointer points!
-					switch (currentLighting) {
-					case 0:
-						objectShader = &PhongShader;
-						break;
-					case 1:
-						objectShader = &GouraudShader;
-						break;
-					case 2:
-						objectShader = &BlinnPhongShader;
-						break;
-					case 3:
-						objectShader = &CookTorranceShader;
-						break;
-					}
-				}
-				printf("Select %s\n", type);
-			}
-			ImGui::PopID();
 		}
 
 		ImGui::End();

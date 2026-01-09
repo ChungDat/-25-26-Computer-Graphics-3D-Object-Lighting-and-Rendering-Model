@@ -1,7 +1,15 @@
 #include "ControlCollapse.h"
 #include <iostream>
 
-// Base constructors (definitions required by the linker)
+const std::map<std::string, std::string> TEXTURE = {
+	{"wood crate", "custom_texture/container2.png"},
+};
+
+const std::map < std::string, glm::vec3> MATERIAL = {
+	{"gold", glm::vec3(1.0f, 0.71f, 0.29f)},
+	{"copper", glm::vec3(0.95, 0.64, 0.54)},
+};
+
 ControlCollapse::ControlCollapse()
 	: label(nullptr)
 {}
@@ -70,13 +78,13 @@ void ObjectCollapse::show() {
 
 void ObjectCollapse::addObject(const char* objectType) {
 	if (objectType == "Cube")
-		objectList.push_back(new Cube("container2.png", "container2_specular.png", "matrix.jpg"));
+		objectList.push_back(new Cube());
 	else if (objectType == "Pyramid")
-		objectList.push_back(new Pyramid("container2.png", "container2_specular.png", "matrix.jpg"));
+		objectList.push_back(new Pyramid());
 	else if (objectType == "Sphere")
-		objectList.push_back(new Sphere("container2.png", "container2_specular.png", "matrix.jpg"));
+		objectList.push_back(new Sphere());
 	else if (objectType == "Cylinder")
-		objectList.push_back(new Cylinder("container2.png", "container2_specular.png", "matrix.jpg"));
+		objectList.push_back(new Cylinder());
 }
 
 ObjectProperties::ObjectProperties(const char* _label, std::vector<Object*>& _objectList) 
@@ -125,6 +133,10 @@ void ObjectProperties::show() {
 			{
 				objectList[currentSelect]->setMetallic(metallic);
 			}
+
+			ImGui::SeparatorText("Texture");
+
+			if (true);
 
 			ImGui::SeparatorText("Visibility");
 
@@ -253,34 +265,53 @@ void LightProperties::show() {
 
 }
 
-Settings::Settings(Light& _flashLight, Axis& _axis, int& rasterizationMode) : flashLight(_flashLight), axis(_axis), currentRasterizationMode(rasterizationMode) {}
+Settings::Settings(const char* _label, Light* _flashLight, Axis& _axis, Shader*& _shader, const std::vector<std::string>& _shaderModel, std::vector<Shader*>& _shaderList, int& rasterizationMode) 
+	: ControlCollapse(_label), flashLight(_flashLight), axis(_axis), objectShader(_shader), shaderModel(_shaderModel), shaderList(_shaderList), currentRasterizationMode(rasterizationMode), currentLighting(0) {}
 
 void Settings::show() {
-	// flash light
-	if (flashLight.isEnabled()) {
-		if (ImGui::Button("Hide Flash Light")) {
-			flashLight.disable();
+	if (ImGui::CollapsingHeader(label ? label : "Settings")) {
+		// flash light
+		if (flashLight->isEnabled()) {
+			if (ImGui::Button("Hide Flash Light")) {
+				flashLight->disable();
+			}
+		}
+		else {
+			if (ImGui::Button("Show Flash Light")) {
+				flashLight->enable();
+			}
+		}
+
+		// axis
+		if (axis.isEnabled()) {
+			if (ImGui::Button("Hide Axis"))
+				axis.disable();
+		}
+		else {
+			if (ImGui::Button("Show Axis"))
+				axis.enable();
+		}
+
+		// rasterization mode
+		ImGui::RadioButton("Fill", &currentRasterizationMode, 0); ImGui::SameLine();
+		ImGui::RadioButton("Wireframe", &currentRasterizationMode, 1); ImGui::SameLine();
+		ImGui::RadioButton("Point", &currentRasterizationMode, 2);
+
+		// shader mode
+		for (int i = 0; i < shaderModel.size(); i++) {
+			const char* type = shaderModel[i].c_str();
+
+			bool is_selected = (currentLighting == i);
+			ImGui::PushID(i);
+
+			if (ImGui::Selectable(type, is_selected)) {
+				if (currentLighting != i) {
+					currentLighting = i;
+					objectShader = shaderList[currentLighting];
+					printf("Select %s\n", type);
+				}
+			}
+			ImGui::PopID();
 		}
 	}
-	else {
-		if (ImGui::Button("Show Flash Light")) {
-			flashLight.enable();
-		}
-	}
-
-	// axis
-	if (axis.isEnabled()) {
-		if (ImGui::Button("Hide Axis"))
-			axis.disable();
-	}
-	else {
-		if (ImGui::Button("Show Axis"))
-			axis.enable();
-	}
-
-	// rasterization mode
-	ImGui::RadioButton("Fill", &currentRasterizationMode, 0); ImGui::SameLine();
-	ImGui::RadioButton("Wireframe", &currentRasterizationMode, 1); ImGui::SameLine();
-	ImGui::RadioButton("Point", &currentRasterizationMode, 2);
-
 }
