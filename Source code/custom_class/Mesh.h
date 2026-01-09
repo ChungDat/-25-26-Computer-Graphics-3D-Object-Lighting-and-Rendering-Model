@@ -20,13 +20,13 @@ struct Vertex {
 	glm::vec3 Tangent;
 	// bitangent
 	glm::vec3 Bitangent;
-	//bone indexes which will influence this vertex
+	// bone indexes which will influence this vertex
 	int m_BoneIDs[MAX_BONE_INFLUENCE];
-	//weights from each bone
+	// weights from each bone
 	float m_Weights[MAX_BONE_INFLUENCE];
 };
 
-struct Texture {
+struct ModelTexture {
 	unsigned int id;
 	std::string type;
 	std::string path;
@@ -37,11 +37,12 @@ class Mesh
 public:
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
-	std::vector<Texture> textures;
+	std::vector<ModelTexture> textures;
 
-	Mesh(std::vector<Vertex>, std::vector<unsigned int>, std::vector<Texture>);
+	Mesh(std::vector<Vertex>, std::vector<unsigned int>, std::vector<ModelTexture>);
 	void Draw(Shader& shader);
-private:
+
+protected:
 	unsigned int VAO, VBO, EBO;
 	void setupMesh();
 };

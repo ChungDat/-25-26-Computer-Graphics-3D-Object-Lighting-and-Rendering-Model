@@ -19,22 +19,27 @@ class Model: public Object
 protected:
 	// model data
 	std::vector<Mesh> meshes;
-	std::vector<Texture> textures_loaded;
+	std::vector<ModelTexture> textures_loaded;
 	std::string directory;
 	bool gammaCorrection;
 
 	void loadModel(std::string);
 	void processNode(aiNode*, const aiScene*);
 	Mesh processMesh(aiMesh*, const aiScene*);
-	std::vector<Texture> loadMaterialTextures(aiMaterial*, aiTextureType, std::string);
+	std::vector<ModelTexture> loadMaterialTextures(aiMaterial*, aiTextureType, std::string);
 	unsigned int TextureFromFile(const char*, const std::string&, bool = false);
 	
 	std::string getType() const override;
 	unsigned int getVAO() const override { return 0; };
 	unsigned int getVertexCount() const override { return 0; };
+
+	bool enabled;
+
 public:
 	Model(char*);
 	virtual ~Model();
 	void draw(Shader&, const glm::mat4&, const glm::mat4&, const glm::vec3&, const glm::mat4&, const glm::mat4&);
+	bool isEnabled();
+	void enable();
+	void disable();
 };
-
