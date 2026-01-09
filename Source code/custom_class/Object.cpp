@@ -29,81 +29,148 @@ bool Cylinder::initialized = false;
 // abstract Object class
 // ---------------------
 
-Object::Object(const std::string& diffusePath, const std::string& specularPath, const std::string& emssionPath) 
-	: diffusePath(diffusePath), specularPath(specularPath), emissionPath(emssionPath), ID(nextID++)
+Object::Object() : ID(nextID++)
 {
-	if (!diffusePath.empty()) {
-		diffuseMap = createTexture(diffusePath.c_str());
-	}
-	else {
-		diffuseMap = 0;
-	}
-
-	if (!specularPath.empty()) {
-		specularMap = createTexture(specularPath.c_str());
-	}
-	else {
-		specularMap = 0;
-	}
-
-	if (!emssionPath.empty()) {
-		emissionMap = createTexture(emssionPath.c_str());
-	}
-	else {
-		emissionMap = 0;
-	}
-
-	// default
 	position = glm::vec3(0.0f);
 	scale = glm::vec3(1.0f);
 	rotation = glm::vec3(0.0f);
 
-	albedo = glm::vec3(0.5);
-	roughness = 0.5;
-	metallic = 0.5;
+	material.ambient = glm::vec3(0.1f);
+	material.diffuse = glm::vec3(0.5f);
+	material.specular = glm::vec3(0.5f);
+
+	//material.shininess = 32.0f;
+
+	material.albedo = glm::vec3(0.5f);
+	material.roughness = 0.5f;
+	material.metallic = 0.5f;
+
+	texture.diffuseMap = 0;
+	texture.specularMap = 0;
+	texture.emissionMap = 0;
+
+	texture.albedoMap = 0;
+	texture.metallicMap = 0;
+	texture.roughnessMap = 0;
 
 	enabled = true;
-
-	setModelMatrix();
 }
-
-Object::Object(const std::string& diffusePath, const std::string& specularPath) 
-	: Object(diffusePath, specularPath, "") {}
-
-Object::Object(const std::string& diffusePath) 
-	: Object(diffusePath, "", "") {}
-
-Object::Object() 
-	: Object("", "", "") {}
 
 void Object::draw(Shader& shader, const glm::mat4& view, const glm::mat4& projection, const glm::vec3& viewPos, const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) {
 	if (!isEnabled()) return;
-	shader.use();
+
 	setModelMatrix();
+
+	shader.use();
+
 	shader.setMat4fv("view", view);
 	shader.setMat4fv("projection", projection);
 	shader.setVec3fv("viewPos", viewPos);
 	shader.setMat4fv("horizontalRotate", horizontalRotate);
 	shader.setMat4fv("verticalRotate", verticalRotate);
+
 	shader.setMat4fv("model", model);
 	
-	shader.setInt("material.diffuse", 0);
-	shader.setInt("material.specular", 1);
-	shader.setInt("material.emission", 2);
+	shader.setVec3fv("material.ambient", material.ambient);
+	shader.setVec3fv("material.diffuse", material.diffuse);
+	shader.setVec3fv("material.specular", material.specular);
 
-	shader.setVec3fv("albedo", albedo);
-	shader.setFloat("roughness", roughness);
-	shader.setFloat("metallic", metallic);
+	//shader.setFloat("material.shininess", material.shininess);
+
+	shader.setVec3fv("material.albedo", material.albedo);
+	shader.setFloat("material.metallic", material.metallic);
+	shader.setFloat("material.roughness", material.roughness);
+
+	shader.setBool("useDiffuseMap", texture.diffuseMap != 0);
+	shader.setBool("useSpecularMap", texture.specularMap != 0);
+	shader.setBool("useEmissionMap", texture.emissionMap != 0);
+
+	shader.setBool("useAlbedoMap", texture.albedoMap != 0);
+	shader.setBool("useMetallicMap", texture.metallicMap != 0);
+	shader.setBool("useRoughnessMap", texture.roughnessMap != 0);
+
+	shader.setInt("diffuseMap", 0);
+	shader.setInt("specularMap", 1);
+	shader.setInt("emissionMap", 2);
+
+	shader.setInt("albedoMap", 3);
+	shader.setInt("metallicMap", 4);
+	shader.setInt("roughnessMap", 5);
 
 	glBindVertexArray(getVAO());
+
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, diffuseMap);
+	glBindTexture(GL_TEXTURE_2D, texture.diffuseMap);
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, specularMap);
+	glBindTexture(GL_TEXTURE_2D, texture.specularMap);
 	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, emissionMap);
+	glBindTexture(GL_TEXTURE_2D, texture.emissionMap);
+
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, texture.albedoMap);
+	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, texture.metallicMap);
+	glActiveTexture(GL_TEXTURE5);
+	glBindTexture(GL_TEXTURE_2D, texture.roughnessMap);
 
 	glDrawArrays(getDrawMode(), 0, getVertexCount());
+}
+
+void Object::setDiffusePath(const std::string _diffusePath)
+{
+	texture.diffusePath = _diffusePath;
+	texture.diffuseMap = createTexture(texture.diffusePath.c_str());
+}
+
+void Object::setSpecularPath(const std::string _specularPath)
+{
+	texture.specularPath = _specularPath;
+	texture.specularMap = createTexture(texture.specularPath.c_str());
+}
+
+void Object::setEmissionPath(const std::string _emissionPath)
+{
+	texture.emissionPath = _emissionPath;
+	texture.emissionMap = createTexture(texture.emissionPath.c_str());
+}
+
+void Object::setAlbedoPath(const std::string _albedoPath) {
+	texture.albedoPath = _albedoPath;
+	texture.albedoMap = createTexture(texture.albedoPath.c_str());
+}
+
+void Object::setMetallicPath(const std::string _metallicPath) {
+	texture.metallicPath = _metallicPath;
+	texture.metallicMap = createTexture(texture.metallicPath.c_str());
+}
+
+void Object::setRoughnessPath(const std::string _roughnessPath) {
+	texture.roughnessPath = _roughnessPath;
+	texture.roughnessMap = createTexture(texture.roughnessPath.c_str());
+}
+
+void Object::setAmbient(const glm::vec3 _ambient) {
+	material.ambient = _ambient;
+}
+
+void Object::setDiffuse(const glm::vec3 _diffuse) {
+	material.diffuse = _diffuse;
+}
+
+void Object::setSpecular(const glm::vec3 _specular) {
+	material.specular = _specular;
+}
+
+void Object::setAlbedo(const glm::vec3 _albedo) {
+	material.albedo = _albedo;
+}
+
+void Object::setRoughness(const float _roughness) {
+	material.roughness = _roughness;
+}
+
+void Object::setMetallic(const float _metallic) {
+	material.metallic = _metallic;
 }
 
 void Object::setPosition(const glm::vec3 _pos) {
@@ -116,18 +183,6 @@ void Object::setScale(const glm::vec3 _scale) {
 
 void Object::setRotation(const glm::vec3 _rotation) {
 	rotation = glm::radians(_rotation);
-}
-
-void Object::setAlbedo(const glm::vec3 _albedo) {
-	albedo = _albedo;
-}
-
-void Object::setRoughness(const float _roughness) {
-	roughness = _roughness;
-}
-
-void Object::setMetallic(const float _metallic) {
-	metallic = _metallic;
 }
 
 void Object::setModelMatrix() {
@@ -173,16 +228,32 @@ float Object::getZ() const {
 	return position.z;
 }
 
+glm::vec3 Object::getAmbient() const {
+	return material.ambient;
+}
+
+glm::vec3 Object::getDiffuse() const {
+	return material.diffuse;
+}
+
+glm::vec3 Object::getSpecular() const {
+	return material.specular;
+}
+
+float Object::getShininess() const {
+	return material.shininess;
+}
+
 glm::vec3 Object::getAlbedo() const {
-	return albedo;
+	return material.albedo;
 }
 
 float Object::getRoughness() const {
-	return roughness;
+	return material.roughness;
 }
 
 float Object::getMetallic() const {
-	return metallic;
+	return material.metallic;
 }
 
 int Object::getID() const {
@@ -198,20 +269,10 @@ Object::~Object() {}
 // Cube class
 // ----------
 
-Cube::Cube(const std::string& diffusePath, const std::string& specularPath, const std::string& emssionPath) 
-	: Object(diffusePath, specularPath, emssionPath)
+Cube::Cube() : Object()
 {
 	initBuffers();
 }
-
-Cube::Cube(const std::string& diffusePath, const std::string& specularPath) 
-	: Cube(diffusePath, specularPath, "") {}
-
-Cube::Cube(const std::string& diffusePath)
-	: Cube(diffusePath, "", "") {}
-
-Cube::Cube()
-	: Cube("", "", "") {}
 
 void Cube::initBuffers() {
 	if (initialized) return;
@@ -302,20 +363,9 @@ std::string Cube::getType() const
 // Pyramid class
 // -------------
 
-Pyramid::Pyramid(const std::string& diffusePath, const std::string& specularPath, const std::string& emssionPath)
-	: Object(diffusePath, specularPath, emssionPath)
+Pyramid::Pyramid() : Object()
 {
 	initBuffers();
-}
-
-Pyramid::Pyramid(const std::string& diffusePath, const std::string& specularPath)
-	: Pyramid(diffusePath, specularPath, "") {}
-
-Pyramid::Pyramid(const std::string& diffusePath)
-	: Pyramid(diffusePath, "", "") {}
-
-Pyramid::Pyramid()
-	: Pyramid("", "", "") {
 }
 
 void Pyramid::initBuffers() {
@@ -401,20 +451,10 @@ std::string Pyramid::getType() const {
 // Sphere class
 // ------------
 
-Sphere::Sphere(const std::string& diffusePath, const std::string& specularPath, const std::string& emssionPath)
-	: Object(diffusePath, specularPath, emssionPath)
+Sphere::Sphere() : Object()
 {
 	initBuffers();
 }
-
-Sphere::Sphere(const std::string& diffusePath, const std::string& specularPath)
-	: Sphere(diffusePath, specularPath, "") {}
-
-Sphere::Sphere(const std::string& diffusePath)
-	: Sphere(diffusePath, "", "") {}
-
-Sphere::Sphere()
-	: Sphere("", "", "") {}
 
 void Sphere::initBuffers() {
 	if (initialized) return;
@@ -536,30 +576,52 @@ void Sphere::generateSphere(float radius, unsigned int sectorCount, unsigned int
 
 void Sphere::draw(Shader& shader, const glm::mat4& view, const glm::mat4& projection, const glm::vec3& viewPos, const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) {
 	if (!isEnabled()) return;
-	shader.use();
+
 	setModelMatrix();
+
+	shader.use();
+
 	shader.setMat4fv("view", view);
 	shader.setMat4fv("projection", projection);
 	shader.setVec3fv("viewPos", viewPos);
 	shader.setMat4fv("horizontalRotate", horizontalRotate);
 	shader.setMat4fv("verticalRotate", verticalRotate);
+
 	shader.setMat4fv("model", model);
 
-	shader.setInt("material.diffuse", 0);
-	shader.setInt("material.specular", 1);
-	shader.setInt("material.emission", 2);
+	shader.setVec3fv("material.ambient", material.ambient);
+	shader.setVec3fv("material.diffuse", material.diffuse);
+	shader.setVec3fv("material.specular", material.specular);
 
-	shader.setVec3fv("albedo", albedo);
-	shader.setFloat("roughness", roughness);
-	shader.setFloat("metallic", metallic);
+	shader.setFloat("material.shininess", material.shininess);
+
+	shader.setVec3fv("material.albedo", material.albedo);
+	shader.setFloat("material.metallic", material.metallic);
+	shader.setFloat("material.roughness", material.roughness);
+
+	shader.setInt("diffuseMap", 0);
+	shader.setInt("specularMap", 1);
+	shader.setInt("emissionMap", 2);
+
+	shader.setInt("albedoMap", 3);
+	shader.setInt("metallicMap", 4);
+	shader.setInt("roughnessMap", 5);
 
 	glBindVertexArray(getVAO());
+
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, diffuseMap);
+	glBindTexture(GL_TEXTURE_2D, texture.diffuseMap);
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, specularMap);
+	glBindTexture(GL_TEXTURE_2D, texture.specularMap);
 	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, emissionMap);
+	glBindTexture(GL_TEXTURE_2D, texture.emissionMap);
+
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, texture.albedoMap);
+	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, texture.metallicMap);
+	glActiveTexture(GL_TEXTURE5);
+	glBindTexture(GL_TEXTURE_2D, texture.roughnessMap);
 
 	glDrawElements(getDrawMode(), getVertexCount(), GL_UNSIGNED_INT, 0);
 }
@@ -567,22 +629,9 @@ void Sphere::draw(Shader& shader, const glm::mat4& view, const glm::mat4& projec
 // Cylinder class
 // --------------
 
-Cylinder::Cylinder(const std::string& diffusePath, const std::string& specularPath, const std::string& emssionPath)
-	: Object(diffusePath, specularPath, emssionPath)
+Cylinder::Cylinder() : Object()
 {
 	initBuffers();
-}
-
-Cylinder::Cylinder(const std::string& diffusePath, const std::string& specularPath)
-	: Cylinder(diffusePath, specularPath, "") {
-}
-
-Cylinder::Cylinder(const std::string& diffusePath)
-	: Cylinder(diffusePath, "", "") {
-}
-
-Cylinder::Cylinder()
-	: Cylinder("", "", "") {
 }
 
 void Cylinder::initBuffers() {
@@ -739,30 +788,52 @@ void Cylinder::generateCylinder(float radius, float height, unsigned int sectorC
 
 void Cylinder::draw(Shader& shader, const glm::mat4& view, const glm::mat4& projection, const glm::vec3& viewPos, const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) {
 	if (!isEnabled()) return;
-	shader.use();
+
 	setModelMatrix();
+
+	shader.use();
+
 	shader.setMat4fv("view", view);
 	shader.setMat4fv("projection", projection);
 	shader.setVec3fv("viewPos", viewPos);
 	shader.setMat4fv("horizontalRotate", horizontalRotate);
 	shader.setMat4fv("verticalRotate", verticalRotate);
+
 	shader.setMat4fv("model", model);
 
-	shader.setInt("material.diffuse", 0);
-	shader.setInt("material.specular", 1);
-	shader.setInt("material.emission", 2);
+	shader.setVec3fv("material.ambient", material.ambient);
+	shader.setVec3fv("material.diffuse", material.diffuse);
+	shader.setVec3fv("material.specular", material.specular);
 
-	shader.setVec3fv("albedo", albedo);
-	shader.setFloat("roughness", roughness);
-	shader.setFloat("metallic", metallic);
+	shader.setFloat("material.shininess", material.shininess);
+
+	shader.setVec3fv("material.albedo", material.albedo);
+	shader.setFloat("material.metallic", material.metallic);
+	shader.setFloat("material.roughness", material.roughness);
+
+	shader.setInt("diffuseMap", 0);
+	shader.setInt("specularMap", 1);
+	shader.setInt("emissionMap", 2);
+
+	shader.setInt("albedoMap", 3);
+	shader.setInt("metallicMap", 4);
+	shader.setInt("roughnessMap", 5);
 
 	glBindVertexArray(getVAO());
+
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, diffuseMap);
+	glBindTexture(GL_TEXTURE_2D, texture.diffuseMap);
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, specularMap);
+	glBindTexture(GL_TEXTURE_2D, texture.specularMap);
 	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, emissionMap);
+	glBindTexture(GL_TEXTURE_2D, texture.emissionMap);
+
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, texture.albedoMap);
+	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, texture.metallicMap);
+	glActiveTexture(GL_TEXTURE5);
+	glBindTexture(GL_TEXTURE_2D, texture.roughnessMap);
 
 	glDrawElements(getDrawMode(), getVertexCount(), GL_UNSIGNED_INT, 0);
 }

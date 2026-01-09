@@ -10,49 +10,47 @@
 #include <vector>
 #include <cmath>
 
+struct Material{
+    glm::vec3 ambient;
+    glm::vec3 diffuse;
+    glm::vec3 specular;
+
+    float shininess;
+
+    glm::vec3 albedo;
+    float metallic;
+    float roughness;
+};
+
+struct Texture {
+    std::string diffusePath;
+    std::string specularPath;
+    std::string emissionPath;
+
+    std::string albedoPath;
+    std::string metallicPath;
+    std::string roughnessPath;
+
+    unsigned int diffuseMap;
+    unsigned int specularMap;
+    unsigned int emissionMap;
+
+    unsigned int albedoMap;
+    unsigned int metallicMap;
+    unsigned int roughnessMap;
+};
+
 class Object
 {
-public:
-    Object();
-	Object(const std::string& diffusePath);
-	Object(const std::string& diffusePath, const std::string& specularPath);
-	Object(const std::string& diffusePath, const std::string& specularPath, const std::string& emssionPath);
-    //Object(const Object& other);
-
-    virtual void draw(Shader& shader, const glm::mat4& view, const glm::mat4& projection, const glm::vec3& viewPos, const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate);
-    void setPosition(const glm::vec3 _pos);
-    void setScale(const glm::vec3 _scale);
-    void setRotation(const glm::vec3 _rotation);
-    void setAlbedo(const glm::vec3);
-    void setRoughness(const float);
-    void setMetallic(const float);
-    void disable();
-    void enable();
-    bool isEnabled() const;
-
-    glm::vec3 getPosition() const;
-    glm::vec3& getPosition_Ref();
-    float getX() const;
-    float getY() const;
-    float getZ() const;
-    glm::vec3 getAlbedo() const;
-    float getRoughness() const;
-    float getMetallic() const;
-    int getID() const;
-
-    virtual std::string getType() const = 0;
-    
-    virtual ~Object();
 protected:
-    unsigned int diffuseMap, specularMap, emissionMap;
-    std::string diffusePath, specularPath, emissionPath;
     glm::mat4 model;
     glm::vec3 position;
     glm::vec3 scale;
-	glm::vec3 rotation; // a vector representing rotation angles around x, y, z axes in degrees
-    glm::vec3 albedo;
-    float roughness;
-    float metallic;
+    glm::vec3 rotation; // a vector representing rotation angles around x, y, z axes in degrees
+
+    Material material;
+    Texture texture;
+
     bool enabled;
 
     static int nextID;
@@ -62,6 +60,58 @@ protected:
     virtual unsigned int getVAO() const = 0;
     virtual unsigned int getVertexCount() const = 0;
     virtual GLenum getDrawMode() const;
+
+public:
+    Object();
+
+    virtual void draw(Shader& shader, const glm::mat4& view, const glm::mat4& projection, const glm::vec3& viewPos, const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate);
+    
+    void setDiffusePath(const std::string);
+    void setSpecularPath(const std::string);
+    void setEmissionPath(const std::string);
+
+    void setAlbedoPath(const std::string);
+    void setMetallicPath(const std::string);
+    void setRoughnessPath(const std::string);
+    
+    void setAmbient(const glm::vec3);
+    void setDiffuse(const glm::vec3);
+    void setSpecular(const glm::vec3);
+
+    void setAlbedo(const glm::vec3);
+    void setRoughness(const float);
+    void setMetallic(const float);
+
+    void setPosition(const glm::vec3 _pos);
+    void setScale(const glm::vec3 _scale);
+    void setRotation(const glm::vec3 _rotation);
+
+    void disable();
+    void enable();
+    bool isEnabled() const;
+
+    glm::vec3 getPosition() const;
+    glm::vec3& getPosition_Ref();
+
+    float getX() const;
+    float getY() const;
+    float getZ() const;
+
+    glm::vec3 getAmbient() const;
+    glm::vec3 getDiffuse() const;
+    glm::vec3 getSpecular() const;
+
+    float getShininess() const;
+
+    glm::vec3 getAlbedo() const;
+    float getRoughness() const;
+    float getMetallic() const;
+
+    int getID() const;
+
+    virtual std::string getType() const = 0;
+    
+    virtual ~Object();
 };
 
 class Cube : public Object {
@@ -72,11 +122,9 @@ protected:
     unsigned int getVAO() const;
     unsigned int getVertexCount() const;
     std::string getType() const;
+
 public:
     Cube();
-    Cube(const std::string& diffusePath);
-    Cube(const std::string& diffusePath, const std::string& specularPath);
-    Cube(const std::string& diffusePath, const std::string& specularPath, const std::string& emssionPath);
 };
 
 class Sphere : public Object {
@@ -91,11 +139,9 @@ protected:
     std::string getType() const;
     static void generateSphere(float radius, unsigned int sectorCount, unsigned int stackCount,
         std::vector<float>& vertices, std::vector<unsigned int>& indices);
+
 public:
     Sphere();
-    Sphere(const std::string& diffusePath);
-    Sphere(const std::string& diffusePath, const std::string& specularPath);
-    Sphere(const std::string& diffusePath, const std::string& specularPath, const std::string& emssionPath);
     void draw(Shader& shader, const glm::mat4& view, const glm::mat4& projection, const glm::vec3& viewPos, const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) override;
 };
 
@@ -107,11 +153,9 @@ protected:
     unsigned int getVAO() const;
     unsigned int getVertexCount() const;
     std::string getType() const;
+
 public:
     Pyramid();
-    Pyramid(const std::string& diffusePath);
-    Pyramid(const std::string& diffusePath, const std::string& specularPath);
-    Pyramid(const std::string& diffusePath, const std::string& specularPath, const std::string& emssionPath);
 };
 
 class Cylinder : public Object {
@@ -126,10 +170,8 @@ protected:
     std::string getType() const;
     static void generateCylinder(float radius, float height, unsigned int sectorCount,
         std::vector<float>& vertices, std::vector<unsigned int>& indices);
+
 public:
     Cylinder();
-    Cylinder(const std::string& diffusePath);
-    Cylinder(const std::string& diffusePath, const std::string& specularPath);
-    Cylinder(const std::string& diffusePath, const std::string& specularPath, const std::string& emssionPath);
     void draw(Shader& shader, const glm::mat4& view, const glm::mat4& projection, const glm::vec3& viewPos, const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) override;
 };

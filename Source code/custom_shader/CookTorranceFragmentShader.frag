@@ -1,5 +1,11 @@
 #version 330 core
 
+struct Material {
+	vec3 albedo;
+	float metallic;
+	float roughness;
+};
+
 struct DirectionalLight {
 	vec3 direction; // world-space direction
 	vec3 color;
@@ -38,38 +44,49 @@ in vec3 fragPos; // world-space position
 out vec4 FragColor;
 
 uniform vec3 viewPos; // world-space camera position
+uniform Material material;
+
 uniform DirectionalLight dirLight[NR_DIR_LIGHTS];
 uniform PointLight pointLight[NR_POINT_LIGHTS];
 uniform SpotLight spotLight[NR_SPOT_LIGHTS];
-uniform vec3 albedo;
-uniform float roughness;
-uniform float metallic;
 
-vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir, vec3 F0, float roughness, float metallic);
-vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 F0, float roughness, float metallic);
-vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 F0, float roughness, float metallic);
+uniform sampler2D albedoMap;
+uniform sampler2D metallicMap;
+uniform sampler2D roughnessMap;
+
+uniform bool useAlbedoMap;
+uniform bool useMetallicMap;
+uniform bool useRoughnessMap;
 
 float DistributionGGX(vec3 N, vec3 H, float roughness);
 float GeometrySchlickGGX(float NdotV, float roughness);
 float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness);
 vec3 FresnelSchlick(float cosTheta, vec3 F0);
 
+vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir, vec3 F0, vec3 albedo, float roughness, float metallic);
+vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 F0, vec3 albedo, float roughness, float metallic);
+vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 F0, vec3 albedo, float roughness, float metallic);
+
 void main() {
 	vec3 N = normalize(fragNormal);
 	vec3 V = normalize(viewPos - fragPos);
+
+	vec3 albedo = useAlbedoMap ? texture(albedoMap, texCoord).rgb : material.albedo;
+	float roughness = useRoughnessMap ? texture(roughnessMap, texCoord).r : material.roughness;
+	float metallic = useMetallicMap ? texture(metallicMap, texCoord).r : material.metallic;
 
 	vec3 result = vec3(0.0);
 
 	vec3 F0 = mix(vec3(0.04), albedo, metallic);
 
 	for (int i = 0; i < NR_DIR_LIGHTS; i++) {
-		result += CalcDirLight(dirLight[i], N, V, F0, roughness, metallic);
+		result += CalcDirLight(dirLight[i], N, V, F0, albedo, roughness, metallic);
 	}
 	for (int i = 0; i < NR_POINT_LIGHTS; i++) {
-		result += CalcPointLight(pointLight[i], N, fragPos, V, F0, roughness, metallic);
+		result += CalcPointLight(pointLight[i], N, fragPos, V, F0, albedo, roughness, metallic);
 	}
 	for (int i = 0; i < NR_SPOT_LIGHTS; i++) {
-		result += CalcSpotLight(spotLight[i], N, V, F0, roughness, metallic);
+		result += CalcSpotLight(spotLight[i], N, V, F0, albedo, roughness, metallic);
 	}
 
 	FragColor = vec4(result, 1.0);
@@ -112,7 +129,7 @@ vec3 FresnelSchlick(float cosTheta, vec3 F0) {
 	return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
 }
 
-vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir, vec3 F0, float roughness, float metallic) {
+vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir, vec3 F0, vec3 albedo, float roughness, float metallic) {
 	vec3 lightDir = normalize(-light.direction);
 	vec3 H = normalize(lightDir + viewDir);
 
@@ -134,7 +151,7 @@ vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir, vec3 F0, fl
 	return (diffuse + specular) * light.color * NdotL;
 }
 
-vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 F0, float roughness, float metallic) {
+vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 F0, vec3 albedo, float roughness, float metallic) {
 	vec3 lightDir = normalize(light.position - fragPos);
 	vec3 H = normalize(lightDir + viewDir);
 
@@ -160,7 +177,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, v
 	return (diffuse + specular) * light.color * NdotL * attenuation;
 }
 
-vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 F0, float roughness, float metallic) {
+vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 F0, vec3 albedo, float roughness, float metallic) {
 	vec3 lightDir = normalize(-light.direction);
 	vec3 H = normalize(lightDir + viewDir);
 

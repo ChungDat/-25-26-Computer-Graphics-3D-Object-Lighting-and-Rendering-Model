@@ -221,6 +221,7 @@ std::string DirectionalLight::getType() const {
 
 void DirectionalLight::updateObjectShader(Shader& objectShader, unsigned int typeCount) const {
 	objectShader.use();
+
 	objectShader.setVec3fv("dirLight[" + std::to_string(typeCount) + "].direction", direction);
 
 	objectShader.setVec3fv("dirLight[" + std::to_string(typeCount) + "].color", color);
@@ -243,10 +244,13 @@ PointLight::PointLight(Shader& shader) : Light(shader) {
 
 void PointLight::draw(const glm::mat4& view, const glm::mat4& projection) const {
 	if (!isEnabled()) return;
+
 	shader.use();
+
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, position);
 	model = glm::scale(model, glm::vec3(0.2f));
+
 	shader.setMat4fv("model", model);
 	shader.setVec3fv("lightColor", color);
 	shader.setMat4fv("view", view);
@@ -325,6 +329,7 @@ std::string PointLight::getType() const {
 
 void PointLight::updateObjectShader(Shader& objectShader, unsigned int typeCount) const {
 	objectShader.use();
+
 	objectShader.setVec3fv("pointLight[" + std::to_string(typeCount) + "].position", position);
 
 	objectShader.setFloat("pointLight[" + std::to_string(typeCount) + "].constant", constant);
@@ -377,6 +382,7 @@ std::string SpotLight::getType() const {
 
 void SpotLight::updateObjectShader(Shader& objectShader, unsigned int typeCount) const {
 	objectShader.use();
+
 	objectShader.setVec3fv("spotLight[" + std::to_string(typeCount) + "].position", position);
 	objectShader.setVec3fv("spotLight[" + std::to_string(typeCount) + "].direction", direction);
 

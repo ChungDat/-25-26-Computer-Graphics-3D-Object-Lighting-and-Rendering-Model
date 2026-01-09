@@ -176,16 +176,16 @@ int main() {
 
 	// create objects
 	std::vector<Object*> objectList = {
-		new Cube("custom_texture/container2.png", "custom_texture/container2_specular.png"),//, "custom_texture/matrix.jpg"),
-		new Cube("custom_texture/container2.png", "custom_texture/container2_specular.png"),//, "custom_texture/matrix.jpg"),
-		new Cube("custom_texture/container2.png", "custom_texture/container2_specular.png"),//, "custom_texture/matrix.jpg"),
-		new Cube("custom_texture/container2.png", "custom_texture/container2_specular.png"),//, "custom_texture/matrix.jpg"),
-		new Cube("custom_texture/container2.png", "custom_texture/container2_specular.png"),//, "custom_texture/matrix.jpg"),
-		new Cube("custom_texture/container2.png", "custom_texture/container2_specular.png"),//, "custom_texture/matrix.jpg"),
-		new Cube("custom_texture/container2.png", "custom_texture/container2_specular.png"),//, "custom_texture/matrix.jpg"),
-		new Cube("custom_texture/container2.png", "custom_texture/container2_specular.png"),//, "custom_texture/matrix.jpg"),
-		new Cube("custom_texture/container2.png", "custom_texture/container2_specular.png"),//, "custom_texture/matrix.jpg"),
-		new Cube("custom_texture/container2.png", "custom_texture/container2_specular.png")//, "custom_texture/matrix.jpg"),
+		new Cube(),
+		new Cube(),
+		new Cube(),
+		new Cube(),
+		new Cube(),
+		new Cube(),
+		new Cube(),
+		new Cube(),
+		new Cube(),
+		new Cube()
 	};
 
 	// create lights

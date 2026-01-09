@@ -22,6 +22,7 @@ protected:
 	bool enabled;
 	glm::vec3 storedColor; // To remember the color when disabled
 	Shader& shader;
+
 public:
 	Light(Shader& shader);
 	virtual void setPosition(const glm::vec3& _pos) {};
@@ -66,6 +67,7 @@ public:
 class DirectionalLight : public Light {
 protected:
 	glm::vec3 direction;
+
 public:
 	DirectionalLight(Shader& shader);
 	void draw(const glm::mat4& view, const glm::mat4& projection) const override {};
@@ -88,6 +90,7 @@ protected:
 	float radius = 0.8f;
 
 	glm::vec3 orbitCenter;     // <- new: center of circular motion
+
 public:
 	PointLight(Shader& shader);
 	void draw(const glm::mat4& view, const glm::mat4& projection) const override;
