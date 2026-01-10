@@ -58,7 +58,7 @@ public:
 	int getID() const;
 
 	//virtual void draw(const glm::mat4& view, const glm::mat4& projection) const {};
-	virtual void draw() const {};
+	virtual void draw(float time) {};
 	virtual void updatePosition(float time) {};                      // <- new
 	virtual void updateObjectShader(Shader& shader, unsigned int typeCount) const = 0;
 	virtual void setCircularMotion(bool _circularMotion) {};
@@ -72,7 +72,7 @@ protected:
 public:
 	DirectionalLight(Shader& shader);
 	//void draw(const glm::mat4& view, const glm::mat4& projection) const override {};
-	void draw() const override {};
+	void draw(float time) override {};
 	void setDirection(const glm::vec3& _dir);
 
 	glm::vec3 getDirection() const override;
@@ -96,7 +96,7 @@ protected:
 public:
 	PointLight(Shader& shader);
 	//void draw(const glm::mat4& view, const glm::mat4& projection) const override;
-	void draw() const override;
+	void draw(float time) override;
 	void updatePosition(float time) override;                     // <- new override
 	void setPosition(const glm::vec3& _pos) override;
 	void setRadius(float _radius) override;

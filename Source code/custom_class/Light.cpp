@@ -208,7 +208,7 @@ DirectionalLight::DirectionalLight(Shader& shader) : Light(shader) {
 }
 
 void DirectionalLight::setDirection(const glm::vec3& _dir) {
-	direction = _dir;
+	direction = glm::normalize(_dir);
 }
 
 glm::vec3 DirectionalLight::getDirection() const {
@@ -223,8 +223,8 @@ void DirectionalLight::updateObjectShader(Shader& objectShader, unsigned int typ
 	objectShader.use();
 
 	objectShader.setVec3fv("dirLight[" + std::to_string(typeCount) + "].direction", direction);
-
 	objectShader.setVec3fv("dirLight[" + std::to_string(typeCount) + "].color", color);
+
 	objectShader.setVec3fv("dirLight[" + std::to_string(typeCount) + "].ambient", ambient);
 	objectShader.setVec3fv("dirLight[" + std::to_string(typeCount) + "].diffuse", diffuse);
 	objectShader.setVec3fv("dirLight[" + std::to_string(typeCount) + "].specular", specular);
@@ -243,8 +243,10 @@ PointLight::PointLight(Shader& shader) : Light(shader) {
 }
 
 //void PointLight::draw(const glm::mat4& view, const glm::mat4& projection) const {
-void PointLight::draw() const {
+void PointLight::draw(float time) {
 	if (!isEnabled()) return;
+
+	updatePosition(time);
 
 	shader.use();
 

@@ -24,6 +24,7 @@
 #include "custom_class/Axis.h"
 #include "custom_class/Plane.h"
 #include "custom_class/Container.h"
+#include "constants.h"
 
 // standard
 #include <string>

@@ -146,6 +146,7 @@ protected:
 public:
     Sphere(Shader*&);
     void draw(const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) override;
+    void draw() override;
 };
 
 class Pyramid : public Object {
@@ -177,4 +178,5 @@ protected:
 public:
     Cylinder(Shader*&);
     void draw(const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) override;
+    void draw() override;
 };

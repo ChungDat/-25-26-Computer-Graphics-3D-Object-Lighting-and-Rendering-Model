@@ -34,6 +34,7 @@ Object::Object(Shader*& _shader) : ID(nextID++), shader(_shader)
 	position = glm::vec3(0.0f);
 	scale = glm::vec3(1.0f);
 	rotation = glm::vec3(0.0f);
+	model = glm::mat4(1.0f);
 
 	material.ambient = glm::vec3(0.1f);
 	material.diffuse = glm::vec3(0.5f);
@@ -624,6 +625,10 @@ void Sphere::draw(const glm::mat4& horizontalRotate, const glm::mat4& verticalRo
 	glDrawElements(getDrawMode(), getVertexCount(), GL_UNSIGNED_INT, 0);
 }
 
+void Sphere::draw() {
+	Sphere::draw(glm::mat4(1.0f), glm::mat4(1.0f));
+}
+
 // Cylinder class
 // --------------
 
@@ -831,4 +836,8 @@ void Cylinder::draw(const glm::mat4& horizontalRotate, const glm::mat4& vertical
 	glBindTexture(GL_TEXTURE_2D, texture.roughnessMap);
 
 	glDrawElements(getDrawMode(), getVertexCount(), GL_UNSIGNED_INT, 0);
+}
+
+void Cylinder::draw() {
+	Cylinder::draw(glm::mat4(1.0f), glm::mat4(1.0f));
 }
