@@ -67,6 +67,7 @@ public:
     Object(Shader*&);
 
     virtual void draw(const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate);
+    virtual void draw();
     
     void setDiffusePath(const std::string);
     void setSpecularPath(const std::string);

@@ -41,7 +41,7 @@ Object::Object(Shader*& _shader) : ID(nextID++), shader(_shader)
 
 	//material.shininess = 32.0f;
 
-	material.albedo = glm::vec3(0.5f);
+	material.albedo = glm::vec3(0.9f);
 	material.roughness = 0.5f;
 	material.metallic = 0.5f;
 
@@ -111,6 +111,10 @@ void Object::draw(const glm::mat4& horizontalRotate, const glm::mat4& verticalRo
 	glBindTexture(GL_TEXTURE_2D, texture.roughnessMap);
 
 	glDrawArrays(getDrawMode(), 0, getVertexCount());
+}
+
+void Object::draw() {
+	Object::draw(glm::mat4(1.0f), glm::mat4(1.0f));
 }
 
 void Object::setDiffusePath(const std::string _diffusePath)

@@ -50,11 +50,11 @@ struct SpotLight {
 	float quadratic;
 };
 
+uniform vec3 viewPos; // world-space camera position
+
 #define NR_DIR_LIGHTS 1
 #define NR_POINT_LIGHTS 5
 #define NR_SPOT_LIGHTS 1
-
-uniform vec3 viewPos; // world-space camera position
 
 uniform DirectionalLight dirLight[NR_DIR_LIGHTS];
 uniform PointLight pointLight[NR_POINT_LIGHTS];

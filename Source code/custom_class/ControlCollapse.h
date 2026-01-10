@@ -86,6 +86,7 @@ class Settings : public ControlCollapse {
 protected:
 	Light* flashLight;
 	Axis& axis;
+	Cube& boxRoom;
 	Shader*& objectShader;
 
 	const std::vector<std::string>& shaderModel;
@@ -96,7 +97,7 @@ protected:
 	int currentLighting;
 
 public:
-	Settings(const char*, Light*, Axis&, Shader*&, const std::vector<std::string>&, std::vector<Shader*>&, int&);
+	Settings(const char*, Light*, Axis&, Cube&, Shader*&, const std::vector<std::string>&, std::vector<Shader*>&, int&);
 	virtual ~Settings() {};
 	void show();
 };

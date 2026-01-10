@@ -163,14 +163,13 @@ int main() {
 	GouraudShader.use();
 	GouraudShader.setFloat("material.shininess", 32.0f); // Gouraud uses similar shininess to Phong
 
+	Shader* objectShader = &PhongShader;
+
 	// light source
 	Shader lightShader = Shader("custom_shader/lightSourceVertexShader.vert", "custom_shader/lightSourceFragmentShader.frag");
 
 	// axis shader
 	Shader axisShader = Shader("custom_shader/axis.vert", "custom_shader/axis.frag");
-
-
-	Shader* objectShader = &PhongShader;
 
 	// create objects
 	std::vector<Object*> objectList = {
@@ -190,8 +189,9 @@ int main() {
 	Model backpackModel((char*)"backpack/backpack.obj", objectShader);
 
 	// create lights
+	SpotLight* flashLight = new SpotLight(lightShader);
+
 	std::vector<Light*> lightList = {
-		new SpotLight(lightShader),       // 0: Flashlight
 		new DirectionalLight(lightShader),// 2: Main directional light
 		new PointLight(lightShader),      // 1: White orbiting light
 		new PointLight(lightShader),      // 3: Orange point light
@@ -204,6 +204,9 @@ int main() {
 	Axis axis = Axis(axisShader);
 	Plane plane = Plane(axisShader);
 
+	// create box room
+	Cube boxRoom = Cube(objectShader);
+
 	// set object positions
 	// --------------------
 	for (unsigned int i = 0; i < objectList.size(); i++) {
@@ -211,23 +214,27 @@ int main() {
 		if (i < 10)
 			objectList[i]->setPosition(initPositions[i]);
 	}
+	boxRoom.setPosition(glm::vec3(0.0f));
+	boxRoom.setScale(glm::vec3(20.0f));
+	boxRoom.setDiffuse(glm::vec3(0.5f));
+	boxRoom.setAlbedo(glm::vec3(0.5f));
 
 	// set light color and positions
 	// ---------
 	// flash spot light
-	lightList[0]->setColor(glm::vec3(1.0f));
+	flashLight->setColor(glm::vec3(1.0f));
 
 	// main directional light
-	lightList[1]->setDirection(glm::vec3(-0.2f, -1.0f, -0.3f));
-	lightList[1]->setColor(glm::vec3(1.0f, 1.0f, 1.0f));
+	lightList[0]->setDirection(glm::vec3(-0.2f, -1.0f, -0.3f));
+	lightList[0]->setColor(glm::vec3(1.0f, 1.0f, 1.0f));
 
 	// orbital point light
-	lightList[2]->setCircularMotion(true);
+	lightList[1]->setCircularMotion(true);
 
 	// point light
-	for (int i = 2; i < lightList.size(); i++) {
-		lightList[i]->setColor(lightColors[i - 2]);
-		lightList[i]->setPosition(lightPositions[i - 2]);
+	for (int i = 1; i < lightList.size(); i++) {
+		lightList[i]->setColor(lightColors[i - 1]);
+		lightList[i]->setPosition(lightPositions[i - 1]);
 	}
 
 	// ImGui Settings
@@ -239,7 +246,7 @@ int main() {
 	ObjectCollapse objectCollapse = ObjectCollapse("Add Object", objectList, objectShader);
 	ObjectProperties objectProperties = ObjectProperties("Object Properties", objectList);
 	LightProperties lightProperties = LightProperties("Light Properties", lightList);
-	Settings settings = Settings("Settings", lightList[0], axis, objectShader, shaderModel, shaderList, currentRasterizationMode);
+	Settings settings = Settings("Settings", flashLight, axis, boxRoom, objectShader, shaderModel, shaderList, currentRasterizationMode);
 
 	// render loop
 	// -----------
@@ -326,19 +333,20 @@ int main() {
 		// ===================================================================
 		// PER-FRAME LIGHT UPDATES (Only for animated lights)
 		// ===================================================================
-		lightList[2]->updatePosition(currentFrame); // Keep updating the orbiting one
+		lightList[1]->updatePosition(currentFrame); // Keep updating the orbiting one
 
-		// draw
-
+		// draw light object
+		// -----------------
 		for (int i = 0; i < lightList.size(); i++) {
 			if (i == 0) continue;
 			lightList[i]->draw();
 		}
 
-		// normal object
-		// -------------
-
 		// extract world-space light position and upload to objectShader
+		// -------------------------------------------------------------
+		flashLight->setPosition(camera.Position);
+		flashLight->setDirection(camera.Front);
+
 		int n_DirLight = 0, n_PointLight = 0, n_SpotLight = 0;
 		for (int i = 0; i < lightList.size(); i++) {
 			if (DirectionalLight* s = dynamic_cast<DirectionalLight*>(lightList[i])) {
@@ -346,23 +354,22 @@ int main() {
 			}
 			// SpotLight is derived from PointLight -> CHECK THIS FIRST
 			else if (SpotLight* s = dynamic_cast<SpotLight*>(lightList[i])) {
-				if (i == 0) {
-					s->setPosition(camera.Position);
-					s->setDirection(camera.Front);
-				}
 				s->updateObjectShader(*objectShader, n_SpotLight++);
 			}
 			else if (PointLight* s = dynamic_cast<PointLight*>(lightList[i])) {
 				s->updateObjectShader(*objectShader, n_PointLight++);
 			}
 		}
+		flashLight->updateObjectShader(*objectShader, n_SpotLight++);
 
-		// draw
+		// draw simple object;
+		// -------------------
 		for (unsigned int i = 0; i < objectList.size(); i++) {
 			//float angle = 20.f * i;
 			//cubeList[i].setRotation(glm::vec3(angle * 0.2f, angle * 0.5f, angle * 0.8f));
 			objectList[i]->draw(horizontalRotate, verticalRotate);
 		}
+		boxRoom.draw();
 
 		// assimp loaded model
 		glm::vec3 pos(0.0f, -2.0f, 0.0f);
@@ -403,6 +410,7 @@ int main() {
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
 
+	delete flashLight;
 	for (int i = 0; i < lightList.size(); i++) {
 		delete lightList[i];
 	}

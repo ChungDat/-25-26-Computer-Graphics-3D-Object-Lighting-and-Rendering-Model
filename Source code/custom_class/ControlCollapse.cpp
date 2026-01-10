@@ -265,8 +265,8 @@ void LightProperties::show() {
 
 }
 
-Settings::Settings(const char* _label, Light* _flashLight, Axis& _axis, Shader*& _shader, const std::vector<std::string>& _shaderModel, std::vector<Shader*>& _shaderList, int& rasterizationMode) 
-	: ControlCollapse(_label), flashLight(_flashLight), axis(_axis), objectShader(_shader), shaderModel(_shaderModel), shaderList(_shaderList), currentRasterizationMode(rasterizationMode), currentLighting(0) {}
+Settings::Settings(const char* _label, Light* _flashLight, Axis& _axis, Cube& _boxRoom, Shader*& _shader, const std::vector<std::string>& _shaderModel, std::vector<Shader*>& _shaderList, int& rasterizationMode) 
+	: ControlCollapse(_label), flashLight(_flashLight), axis(_axis), boxRoom(_boxRoom), objectShader(_shader), shaderModel(_shaderModel), shaderList(_shaderList), currentRasterizationMode(rasterizationMode), currentLighting(0) {}
 
 void Settings::show() {
 	if (ImGui::CollapsingHeader(label ? label : "Settings")) {
@@ -290,6 +290,16 @@ void Settings::show() {
 		else {
 			if (ImGui::Button("Show Axis"))
 				axis.enable();
+		}
+
+		// box room
+		if (boxRoom.isEnabled()) {
+			if (ImGui::Button("Hide Box Room"))
+				boxRoom.disable();
+		}
+		else {
+			if (ImGui::Button("Show Box Room"))
+				boxRoom.enable();
 		}
 
 		// rasterization mode

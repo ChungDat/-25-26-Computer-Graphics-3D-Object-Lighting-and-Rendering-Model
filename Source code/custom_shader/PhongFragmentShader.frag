@@ -44,10 +44,6 @@ struct SpotLight {
 	float quadratic;
 };
 
-#define NR_DIR_LIGHTS 1
-#define NR_POINT_LIGHTS 5
-#define NR_SPOT_LIGHTS 1
-
 in vec2 texCoord;
 in vec3 fragNormal; // world-space normal
 in vec3 fragPos; // world-space position
@@ -74,6 +70,10 @@ uniform sampler2D texture_specular3;
 uniform sampler2D texture_specular4;
 
 uniform vec3 viewPos; // world-space camera position
+
+#define NR_DIR_LIGHTS 1
+#define NR_POINT_LIGHTS 5
+#define NR_SPOT_LIGHTS 1
 
 uniform DirectionalLight dirLight[NR_DIR_LIGHTS];
 uniform PointLight pointLight[NR_POINT_LIGHTS];
