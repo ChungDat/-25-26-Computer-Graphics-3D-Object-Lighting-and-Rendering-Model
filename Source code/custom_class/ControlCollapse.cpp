@@ -39,8 +39,8 @@ void PresetScenesCollapse::show() {
 	}
 }
 
-LightCollapse::LightCollapse(const char* _label, std::vector<Light*>& _lightList, Shader& _shader) 
-	: ControlCollapse(_label), lightList(_lightList), shader(_shader) {}
+LightCollapse::LightCollapse(const char* _label, std::vector<Light*>& _lightList, int& _numDirLights, int& _numPointLights, int& _numSpotLights, Shader& _lightShader, Shader*& _objectShader) 
+	: ControlCollapse(_label), lightList(_lightList), numDirLights(_numDirLights), numPointLights(_numPointLights), numSpotLights(_numSpotLights), lightShader(_lightShader), objectShader(_objectShader) {}
 
 void LightCollapse::show() {
 	if (ImGui::CollapsingHeader(label ? label : "Light")) {
@@ -54,16 +54,32 @@ void LightCollapse::show() {
 }
 
 void LightCollapse::addLight(const char* lightType) {
-	if (lightType == "Directional Light")
-		lightList.push_back(new DirectionalLight(shader));
-	else if (lightType == "Point Light")
-		lightList.push_back(new PointLight(shader));
-	else if (lightType == "Spot Light")
-		lightList.push_back(new SpotLight(shader));
+	objectShader->use();
+
+	Light* light;
+	if (lightType == "Directional Light" && numDirLights < NR_DIR_LIGHTS) {
+		light = new DirectionalLight(lightShader);
+		
+		light->updateObjectShader(*objectShader, numDirLights++);
+		objectShader->setInt("numDirLights", numDirLights);
+	}
+	else if (lightType == "Point Light" && numPointLights < NR_POINT_LIGHTS) {
+		light = new PointLight(lightShader);
+
+		light->updateObjectShader(*objectShader, numPointLights++);
+		objectShader->setInt("numPointLights", numPointLights);
+	}
+	else if (lightType == "Spot Light" && numSpotLights < NR_SPOT_LIGHTS) {
+		light = new SpotLight(lightShader);
+
+		light->updateObjectShader(*objectShader, numSpotLights++);
+		objectShader->setInt("numSpotLights", numSpotLights);
+	}
+	lightList.push_back(light);
 }
 
-ObjectCollapse::ObjectCollapse(const char* _label, std::vector<Object*>& _objectList, Shader* _shader)
-	: ControlCollapse(_label), objectList(_objectList), shader(_shader) {}
+ObjectCollapse::ObjectCollapse(const char* _label, std::vector<Object*>& _objectList, int& _numObjects, Shader*& _objectShader)
+	: ControlCollapse(_label), objectList(_objectList), numObjects(_numObjects), objectShader(_objectShader) {}
 
 void ObjectCollapse::show() {
 	if (ImGui::CollapsingHeader(label ? label : "Add object")) {
@@ -77,18 +93,26 @@ void ObjectCollapse::show() {
 }
 
 void ObjectCollapse::addObject(const char* objectType) {
-	if (objectType == "Cube")
-		objectList.push_back(new Cube(shader));
-	else if (objectType == "Pyramid")
-		objectList.push_back(new Pyramid(shader));
-	else if (objectType == "Sphere")
-		objectList.push_back(new Sphere(shader));
-	else if (objectType == "Cylinder")
-		objectList.push_back(new Cylinder(shader));
+	if (objectType == "Cube" && numObjects < NR_OBJECTS) {
+		objectList.push_back(new Cube(objectShader));
+		numObjects++;
+	}
+	else if (objectType == "Pyramid" && numObjects < NR_OBJECTS) {
+		objectList.push_back(new Pyramid(objectShader));
+		numObjects++;
+	}
+	else if (objectType == "Sphere" && numObjects < NR_OBJECTS) {
+		objectList.push_back(new Sphere(objectShader));
+		numObjects++;
+	}
+	else if (objectType == "Cylinder" && numObjects < NR_OBJECTS) {
+		objectList.push_back(new Cylinder(objectShader));
+		numObjects++;
+	}
 }
 
-ObjectProperties::ObjectProperties(const char* _label, std::vector<Object*>& _objectList) 
-	: ControlCollapse(_label), objectList(_objectList) {}
+ObjectProperties::ObjectProperties(const char* _label, std::vector<Object*>& _objectList, int& _numObjects) 
+	: ControlCollapse(_label), objectList(_objectList), numObjects(_numObjects) {}
 
 void ObjectProperties::show() {
 	if (ImGui::CollapsingHeader(label ? label : "Object Properties")) {
@@ -105,7 +129,6 @@ void ObjectProperties::show() {
 			ImGui::PopID();
 		}
 
-		//if (objectList.size() > 0 && currentSelect < objectList.size()) {
 		if (currentSelect < objectList.size()) {
 			ImGui::SeparatorText("Position");
 
@@ -154,13 +177,17 @@ void ObjectProperties::show() {
 			if (ImGui::Button("Remove##o")) {
 				delete objectList[currentSelect];
 				objectList.erase(objectList.begin() + currentSelect);
+
+				numObjects--;
+
+				currentSelect = 0;
 			}
 		}
 	}
 }
 
-LightProperties::LightProperties(const char* _label, std::vector<Light*>& _lightList)
-	: ControlCollapse(_label), lightList(_lightList) {}
+LightProperties::LightProperties(const char* _label, std::vector<Light*>& _lightList, int& _numDirLights, int& _numPointLights, int& _numSpotLights, Shader& _lightShader, Shader*& _objectShader)
+	: ControlCollapse(_label), lightList(_lightList), numDirLights(_numDirLights), numPointLights(_numPointLights), numSpotLights(_numSpotLights), lightShader(_lightShader), objectShader(_objectShader) {}
 
 void LightProperties::show() {
 	if (ImGui::CollapsingHeader(label ? label : "Light Properties")) {
@@ -177,17 +204,18 @@ void LightProperties::show() {
 			}
 			ImGui::PopID();
 		}
-		if (lightList.size() > 0 && currentSelect < lightList.size()) {
+		//if (lightList.size() > 0 && currentSelect < lightList.size()) {
+		if (currentSelect < lightList.size()) {
 			if (lightList[currentSelect]->getType() != "Directional") {
 				ImGui::SeparatorText("Position");
 				float posX = lightList[currentSelect]->getX();
 				float posY = lightList[currentSelect]->getY();
 				float posZ = lightList[currentSelect]->getZ();
-				bool positionChanged = false;
-				positionChanged = ImGui::SliderFloat("X##l", &posX, -10.0f, 10.0f, "%.1f") || positionChanged;
-				positionChanged = ImGui::SliderFloat("Y##l", &posY, -10.0f, 10.0f, "%.1f") || positionChanged;
-				positionChanged = ImGui::SliderFloat("Z##l", &posZ, -10.0f, 10.0f, "%.1f") || positionChanged;
-				if (positionChanged) {
+
+				if (ImGui::SliderFloat("X##l", &posX, -10.0f, 10.0f, "%.1f") || 
+					ImGui::SliderFloat("Y##l", &posY, -10.0f, 10.0f, "%.1f") || 
+					ImGui::SliderFloat("Z##l", &posZ, -10.0f, 10.0f, "%.1f"))
+				{
 					lightList[currentSelect]->setPosition(glm::vec3(posX, posY, posZ));
 				}
 			}
@@ -197,11 +225,11 @@ void LightProperties::show() {
 				float dirX = dir.x;
 				float dirY = dir.y;
 				float dirZ = dir.z;
-				bool directionChanged = false;
-				directionChanged = ImGui::SliderFloat("X", &dirX, -10.0f, 10.0f, "%.1f") || directionChanged;
-				directionChanged = ImGui::SliderFloat("Y", &dirY, -10.0f, 10.0f, "%.1f") || directionChanged;
-				directionChanged = ImGui::SliderFloat("Z", &dirZ, -10.0f, 10.0f, "%.1f") || directionChanged;
-				if (directionChanged) {
+
+				if (ImGui::SliderFloat("X", &dirX, -10.0f, 10.0f, "%.1f") || 
+					ImGui::SliderFloat("Y", &dirY, -10.0f, 10.0f, "%.1f") || 
+					ImGui::SliderFloat("Z", &dirZ, -10.0f, 10.0f, "%.1f"))
+				{
 					lightList[currentSelect]->setDirection(glm::vec3(dirX, dirY, dirZ));
 				}
 			}
@@ -254,15 +282,42 @@ void LightProperties::show() {
 			}
 
 			if (ImGui::Button("Remove##l")) {
-				if (lightList.size() > 0) {
-					delete lightList[currentSelect];
-					lightList.erase(lightList.begin() + currentSelect);
-					currentSelect = 0;
+				//lightList[currentSelect]->setColor(glm::vec3(0.0f));
+
+				if (DirectionalLight* s = dynamic_cast<DirectionalLight*>(lightList[currentSelect])) {
+					numDirLights--;
+				}
+				// SpotLight is derived from PointLight -> CHECK THIS FIRST
+				else if (SpotLight* s = dynamic_cast<SpotLight*>(lightList[currentSelect])) {
+					numSpotLights--;
+				}
+				else if (PointLight* s = dynamic_cast<PointLight*>(lightList[currentSelect])) {
+					numPointLights--;
+				}
+
+				delete lightList[currentSelect];
+				lightList.erase(lightList.begin() + currentSelect);
+
+				currentSelect = 0;
+			}
+
+			// extract world-space light position and upload to objectShader
+			// -------------------------------------------------------------
+			int n_DirLight = 0, n_SpotLight = 1, n_PointLight = 0;
+			for (int i = 0; i < lightList.size(); i++) {
+				if (DirectionalLight* s = dynamic_cast<DirectionalLight*>(lightList[i])) {
+					s->updateObjectShader(*objectShader, n_DirLight++);
+				}
+				// SpotLight is derived from PointLight -> CHECK THIS FIRST
+				else if (SpotLight* s = dynamic_cast<SpotLight*>(lightList[i])) {
+					s->updateObjectShader(*objectShader, n_SpotLight++);
+				}
+				else if (PointLight* s = dynamic_cast<PointLight*>(lightList[i])) {
+					s->updateObjectShader(*objectShader, n_PointLight++);
 				}
 			}
 		}
 	}
-
 }
 
 Settings::Settings(const char* _label, Light* _flashLight, Axis& _axis, Cube& _boxRoom, Shader*& _shader, const std::vector<std::string>& _shaderModel, std::vector<Shader*>& _shaderList, int& rasterizationMode) 

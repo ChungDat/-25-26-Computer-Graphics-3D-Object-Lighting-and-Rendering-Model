@@ -55,6 +55,9 @@ glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 // create camera
 Camera camera = Camera(cameraPos, yaw, pitch);
 
+int numDirLights = 0, numPointLights = 0, numSpotLights = 0;
+int numObjects = 0;
+
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 // ---------------------------------------------------------------------------------------------
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -216,7 +219,7 @@ int main() {
 	boxRoom.setPosition(glm::vec3(0.0f));
 	boxRoom.setScale(glm::vec3(20.0f));
 	boxRoom.setDiffuse(glm::vec3(0.5f));
-	boxRoom.setAlbedo(glm::vec3(0.5f));
+	boxRoom.setAlbedo(glm::vec3(1.0f));
 
 	// set light color and positions
 	// ---------
@@ -241,10 +244,10 @@ int main() {
 	int currentRasterizationMode = 0;
 
 	//PresetScenesCollapse presetScenesCollapse = PresetScenesCollapse("Preset Scenes");
-	LightCollapse lightCollapse = LightCollapse("Add Light", lightList, lightShader);
-	ObjectCollapse objectCollapse = ObjectCollapse("Add Object", objectList, objectShader);
-	ObjectProperties objectProperties = ObjectProperties("Object Properties", objectList);
-	LightProperties lightProperties = LightProperties("Light Properties", lightList);
+	LightCollapse lightCollapse = LightCollapse("Add Light", lightList, numDirLights, numPointLights, numSpotLights, lightShader, objectShader);
+	ObjectCollapse objectCollapse = ObjectCollapse("Add Object", objectList, numObjects, objectShader);
+	ObjectProperties objectProperties = ObjectProperties("Object Properties", objectList, numObjects);
+	LightProperties lightProperties = LightProperties("Light Properties", lightList, numDirLights, numPointLights, numSpotLights, lightShader, objectShader);
 	Settings settings = Settings("Settings", flashLight, axis, boxRoom, objectShader, shaderModel, shaderList, currentRasterizationMode);
 
 	// render loop
@@ -332,13 +335,11 @@ int main() {
 		// ===================================================================
 		// PER-FRAME LIGHT UPDATES (Only for animated lights)
 		// ===================================================================
-		lightList[1]->updatePosition(currentFrame); // Keep updating the orbiting one
 
 		// draw light object
 		// -----------------
 		for (int i = 0; i < lightList.size(); i++) {
-			if (i == 0) continue;
-			lightList[i]->draw();
+			lightList[i]->draw(currentFrame);
 		}
 
 		// extract world-space light position and upload to objectShader
@@ -346,21 +347,21 @@ int main() {
 		flashLight->setPosition(camera.Position);
 		flashLight->setDirection(camera.Front);
 
-		int n_DirLight = 0, n_PointLight = 0, n_SpotLight = 0;
-		for (int i = 0; i < lightList.size(); i++) {
-			if (DirectionalLight* s = dynamic_cast<DirectionalLight*>(lightList[i])) {
-				s->updateObjectShader(*objectShader, n_DirLight++);
-			}
-			// SpotLight is derived from PointLight -> CHECK THIS FIRST
-			else if (SpotLight* s = dynamic_cast<SpotLight*>(lightList[i])) {
-				s->updateObjectShader(*objectShader, n_SpotLight++);
-			}
-			else if (PointLight* s = dynamic_cast<PointLight*>(lightList[i])) {
-				s->updateObjectShader(*objectShader, n_PointLight++);
-			}
-		}
-		flashLight->updateObjectShader(*objectShader, n_SpotLight++);
-
+		//int n_DirLight = 0, n_SpotLight = 0, n_PointLight = 0;
+		//for (int i = 0; i < lightList.size(); i++) {
+		//	if (DirectionalLight* s = dynamic_cast<DirectionalLight*>(lightList[i])) {
+		//		s->updateObjectShader(*objectShader, n_DirLight++);
+		//	}
+		//	// SpotLight is derived from PointLight -> CHECK THIS FIRST
+		//	else if (SpotLight* s = dynamic_cast<SpotLight*>(lightList[i])) {
+		//		s->updateObjectShader(*objectShader, n_SpotLight++);
+		//	}
+		//	else if (PointLight* s = dynamic_cast<PointLight*>(lightList[i])) {
+		//		s->updateObjectShader(*objectShader, n_PointLight++);
+		//	}
+		//}
+		flashLight->updateObjectShader(*objectShader, 0);
+		
 		// draw simple object;
 		// -------------------
 		for (unsigned int i = 0; i < objectList.size(); i++) {
