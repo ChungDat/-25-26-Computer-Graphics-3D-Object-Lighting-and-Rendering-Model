@@ -43,12 +43,11 @@ protected:
 	int& numSpotLights;
 
 	Shader& lightShader;
-	Shader*& objectShader;
 
 	void addLight(const char*);
 
 public:
-	LightCollapse(const char*, std::vector<Light*>&, int&, int&, int&, Shader&, Shader*&);
+	LightCollapse(const char*, std::vector<Light*>&, int&, int&, int&, Shader&);
 	virtual ~LightCollapse() {};
 	void show();
 };
@@ -89,14 +88,15 @@ protected:
 	int& numPointLights;
 	int& numSpotLights;
 
-	Shader& lightShader;
 	Shader*& objectShader;
 
 	int currentSelect = 0;
 
 public:
-	LightProperties(const char*, std::vector<Light*>&, int&, int&, int&, Shader&, Shader*&);
+	LightProperties(const char*, std::vector<Light*>&, int&, int&, int&, Shader*&);
 	virtual ~LightProperties() {};
+
+	void updateLightUniforms();
 	void show();
 };
 
