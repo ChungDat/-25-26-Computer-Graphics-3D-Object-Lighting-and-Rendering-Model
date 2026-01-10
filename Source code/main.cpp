@@ -30,8 +30,6 @@
 #include <iostream>
 #include <vector>
 
-const int WIDTH = 800;
-const int HEIGHT = 600;
 const float RADIUS = 10.0f;
 
 float horizontalRotateRate = 0.0f;

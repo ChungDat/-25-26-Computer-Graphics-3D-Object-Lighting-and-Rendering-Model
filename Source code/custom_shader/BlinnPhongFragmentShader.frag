@@ -61,9 +61,13 @@ uniform bool useEmissionMap;
 
 uniform vec3 viewPos; // world-space camera position
 
-#define NR_DIR_LIGHTS 1
-#define NR_POINT_LIGHTS 5
-#define NR_SPOT_LIGHTS 1
+#define NR_DIR_LIGHTS 4
+#define NR_POINT_LIGHTS 8
+#define NR_SPOT_LIGHTS 4
+
+uniform int numDirLights;
+uniform int numPointLights;
+uniform int numSpotLights;
 
 uniform DirectionalLight dirLight[NR_DIR_LIGHTS];
 uniform PointLight pointLight[NR_POINT_LIGHTS];
@@ -79,13 +83,13 @@ void main() {
 
 	vec3 result = vec3(0.0);
 
-	for (int i = 0; i < NR_DIR_LIGHTS; i++) {
+	for (int i = 0; i < numDirLights; i++) {
 		result += CalcDirLight(dirLight[i], norm, viewDir);
 	}
-	for (int i = 0; i < NR_POINT_LIGHTS; i++) {
+	for (int i = 0; i < numPointLights; i++) {
 		result += CalcPointLight(pointLight[i], norm, fragPos, viewDir);
 	}
-	for (int i = 0; i < NR_SPOT_LIGHTS; i++) {
+	for (int i = 0; i < numSpotLights; i++) {
 		result += CalcSpotLight(spotLight[i], norm, viewDir);
 	}
 
