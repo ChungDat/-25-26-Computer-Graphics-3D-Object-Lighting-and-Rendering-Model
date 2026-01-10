@@ -262,7 +262,7 @@ int main() {
 		// ============================================
 		// Start Dear ImGui control
 		ImVec2 controlWindowPos = ImVec2(WIDTH, 0);
-		ImVec2 controlWindowSize = ImVec2(300, HEIGHT);
+		ImVec2 controlWindowSize = ImVec2(WIDTH / 5, HEIGHT);
 		ImVec2 viewportSize = ImGui::GetMainViewport()->Size;
 		 
 		ImGui::SetNextWindowPos(

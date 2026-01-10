@@ -1,7 +1,7 @@
 #pragma once
 
-constexpr int WIDTH = 800;
-constexpr int HEIGHT = 600;
+constexpr int WIDTH = 1280;
+constexpr int HEIGHT = 720;
 
 constexpr int NR_DIR_LIGHTS = 4;
 constexpr int NR_POINT_LIGHTS = 8;
