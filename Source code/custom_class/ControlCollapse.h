@@ -37,11 +37,16 @@ class LightCollapse : public ControlCollapse {
 protected:
 	std::vector<const char*> lightType = { "Directional Light", "Point Light", "Spot Light" };
 	std::vector<Light*>& lightList;
-	Shader& shader;
+	int& numDirLights;
+	int& numPointLights;
+	int& numSpotLights;
+
+	Shader& lightShader;
+
 	void addLight(const char*);
 
 public:
-	LightCollapse(const char*, std::vector<Light*>&, Shader&);
+	LightCollapse(const char*, std::vector<Light*>&, int&, int&, int&, Shader&);
 	virtual ~LightCollapse() {};
 	void show();
 };
@@ -74,11 +79,19 @@ public:
 class LightProperties : public ControlCollapse {
 protected:
 	std::vector<Light*>& lightList;
+	int& numDirLights;
+	int& numPointLights;
+	int& numSpotLights;
+
+	Shader*& objectShader;
+
 	int currentSelect = 0;
 
 public:
-	LightProperties(const char*, std::vector<Light*>&);
+	LightProperties(const char*, std::vector<Light*>&, int&, int&, int&, Shader*&);
 	virtual ~LightProperties() {};
+
+	void updateLightUniforms();
 	void show();
 };
 

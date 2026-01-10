@@ -39,8 +39,8 @@ void PresetScenesCollapse::show() {
 	}
 }
 
-LightCollapse::LightCollapse(const char* _label, std::vector<Light*>& _lightList, Shader& _shader) 
-	: ControlCollapse(_label), lightList(_lightList), shader(_shader) {}
+LightCollapse::LightCollapse(const char* _label, std::vector<Light*>& _lightList, int& _numDirLights, int& _numPointLights, int& _numSpotLights, Shader& _lightShader) 
+	: ControlCollapse(_label), lightList(_lightList), numDirLights(_numDirLights), numPointLights(_numPointLights), numSpotLights(_numSpotLights), lightShader(_lightShader) {}
 
 void LightCollapse::show() {
 	if (ImGui::CollapsingHeader(label ? label : "Light")) {
@@ -54,12 +54,18 @@ void LightCollapse::show() {
 }
 
 void LightCollapse::addLight(const char* lightType) {
-	if (lightType == "Directional Light")
-		lightList.push_back(new DirectionalLight(shader));
-	else if (lightType == "Point Light")
-		lightList.push_back(new PointLight(shader));
-	else if (lightType == "Spot Light")
-		lightList.push_back(new SpotLight(shader));
+	if (lightType == "Directional Light" && numDirLights < NR_DIR_LIGHTS) {
+		lightList.push_back(new DirectionalLight(lightShader));
+		numDirLights++;
+	}
+	else if (lightType == "Point Light" && numPointLights < NR_POINT_LIGHTS) {
+		lightList.push_back(new PointLight(lightShader));
+		numPointLights++;
+	}
+	else if (lightType == "Spot Light" && numSpotLights < NR_SPOT_LIGHTS) {
+		lightList.push_back(new SpotLight(lightShader));
+		numSpotLights++;
+	}
 }
 
 ObjectCollapse::ObjectCollapse(const char* _label, std::vector<Object*>& _objectList, Shader* _shader)
@@ -159,8 +165,32 @@ void ObjectProperties::show() {
 	}
 }
 
-LightProperties::LightProperties(const char* _label, std::vector<Light*>& _lightList)
-	: ControlCollapse(_label), lightList(_lightList) {}
+LightProperties::LightProperties(const char* _label, std::vector<Light*>& _lightList, int& _numDirLights, int& _numPointLights, int& _numSpotLights, Shader*& _objectShader)
+	: ControlCollapse(_label), lightList(_lightList), numDirLights(_numDirLights), numPointLights(_numPointLights), numSpotLights(_numSpotLights), objectShader(_objectShader) {}
+
+void LightProperties::updateLightUniforms() {
+	objectShader->use();
+
+	// extract world-space light position, attributes and upload to objectShader
+	// -------------------------------------------------------------
+	int n_DirLight = 0, n_SpotLight = 0, n_PointLight = 0;
+	for (int i = 0; i < lightList.size(); i++) {
+		if (DirectionalLight* s = dynamic_cast<DirectionalLight*>(lightList[i])) {
+			s->updateObjectShader(*objectShader, n_DirLight++);
+		}
+		// SpotLight is derived from PointLight -> CHECK THIS FIRST
+		else if (SpotLight* s = dynamic_cast<SpotLight*>(lightList[i])) {
+			s->updateObjectShader(*objectShader, n_SpotLight++);
+		}
+		else if (PointLight* s = dynamic_cast<PointLight*>(lightList[i])) {
+			s->updateObjectShader(*objectShader, n_PointLight++);
+		}
+	}
+	
+	numDirLights = n_DirLight;
+	numPointLights = n_PointLight;
+	numSpotLights = n_SpotLight;
+}
 
 void LightProperties::show() {
 	if (ImGui::CollapsingHeader(label ? label : "Light Properties")) {
@@ -255,11 +285,23 @@ void LightProperties::show() {
 			}
 
 			if (ImGui::Button("Remove##l")) {
-				if (lightList.size() > 0) {
-					delete lightList[currentSelect];
-					lightList.erase(lightList.begin() + currentSelect);
-					currentSelect = 0;
+				//lightList[currentSelect]->setColor(glm::vec3(0.0f));
+
+				if (DirectionalLight* s = dynamic_cast<DirectionalLight*>(lightList[currentSelect])) {
+					numDirLights--;
 				}
+				// SpotLight is derived from PointLight -> CHECK THIS FIRST
+				else if (SpotLight* s = dynamic_cast<SpotLight*>(lightList[currentSelect])) {
+					numSpotLights--;
+				}
+				else if (PointLight* s = dynamic_cast<PointLight*>(lightList[currentSelect])) {
+					numPointLights--;
+				}
+
+				delete lightList[currentSelect];
+				lightList.erase(lightList.begin() + currentSelect);
+
+				currentSelect = 0;
 			}
 		}
 	}

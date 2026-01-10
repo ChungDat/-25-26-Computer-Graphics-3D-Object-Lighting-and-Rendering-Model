@@ -241,10 +241,10 @@ int main() {
 	int currentRasterizationMode = 0;
 
 	//PresetScenesCollapse presetScenesCollapse = PresetScenesCollapse("Preset Scenes");
-	LightCollapse lightCollapse = LightCollapse("Add Light", lightList, lightShader);
-	ObjectCollapse objectCollapse = ObjectCollapse("Add Object", objectList, objectShader);
-	ObjectProperties objectProperties = ObjectProperties("Object Properties", objectList);
-	LightProperties lightProperties = LightProperties("Light Properties", lightList);
+	LightCollapse lightCollapse = LightCollapse("Add Light", lightList, numDirLights, numPointLights, numSpotLights, lightShader);
+	ObjectCollapse objectCollapse = ObjectCollapse("Add Object", objectList, numObjects, objectShader);
+	ObjectProperties objectProperties = ObjectProperties("Object Properties", objectList, numObjects);
+	LightProperties lightProperties = LightProperties("Light Properties", lightList, numDirLights, numPointLights, numSpotLights, objectShader);
 	Settings settings = Settings("Settings", flashLight, axis, boxRoom, objectShader, shaderModel, shaderList, currentRasterizationMode);
 
 	// render loop
@@ -344,21 +344,15 @@ int main() {
 		flashLight->setPosition(camera.Position);
 		flashLight->setDirection(camera.Front);
 
-		int n_DirLight = 0, n_PointLight = 0, n_SpotLight = 0;
-		for (int i = 0; i < lightList.size(); i++) {
-			if (DirectionalLight* s = dynamic_cast<DirectionalLight*>(lightList[i])) {
-				s->updateObjectShader(*objectShader, n_DirLight++);
-			}
-			// SpotLight is derived from PointLight -> CHECK THIS FIRST
-			else if (SpotLight* s = dynamic_cast<SpotLight*>(lightList[i])) {
-				s->updateObjectShader(*objectShader, n_SpotLight++);
-			}
-			else if (PointLight* s = dynamic_cast<PointLight*>(lightList[i])) {
-				s->updateObjectShader(*objectShader, n_PointLight++);
-			}
-		}
-		flashLight->updateObjectShader(*objectShader, n_SpotLight++);
+		lightProperties.updateLightUniforms();
 
+		flashLight->updateObjectShader(*objectShader, numSpotLights++);
+
+		objectShader->setInt("numDirLights", numDirLights);
+		objectShader->setInt("numPointLights", numPointLights);
+		objectShader->setInt("numSpotLights", numSpotLights);
+
+		
 		// draw simple object;
 		// -------------------
 		for (unsigned int i = 0; i < objectList.size(); i++) {
