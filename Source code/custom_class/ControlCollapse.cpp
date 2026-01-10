@@ -111,7 +111,6 @@ void ObjectProperties::show() {
 			ImGui::PopID();
 		}
 
-		//if (objectList.size() > 0 && currentSelect < objectList.size()) {
 		if (currentSelect < objectList.size()) {
 			ImGui::SeparatorText("Position");
 
@@ -119,10 +118,11 @@ void ObjectProperties::show() {
 			float posY = objectList[currentSelect]->getY();
 			float posZ = objectList[currentSelect]->getZ();
 
-			if (ImGui::SliderFloat("X##o", &posX, -10.0f, 10.0f, "%.1f") ||
-				ImGui::SliderFloat("Y##o", &posY, -10.0f, 10.0f, "%.1f") ||
-				ImGui::SliderFloat("Z##o", &posZ, -10.0f, 10.0f, "%.1f"))
-			{
+			bool positionChanged = false;
+			positionChanged = ImGui::SliderFloat("X##o", &posX, -10.0f, 10.0f, "%.1f") || positionChanged;
+			positionChanged = ImGui::SliderFloat("Y##o", &posY, -10.0f, 10.0f, "%.1f") || positionChanged;
+			positionChanged = ImGui::SliderFloat("Z##o", &posZ, -10.0f, 10.0f, "%.1f") || positionChanged;
+			if (positionChanged) {
 				objectList[currentSelect]->setPosition(glm::vec3(posX, posY, posZ));
 			}
 			
@@ -207,7 +207,6 @@ void LightProperties::show() {
 			}
 			ImGui::PopID();
 		}
-		//if (lightList.size() > 0 && currentSelect < lightList.size()) {
 		if (currentSelect < lightList.size()) {
 			if (lightList[currentSelect]->getType() != "Directional") {
 				ImGui::SeparatorText("Position");
@@ -215,10 +214,11 @@ void LightProperties::show() {
 				float posY = lightList[currentSelect]->getY();
 				float posZ = lightList[currentSelect]->getZ();
 
-				if (ImGui::SliderFloat("X##l", &posX, -10.0f, 10.0f, "%.1f") || 
-					ImGui::SliderFloat("Y##l", &posY, -10.0f, 10.0f, "%.1f") || 
-					ImGui::SliderFloat("Z##l", &posZ, -10.0f, 10.0f, "%.1f"))
-				{
+				bool positionChanged = false;
+				positionChanged = ImGui::SliderFloat("X##l", &posX, -10.0f, 10.0f, "%.1f") || positionChanged;
+				positionChanged = ImGui::SliderFloat("Y##l", &posY, -10.0f, 10.0f, "%.1f") || positionChanged;
+				positionChanged = ImGui::SliderFloat("Z##l", &posZ, -10.0f, 10.0f, "%.1f") || positionChanged;
+				if (positionChanged) {
 					lightList[currentSelect]->setPosition(glm::vec3(posX, posY, posZ));
 				}
 			}
@@ -229,10 +229,11 @@ void LightProperties::show() {
 				float dirY = dir.y;
 				float dirZ = dir.z;
 
-				if (ImGui::SliderFloat("X", &dirX, -10.0f, 10.0f, "%.1f") || 
-					ImGui::SliderFloat("Y", &dirY, -10.0f, 10.0f, "%.1f") || 
-					ImGui::SliderFloat("Z", &dirZ, -10.0f, 10.0f, "%.1f"))
-				{
+				bool directionChanged = false;
+				directionChanged = ImGui::SliderFloat("X", &dirX, -10.0f, 10.0f, "%.1f") || directionChanged;
+				directionChanged = ImGui::SliderFloat("Y", &dirY, -10.0f, 10.0f, "%.1f") || directionChanged;
+				directionChanged = ImGui::SliderFloat("Z", &dirZ, -10.0f, 10.0f, "%.1f") || directionChanged;
+				if (directionChanged) {
 					lightList[currentSelect]->setDirection(glm::vec3(dirX, dirY, dirZ));
 				}
 			}
