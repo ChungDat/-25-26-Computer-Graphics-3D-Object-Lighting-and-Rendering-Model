@@ -51,6 +51,8 @@ protected:
     Material material;
     Texture texture;
 
+    Shader*& shader;
+
     bool enabled;
 
     static int nextID;
@@ -62,9 +64,9 @@ protected:
     virtual GLenum getDrawMode() const;
 
 public:
-    Object();
+    Object(Shader*&);
 
-    virtual void draw(Shader& shader, const glm::mat4& view, const glm::mat4& projection, const glm::vec3& viewPos, const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate);
+    virtual void draw(const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate);
     
     void setDiffusePath(const std::string);
     void setSpecularPath(const std::string);
@@ -124,7 +126,7 @@ protected:
     std::string getType() const;
 
 public:
-    Cube();
+    Cube(Shader*&);
 };
 
 class Sphere : public Object {
@@ -141,8 +143,8 @@ protected:
         std::vector<float>& vertices, std::vector<unsigned int>& indices);
 
 public:
-    Sphere();
-    void draw(Shader& shader, const glm::mat4& view, const glm::mat4& projection, const glm::vec3& viewPos, const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) override;
+    Sphere(Shader*&);
+    void draw(const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) override;
 };
 
 class Pyramid : public Object {
@@ -155,7 +157,7 @@ protected:
     std::string getType() const;
 
 public:
-    Pyramid();
+    Pyramid(Shader*&);
 };
 
 class Cylinder : public Object {
@@ -172,6 +174,6 @@ protected:
         std::vector<float>& vertices, std::vector<unsigned int>& indices);
 
 public:
-    Cylinder();
-    void draw(Shader& shader, const glm::mat4& view, const glm::mat4& projection, const glm::vec3& viewPos, const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) override;
+    Cylinder(Shader*&);
+    void draw(const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) override;
 };

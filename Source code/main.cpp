@@ -169,24 +169,25 @@ int main() {
 	// axis shader
 	Shader axisShader = Shader("custom_shader/axis.vert", "custom_shader/axis.frag");
 
-	// model
-	Model backpackModel((char*)"backpack/backpack.obj");
 
 	Shader* objectShader = &PhongShader;
 
 	// create objects
 	std::vector<Object*> objectList = {
-		new Cube(),
-		new Cube(),
-		new Cube(),
-		new Cube(),
-		new Cube(),
-		new Cube(),
-		new Cube(),
-		new Cube(),
-		new Cube(),
-		new Cube()
+		new Cube(objectShader),
+		new Cube(objectShader),
+		new Cube(objectShader),
+		new Cube(objectShader),
+		new Cube(objectShader),
+		new Cube(objectShader),
+		new Cube(objectShader),
+		new Cube(objectShader),
+		new Cube(objectShader),
+		new Cube(objectShader)
 	};
+
+	// assimp model
+	Model backpackModel((char*)"backpack/backpack.obj", objectShader);
 
 	// create lights
 	std::vector<Light*> lightList = {
@@ -235,7 +236,7 @@ int main() {
 
 	//PresetScenesCollapse presetScenesCollapse = PresetScenesCollapse("Preset Scenes");
 	LightCollapse lightCollapse = LightCollapse("Add Light", lightList, lightShader);
-	ObjectCollapse objectCollapse = ObjectCollapse("Add Object", objectList);
+	ObjectCollapse objectCollapse = ObjectCollapse("Add Object", objectList, objectShader);
 	ObjectProperties objectProperties = ObjectProperties("Object Properties", objectList);
 	LightProperties lightProperties = LightProperties("Light Properties", lightList);
 	Settings settings = Settings("Settings", lightList[0], axis, objectShader, shaderModel, shaderList, currentRasterizationMode);
@@ -308,6 +309,16 @@ int main() {
 		horizontalRotate = glm::rotate(horizontalRotate, glm::radians(horizontalRotateRate), glm::vec3(0.0f, 1.0f, 0.0f));
 		glm::mat4 verticalRotate = glm::mat4(1.0f);
 		verticalRotate = glm::rotate(verticalRotate, glm::radians(verticalRotateRate), glm::vec3(1.0f, 0.0f, 0.0f));
+		glm::vec3 viewPos = camera.Position;
+
+		objectShader->use();
+		objectShader->setMat4fv("view", view);
+		objectShader->setMat4fv("projection", projection);
+		objectShader->setVec3fv("viewPos", viewPos);
+
+		lightShader.use();
+		lightShader.setMat4fv("view", view);
+		lightShader.setMat4fv("projection", projection);
 
 		// light source
 		// ------------
@@ -321,7 +332,7 @@ int main() {
 
 		for (int i = 0; i < lightList.size(); i++) {
 			if (i == 0) continue;
-			lightList[i]->draw(view, projection);
+			lightList[i]->draw();
 		}
 
 		// normal object
@@ -347,19 +358,19 @@ int main() {
 		}
 
 		// draw
-		glm::vec3 viewPos = camera.Position;
 		for (unsigned int i = 0; i < objectList.size(); i++) {
 			//float angle = 20.f * i;
 			//cubeList[i].setRotation(glm::vec3(angle * 0.2f, angle * 0.5f, angle * 0.8f));
-			objectList[i]->draw(*objectShader, view, projection, viewPos, horizontalRotate, verticalRotate);
+			objectList[i]->draw(horizontalRotate, verticalRotate);
 		}
 
-		// loaded model
-		glm::mat4 model = glm::mat4(1.0);
-		model = glm::translate(model, glm::vec3(0.0, -1.0, 0.0));
-		model = glm::scale(model, glm::vec3(0.5, 0.5, 0.5));
-		objectShader->setMat4fv("model", model);
-		backpackModel.draw(*objectShader, view, projection, viewPos, horizontalRotate, verticalRotate);
+		// assimp loaded model
+		glm::vec3 pos(0.0f, -2.0f, 0.0f);
+		glm::vec3 scale(0.5, 0.5, 0.5);
+
+		backpackModel.setPosition(pos);
+		backpackModel.setScale(scale);
+		backpackModel.draw(horizontalRotate, verticalRotate);
 
 		if (axis.isEnabled()) {
 			axis.draw(view, projection);

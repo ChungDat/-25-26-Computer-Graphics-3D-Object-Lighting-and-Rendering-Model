@@ -242,7 +242,8 @@ PointLight::PointLight(Shader& shader) : Light(shader) {
 	orbitalMotion = false;
 }
 
-void PointLight::draw(const glm::mat4& view, const glm::mat4& projection) const {
+//void PointLight::draw(const glm::mat4& view, const glm::mat4& projection) const {
+void PointLight::draw() const {
 	if (!isEnabled()) return;
 
 	shader.use();
@@ -253,8 +254,6 @@ void PointLight::draw(const glm::mat4& view, const glm::mat4& projection) const 
 
 	shader.setMat4fv("model", model);
 	shader.setVec3fv("lightColor", color);
-	shader.setMat4fv("view", view);
-	shader.setMat4fv("projection", projection);
 
 	glBindVertexArray(getVAO());
 	glDrawArrays(GL_TRIANGLES, 0, getVertexCount());

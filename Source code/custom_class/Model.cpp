@@ -1,37 +1,27 @@
 #include "Model.h"
 
-Model::Model(char* path) {
+Model::Model(char* path, Shader*& _shader) : Object(_shader) {
 	loadModel(path);
 	enabled = true;
 }
 
 Model::~Model() {}
 
-void Model::enable() {
-	enabled = true;
-}
-
-void Model::disable() {
-	enabled = false;
-}
-
-bool Model::isEnabled() {
-	return enabled;
-}
-
-void Model::draw(Shader& shader, const glm::mat4& view, const glm::mat4& projection, const glm::vec3& viewPos, const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) {
+//void Model::draw(Shader& shader, const glm::mat4& view, const glm::mat4& projection, const glm::vec3& viewPos, const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) {
+void Model::draw(const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) {
 	if (!isEnabled()) return;
 
-	shader.use();
-	
-	shader.setMat4fv("view", view);
-	shader.setMat4fv("projection", projection);
-	shader.setVec3fv("viewPos", viewPos);
-	shader.setMat4fv("horizontalRotate", horizontalRotate);
-	shader.setMat4fv("verticalRotate", verticalRotate);
+	setModelMatrix();
+
+	shader->use();
+
+	shader->setMat4fv("model", model);
+
+	shader->setMat4fv("horizontalRotate", horizontalRotate);
+	shader->setMat4fv("verticalRotate", verticalRotate);
 	
 	for (unsigned int i = 0; i < meshes.size(); i++) {
-		meshes[i].Draw(shader);
+		meshes[i].Draw(*shader);
 	}
 }
 

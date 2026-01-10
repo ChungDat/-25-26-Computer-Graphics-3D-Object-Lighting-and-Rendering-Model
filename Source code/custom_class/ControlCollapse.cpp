@@ -62,8 +62,8 @@ void LightCollapse::addLight(const char* lightType) {
 		lightList.push_back(new SpotLight(shader));
 }
 
-ObjectCollapse::ObjectCollapse(const char* _label, std::vector<Object*>& _objectList) 
-	: ControlCollapse(_label), objectList(_objectList) {}
+ObjectCollapse::ObjectCollapse(const char* _label, std::vector<Object*>& _objectList, Shader* _shader)
+	: ControlCollapse(_label), objectList(_objectList), shader(_shader) {}
 
 void ObjectCollapse::show() {
 	if (ImGui::CollapsingHeader(label ? label : "Add object")) {
@@ -78,13 +78,13 @@ void ObjectCollapse::show() {
 
 void ObjectCollapse::addObject(const char* objectType) {
 	if (objectType == "Cube")
-		objectList.push_back(new Cube());
+		objectList.push_back(new Cube(shader));
 	else if (objectType == "Pyramid")
-		objectList.push_back(new Pyramid());
+		objectList.push_back(new Pyramid(shader));
 	else if (objectType == "Sphere")
-		objectList.push_back(new Sphere());
+		objectList.push_back(new Sphere(shader));
 	else if (objectType == "Cylinder")
-		objectList.push_back(new Cylinder());
+		objectList.push_back(new Cylinder(shader));
 }
 
 ObjectProperties::ObjectProperties(const char* _label, std::vector<Object*>& _objectList) 

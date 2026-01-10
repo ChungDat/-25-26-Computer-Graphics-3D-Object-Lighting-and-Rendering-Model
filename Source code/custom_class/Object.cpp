@@ -29,7 +29,7 @@ bool Cylinder::initialized = false;
 // abstract Object class
 // ---------------------
 
-Object::Object() : ID(nextID++)
+Object::Object(Shader*& _shader) : ID(nextID++), shader(_shader)
 {
 	position = glm::vec3(0.0f);
 	scale = glm::vec3(1.0f);
@@ -56,46 +56,43 @@ Object::Object() : ID(nextID++)
 	enabled = true;
 }
 
-void Object::draw(Shader& shader, const glm::mat4& view, const glm::mat4& projection, const glm::vec3& viewPos, const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) {
+void Object::draw(const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) {
 	if (!isEnabled()) return;
 
 	setModelMatrix();
 
-	shader.use();
+	shader->use();
 
-	shader.setMat4fv("view", view);
-	shader.setMat4fv("projection", projection);
-	shader.setVec3fv("viewPos", viewPos);
-	shader.setMat4fv("horizontalRotate", horizontalRotate);
-	shader.setMat4fv("verticalRotate", verticalRotate);
+	shader->setMat4fv("horizontalRotate", horizontalRotate);
+	shader->setMat4fv("verticalRotate", verticalRotate);
 
-	shader.setMat4fv("model", model);
+	shader->setMat4fv("model", model);
 	
-	shader.setVec3fv("material.ambient", material.ambient);
-	shader.setVec3fv("material.diffuse", material.diffuse);
-	shader.setVec3fv("material.specular", material.specular);
+	shader->setVec3fv("material.ambient", material.ambient);
+	shader->setVec3fv("material.diffuse", material.diffuse);
+	shader->setVec3fv("material.specular", material.specular);
 
 	//shader.setFloat("material.shininess", material.shininess);
 
-	shader.setVec3fv("material.albedo", material.albedo);
-	shader.setFloat("material.metallic", material.metallic);
-	shader.setFloat("material.roughness", material.roughness);
+	shader->setVec3fv("material.albedo", material.albedo);
+	shader->setFloat("material.metallic", material.metallic);
+	shader->setFloat("material.roughness", material.roughness);
 
-	shader.setBool("useDiffuseMap", texture.diffuseMap != 0);
-	shader.setBool("useSpecularMap", texture.specularMap != 0);
-	shader.setBool("useEmissionMap", texture.emissionMap != 0);
+	shader->setBool("useDiffuseMap", texture.diffuseMap != 0);
+	shader->setBool("useSpecularMap", texture.specularMap != 0);
+	shader->setBool("useEmissionMap", texture.emissionMap != 0);
 
-	shader.setBool("useAlbedoMap", texture.albedoMap != 0);
-	shader.setBool("useMetallicMap", texture.metallicMap != 0);
-	shader.setBool("useRoughnessMap", texture.roughnessMap != 0);
+	shader->setBool("useAlbedoMap", texture.albedoMap != 0);
+	shader->setBool("useMetallicMap", texture.metallicMap != 0);
+	shader->setBool("useRoughnessMap", texture.roughnessMap != 0);
 
-	shader.setInt("diffuseMap", 0);
-	shader.setInt("specularMap", 1);
-	shader.setInt("emissionMap", 2);
+	shader->setInt("diffuseMap", 0);
+	shader->setInt("specularMap", 1);
+	shader->setInt("emissionMap", 2);
 
-	shader.setInt("albedoMap", 3);
-	shader.setInt("metallicMap", 4);
-	shader.setInt("roughnessMap", 5);
+	shader->setInt("albedoMap", 3);
+	shader->setInt("metallicMap", 4);
+	shader->setInt("roughnessMap", 5);
 
 	glBindVertexArray(getVAO());
 
@@ -269,7 +266,7 @@ Object::~Object() {}
 // Cube class
 // ----------
 
-Cube::Cube() : Object()
+Cube::Cube(Shader*& _shader) : Object(_shader)
 {
 	initBuffers();
 }
@@ -363,7 +360,7 @@ std::string Cube::getType() const
 // Pyramid class
 // -------------
 
-Pyramid::Pyramid() : Object()
+Pyramid::Pyramid(Shader*& _shader) : Object(_shader)
 {
 	initBuffers();
 }
@@ -451,7 +448,7 @@ std::string Pyramid::getType() const {
 // Sphere class
 // ------------
 
-Sphere::Sphere() : Object()
+Sphere::Sphere(Shader*& _shader) : Object(_shader)
 {
 	initBuffers();
 }
@@ -574,38 +571,35 @@ void Sphere::generateSphere(float radius, unsigned int sectorCount, unsigned int
 	}
 }
 
-void Sphere::draw(Shader& shader, const glm::mat4& view, const glm::mat4& projection, const glm::vec3& viewPos, const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) {
+void Sphere::draw(const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) {
 	if (!isEnabled()) return;
 
 	setModelMatrix();
 
-	shader.use();
+	shader->use();
 
-	shader.setMat4fv("view", view);
-	shader.setMat4fv("projection", projection);
-	shader.setVec3fv("viewPos", viewPos);
-	shader.setMat4fv("horizontalRotate", horizontalRotate);
-	shader.setMat4fv("verticalRotate", verticalRotate);
-
-	shader.setMat4fv("model", model);
-
-	shader.setVec3fv("material.ambient", material.ambient);
-	shader.setVec3fv("material.diffuse", material.diffuse);
-	shader.setVec3fv("material.specular", material.specular);
-
-	shader.setFloat("material.shininess", material.shininess);
-
-	shader.setVec3fv("material.albedo", material.albedo);
-	shader.setFloat("material.metallic", material.metallic);
-	shader.setFloat("material.roughness", material.roughness);
-
-	shader.setInt("diffuseMap", 0);
-	shader.setInt("specularMap", 1);
-	shader.setInt("emissionMap", 2);
-
-	shader.setInt("albedoMap", 3);
-	shader.setInt("metallicMap", 4);
-	shader.setInt("roughnessMap", 5);
+	shader->setMat4fv("horizontalRotate", horizontalRotate);
+	shader->setMat4fv("verticalRotate", verticalRotate);
+	
+	shader->setMat4fv("model", model);
+	
+	shader->setVec3fv("material.ambient", material.ambient);
+	shader->setVec3fv("material.diffuse", material.diffuse);
+	shader->setVec3fv("material.specular", material.specular);
+	
+	shader->setFloat("material.shininess", material.shininess);
+	
+	shader->setVec3fv("material.albedo", material.albedo);
+	shader->setFloat("material.metallic", material.metallic);
+	shader->setFloat("material.roughness", material.roughness);
+	
+	shader->setInt("diffuseMap", 0);
+	shader->setInt("specularMap", 1);
+	shader->setInt("emissionMap", 2);
+	
+	shader->setInt("albedoMap", 3);
+	shader->setInt("metallicMap", 4);
+	shader->setInt("roughnessMap", 5);
 
 	glBindVertexArray(getVAO());
 
@@ -629,7 +623,7 @@ void Sphere::draw(Shader& shader, const glm::mat4& view, const glm::mat4& projec
 // Cylinder class
 // --------------
 
-Cylinder::Cylinder() : Object()
+Cylinder::Cylinder(Shader*& _shader) : Object(_shader)
 {
 	initBuffers();
 }
@@ -786,38 +780,35 @@ void Cylinder::generateCylinder(float radius, float height, unsigned int sectorC
 	}
 }
 
-void Cylinder::draw(Shader& shader, const glm::mat4& view, const glm::mat4& projection, const glm::vec3& viewPos, const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) {
+void Cylinder::draw(const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) {
 	if (!isEnabled()) return;
 
 	setModelMatrix();
 
-	shader.use();
+	shader->use();
 
-	shader.setMat4fv("view", view);
-	shader.setMat4fv("projection", projection);
-	shader.setVec3fv("viewPos", viewPos);
-	shader.setMat4fv("horizontalRotate", horizontalRotate);
-	shader.setMat4fv("verticalRotate", verticalRotate);
-
-	shader.setMat4fv("model", model);
-
-	shader.setVec3fv("material.ambient", material.ambient);
-	shader.setVec3fv("material.diffuse", material.diffuse);
-	shader.setVec3fv("material.specular", material.specular);
-
-	shader.setFloat("material.shininess", material.shininess);
-
-	shader.setVec3fv("material.albedo", material.albedo);
-	shader.setFloat("material.metallic", material.metallic);
-	shader.setFloat("material.roughness", material.roughness);
-
-	shader.setInt("diffuseMap", 0);
-	shader.setInt("specularMap", 1);
-	shader.setInt("emissionMap", 2);
-
-	shader.setInt("albedoMap", 3);
-	shader.setInt("metallicMap", 4);
-	shader.setInt("roughnessMap", 5);
+	shader->setMat4fv("horizontalRotate", horizontalRotate);
+	shader->setMat4fv("verticalRotate", verticalRotate);
+	
+	shader->setMat4fv("model", model);
+	
+	shader->setVec3fv("material.ambient", material.ambient);
+	shader->setVec3fv("material.diffuse", material.diffuse);
+	shader->setVec3fv("material.specular", material.specular);
+	
+	shader->setFloat("material.shininess", material.shininess);
+	
+	shader->setVec3fv("material.albedo", material.albedo);
+	shader->setFloat("material.metallic", material.metallic);
+	shader->setFloat("material.roughness", material.roughness);
+	
+	shader->setInt("diffuseMap", 0);
+	shader->setInt("specularMap", 1);
+	shader->setInt("emissionMap", 2);
+	
+	shader->setInt("albedoMap", 3);
+	shader->setInt("metallicMap", 4);
+	shader->setInt("roughnessMap", 5);
 
 	glBindVertexArray(getVAO());
 

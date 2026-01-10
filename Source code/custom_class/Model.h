@@ -33,13 +33,9 @@ protected:
 	unsigned int getVAO() const override { return 0; };
 	unsigned int getVertexCount() const override { return 0; };
 
-	bool enabled;
-
 public:
-	Model(char*);
+	Model(char*, Shader*&);
 	virtual ~Model();
-	void draw(Shader&, const glm::mat4&, const glm::mat4&, const glm::vec3&, const glm::mat4&, const glm::mat4&);
-	bool isEnabled();
-	void enable();
-	void disable();
+	//void draw(Shader&, const glm::mat4&, const glm::mat4&, const glm::vec3&, const glm::mat4&, const glm::mat4&);
+	void draw(const glm::mat4&, const glm::mat4&);
 };
