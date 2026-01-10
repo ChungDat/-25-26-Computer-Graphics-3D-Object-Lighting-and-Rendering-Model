@@ -353,7 +353,7 @@ SpotLight::SpotLight(Shader& shader) : PointLight(shader) {
 }
 
 void SpotLight::setDirection(const glm::vec3& _dir) {
-	direction = glm::normalize(_dir);
+	direction = _dir;
 }
 
 void SpotLight::setInnerCutOff(float _inner) {

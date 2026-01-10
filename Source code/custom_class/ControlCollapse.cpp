@@ -222,7 +222,7 @@ void LightProperties::show() {
 					lightList[currentSelect]->setPosition(glm::vec3(posX, posY, posZ));
 				}
 			}
-			else {
+			if (lightList[currentSelect]->getType() != "Point") {
 				ImGui::SeparatorText("Direction");
 				glm::vec3 dir = lightList[currentSelect]->getDirection();
 				float dirX = dir.x;
