@@ -208,7 +208,7 @@ DirectionalLight::DirectionalLight(Shader& shader) : Light(shader) {
 }
 
 void DirectionalLight::setDirection(const glm::vec3& _dir) {
-	direction = glm::normalize(_dir);
+	direction =_dir;
 }
 
 glm::vec3 DirectionalLight::getDirection() const {
