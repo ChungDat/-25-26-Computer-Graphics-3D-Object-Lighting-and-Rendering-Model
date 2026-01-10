@@ -52,6 +52,9 @@ glm::vec3 cameraPos = glm::vec3(0.0f, 1.0f, 3.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
+int numDirLights = 0, numPointLights = 0, numSpotLights = 0;
+int numObjects = 0;
+
 // create camera
 Camera camera = Camera(cameraPos, yaw, pitch);
 

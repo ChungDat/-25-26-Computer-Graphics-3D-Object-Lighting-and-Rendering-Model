@@ -8,6 +8,7 @@
 #include "Light.h"
 #include "Axis.h"
 #include "Object.h"
+#include "../constants.h"
 
 class ControlCollapse
 {
@@ -55,12 +56,15 @@ class ObjectCollapse : public ControlCollapse {
 protected:
 	std::vector<const char*> object = { "Cube", "Sphere", "Pyramid", "Cylinder", "Lamp", "Flower Pot", "Glass" };
 	std::vector<Object*>& objectList;
+
+	int& numObjects;
+
 	void addObject(const char*);
 
 	Shader* shader;
 
 public:
-	ObjectCollapse(const char*, std::vector<Object*>&, Shader*);
+	ObjectCollapse(const char*, std::vector<Object*>&, int&, Shader*);
 	virtual ~ObjectCollapse() {};
 	void show();
 };
@@ -68,10 +72,12 @@ public:
 class ObjectProperties : public ControlCollapse {
 protected:
 	std::vector<Object*>& objectList;
+	int& numObjects;
+
 	int currentSelect = 0;
 
 public:
-	ObjectProperties(const char*, std::vector<Object*>&);
+	ObjectProperties(const char*, std::vector<Object*>&, int&);
 	virtual ~ObjectProperties() {};
 	void show();
 };

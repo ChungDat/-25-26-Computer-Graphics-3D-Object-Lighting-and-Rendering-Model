@@ -68,8 +68,8 @@ void LightCollapse::addLight(const char* lightType) {
 	}
 }
 
-ObjectCollapse::ObjectCollapse(const char* _label, std::vector<Object*>& _objectList, Shader* _shader)
-	: ControlCollapse(_label), objectList(_objectList), shader(_shader) {}
+ObjectCollapse::ObjectCollapse(const char* _label, std::vector<Object*>& _objectList, int& _numObjects, Shader* _shader)
+	: ControlCollapse(_label), objectList(_objectList), numObjects(_numObjects), shader(_shader) {}
 
 void ObjectCollapse::show() {
 	if (ImGui::CollapsingHeader(label ? label : "Add object")) {
@@ -93,8 +93,8 @@ void ObjectCollapse::addObject(const char* objectType) {
 		objectList.push_back(new Cylinder(shader));
 }
 
-ObjectProperties::ObjectProperties(const char* _label, std::vector<Object*>& _objectList) 
-	: ControlCollapse(_label), objectList(_objectList) {}
+ObjectProperties::ObjectProperties(const char* _label, std::vector<Object*>& _objectList, int& _numPbjects) 
+	: ControlCollapse(_label), objectList(_objectList), numObjects(_numPbjects) {}
 
 void ObjectProperties::show() {
 	if (ImGui::CollapsingHeader(label ? label : "Object Properties")) {
