@@ -284,6 +284,17 @@ void LightProperties::show() {
 				}
 			}
 
+			if (lightList[currentSelect]->getOrbital()) {
+				if (ImGui::Button("Disable orbital motion")) {
+					lightList[currentSelect]->setOrbital(false);
+				}
+			}
+			else {
+				if (ImGui::Button("Enable orbital motion")) {
+					lightList[currentSelect]->setOrbital(true);
+				}
+			}
+
 			if (ImGui::Button("Remove##l")) {
 				//lightList[currentSelect]->setColor(glm::vec3(0.0f));
 

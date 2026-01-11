@@ -24,19 +24,24 @@ protected:
 
 	glm::vec3 position;
 	glm::vec3 direction;
+	glm::vec3 baseDir;
 	float yaw; // left right - in degree
 	float pitch; // up down - in degree
 
+	virtual void setYaw(const int _angle);
+	virtual void setPitch(const int _angle);
+
 	// orbital motion
 
-	bool orbitalMotion = false;
-	float rotationalFreq = 45; // degree
-	float radius = 0.8f;
+	bool orbitalMotion;
+	float orbitAngle; // radian
+	float rotationalFreq; // degree
+	float radius;
 
 	glm::vec3 orbitCenter; // same as position
 
-	void updateOrbitalPosition(const float time);
-	void updateOrbitalDirection(const float time);
+	void updateOrbitalPosition();
+	virtual void updateOrbitalDirection();
 
 	// opengl
 
@@ -69,8 +74,6 @@ public:
 	virtual void setPosition(const glm::vec3 _pos);
 	virtual void setDirection(const float _yaw, const float _pitch);
 	virtual void setDirection(const glm::vec3 _direction);
-	virtual void setYaw(const int _angle);
-	virtual void setPitch(const int _angle);
 
 	// orbital motion
 
@@ -114,6 +117,7 @@ public:
 
 	// orbital motion
 
+	bool getOrbital() const;
 	float getRadius() const;
 	float getRotationalFreq() const;
 
@@ -126,7 +130,7 @@ public:
 	unsigned int getVAO() const;
 	unsigned int getVertexCount() const;
 
-	virtual void draw(const float time) = 0;
+	virtual void draw(const float deltaTime) = 0;
 
 	virtual void updateObjectShader(Shader& shader, unsigned int typeCount) const = 0;
 };
@@ -161,7 +165,7 @@ public:
 
 	std::string getType() const override;
 
-	void draw(const float time) override;
+	void draw(const float deltaTime) override;
 
 	void updateObjectShader(Shader& shader, unsigned int typeCount) const override;
 };
@@ -213,7 +217,7 @@ public:
 
 	std::string getType() const override;
 
-	void draw(const float time) override;
+	void draw(const float deltaTime) override;
 
 	void updateObjectShader(Shader& objectShader, unsigned int typeCount) const override;
 };
@@ -222,6 +226,11 @@ class SpotLight : public PointLight {
 protected:
 	float innerCutOff;
 	float outerCutOff;
+	
+	void setYaw(const int _angle) override;
+	void setPitch(const int _angle) override;
+
+	void updateOrbitalDirection() override;
 
 public:
 	SpotLight(Shader& _shader);
@@ -235,9 +244,6 @@ public:
 
 	void setDirection(const float _yaw, const float _pitch) override;
 	void setDirection(const glm::vec3 _direction) override;
-	void setYaw(const int _angle) override;
-	void setPitch(const int _angle) override;
-
 
 	void setInnerCutOff(const float _inner);
 	void setOuterCutOff(const float _outer);
@@ -259,6 +265,8 @@ public:
 	// ==============
 
 	std::string getType() const override;
+
+	void draw(const float deltaTime) override;
 
 	void updateObjectShader(Shader& shader, unsigned int typeCount) const override;
 };

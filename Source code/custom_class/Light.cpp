@@ -11,7 +11,6 @@ bool Light::initialized = false;
 
 Light::Light(Shader& _shader) : shader(_shader), ID(nextID++) {
 	// color
-
 	color = glm::vec3(1.0f);
 	storedColor = color; // Initialize storedColor
 
@@ -22,8 +21,16 @@ Light::Light(Shader& _shader) : shader(_shader), ID(nextID++) {
 	// position and direction
 	position = glm::vec3(0.0f);
 	direction = glm::vec3(0.0f, 0.0f, -1.0f);
-	yaw = -90;
+	baseDir = direction;
+	yaw = 270;
 	pitch = 0;
+
+	// orbital motion
+	orbitalMotion = false;
+	orbitCenter = position;
+	orbitAngle = 0.0f; // degree
+	rotationalFreq = 45.0f; // degree
+	radius = 0.8f;
 
 	enabled = true;      // Lights are enabled by default
 }
@@ -64,10 +71,12 @@ void Light::setDirection(const float _yaw, const float _pitch) {
 	float z = glm::cos(glm::radians(pitch)) * glm::sin(glm::radians(yaw));
 
 	direction = glm::normalize(glm::vec3(x, y, z));
+	baseDir = direction;
 }
 
 void Light::setDirection(const glm::vec3 _direction) {
 	direction = glm::normalize(_direction);
+	baseDir = direction;
 }
 
 // angle in degree
@@ -97,30 +106,19 @@ void Light::setRotationalFreq(float _freq) {
 	rotationalFreq = _freq;
 }
 
-void Light::updateOrbitalPosition(const float time) {
+void Light::updateOrbitalPosition() {
 	if (!orbitalMotion) return;
 
-	// compute angle in radians
-	float angle = time * glm::radians(rotationalFreq);
-
-	// orbit in XZ plane around orbitCenter
-	position.x = orbitCenter.x + cosf(angle) * radius;
-	position.y = orbitCenter.y; // keep same Y as center
-	position.z = orbitCenter.z + sinf(angle) * radius;
+	position = orbitCenter + 
+		glm::vec3(cosf(orbitAngle) * radius, 0.0f, sinf(orbitAngle) * radius);
 }
 
-void Light::updateOrbitalDirection(const float time) {
+void Light::updateOrbitalDirection() {
 	if (!orbitalMotion) return;
 
-	// compute angle in radians
-	float angle = time * glm::radians(rotationalFreq);
+	direction = glm::normalize(glm::vec3(cosf(orbitAngle), 0.0f, sinf(orbitAngle)));
 
-	glm::vec3 baseDir = direction;
-
-	glm::mat4 rot = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 1.0f, 0.0f));
-
-	// orbit in XZ plane around orbitCenter
-	direction = glm::normalize(glm::vec3(rot * glm::vec4(baseDir, 0.0f)));
+	yaw = atan2(direction.z, direction.x) * 180 / glm::pi<float>() + 180.0f;
 }
 
 // opengl
@@ -288,6 +286,11 @@ glm::vec3 Light::getSpecular() const {
 
 // orbital motion
 
+bool Light::getOrbital() const
+{
+	return orbitalMotion;
+}
+
 float Light::getRadius() const {
 	return radius;
 }
@@ -306,7 +309,7 @@ int Light::getID() const {
 // -----------------------
 
 DirectionalLight::DirectionalLight(Shader& _shader) : Light(_shader) {
-	direction = glm::normalize(glm::vec3(0.0f, 0.0f, -1.0f));
+	//direction = glm::normalize(glm::vec3(0.0f, 0.0f, -1.0f));
 }
 
 DirectionalLight::~DirectionalLight() {}
@@ -337,8 +340,15 @@ std::string DirectionalLight::getType() const {
 	return "Directional";
 }
 
-void DirectionalLight::draw(const float time) {
-	updateOrbitalDirection(time);
+void DirectionalLight::draw(const float deltaTime) {
+	if (!isEnabled()) return;
+
+	if (orbitalMotion) {
+		orbitAngle += glm::radians(rotationalFreq) * deltaTime;
+		orbitAngle = fmod(orbitAngle, glm::two_pi<float>());
+
+		updateOrbitalDirection();
+	}
 }
 
 void DirectionalLight::updateObjectShader(Shader& objectShader, unsigned int typeCount) const {
@@ -356,12 +366,12 @@ void DirectionalLight::updateObjectShader(Shader& objectShader, unsigned int typ
 // -----------------
 
 PointLight::PointLight(Shader& _shader) : Light(_shader) {
-	position = glm::vec3(0.0f);
+	//position = glm::vec3(0.0f);
 	constant = 1.0f;
 	linear = 0.045f;
 	quadratic = 0.0075f;
-	orbitCenter = position;
-	orbitalMotion = false;
+	//orbitCenter = position;
+	//orbitalMotion = false;
 }
 
 PointLight::~PointLight() {}
@@ -394,10 +404,15 @@ std::string PointLight::getType() const {
 	return "Point";
 }
 
-void PointLight::draw(float time) {
+void PointLight::draw(const float deltaTime) {
 	if (!isEnabled()) return;
 
-	updateOrbitalPosition(time);
+	if (orbitalMotion) {
+		orbitAngle += glm::radians(rotationalFreq) * deltaTime;
+		orbitAngle = fmod(orbitAngle, glm::two_pi<float>());
+
+		updateOrbitalPosition();
+	}
 
 	shader.use();
 
@@ -431,8 +446,6 @@ void PointLight::updateObjectShader(Shader& objectShader, unsigned int typeCount
 // ----------------
 
 SpotLight::SpotLight(Shader& _shader) : PointLight(_shader){
-	direction = glm::normalize(glm::vec3(0.0f, 0.0f, -1.0f));
-
 	innerCutOff = 12.5f;
 	outerCutOff = 17.5f;
 }
@@ -477,6 +490,38 @@ float SpotLight::getOuterCutOff() const {
 
 std::string SpotLight::getType() const {
 	return "Spot";
+}
+
+void SpotLight::updateOrbitalDirection() {
+	if (!orbitalMotion) return;
+
+	direction = glm::normalize(orbitCenter - position);
+
+	yaw = atan2(direction.z, direction.x) * 180 / glm::pi<float>() + 180.0f;
+}
+
+void SpotLight::draw(const float deltaTime) {
+	if (!isEnabled()) return;
+
+	if (orbitalMotion) {
+		orbitAngle += glm::radians(rotationalFreq) * deltaTime;
+		orbitAngle = fmod(orbitAngle, glm::two_pi<float>());
+
+		updateOrbitalPosition();
+		updateOrbitalDirection();
+	}
+
+	shader.use();
+
+	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::translate(model, position);
+	model = glm::scale(model, glm::vec3(0.2f));
+
+	shader.setMat4fv("model", model);
+	shader.setVec3fv("lightColor", color);
+
+	glBindVertexArray(getVAO());
+	glDrawArrays(GL_TRIANGLES, 0, getVertexCount());
 }
 
 void SpotLight::updateObjectShader(Shader& objectShader, unsigned int typeCount) const {

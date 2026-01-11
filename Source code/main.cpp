@@ -339,7 +339,7 @@ int main() {
 		// draw light object
 		// -----------------
 		for (int i = 0; i < lightList.size(); i++) {
-			lightList[i]->draw(currentFrame);
+			lightList[i]->draw(deltaTime);
 		}
 
 		// extract world-space light position and upload to objectShader
