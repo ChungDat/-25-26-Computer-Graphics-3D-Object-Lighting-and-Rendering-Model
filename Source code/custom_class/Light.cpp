@@ -9,17 +9,30 @@ bool Light::initialized = false;
 // abstract Light class
 // --------------------
 
-Light::Light(Shader& shader) : shader(shader), ID(nextID++) {
+Light::Light(Shader& _shader) : shader(_shader), ID(nextID++) {
+	// color
+
 	color = glm::vec3(1.0f);
 	storedColor = color; // Initialize storedColor
-	enabled = true;      // Lights are enabled by default
 
 	ambient = color * 0.1f;
 	diffuse = color;
 	specular = color;
+
+	// position and direction
+	position = glm::vec3(0.0f);
+	direction = glm::vec3(0.0f, 0.0f, -1.0f);
+	yaw = -90;
+	pitch = 0;
+
+	enabled = true;      // Lights are enabled by default
 }
 
-void Light::setColor(const glm::vec3& _color) {
+Light::~Light() {}
+
+// color
+
+void Light::setColor(const glm::vec3 _color) {
 	if (isEnabled()) {
 		color = _color;
 		updateAttribute();
@@ -34,6 +47,83 @@ void Light::updateAttribute() {
 	diffuse = color;
 	specular = color;
 }
+
+// position and direction
+
+void Light::setPosition(const glm::vec3 _pos) {
+	position = _pos;
+	orbitCenter = _pos;
+}
+
+void Light::setDirection(const float _yaw, const float _pitch) {
+	setYaw(_yaw);
+	setPitch(_pitch);
+
+	float x = glm::cos(glm::radians(pitch)) * glm::cos(glm::radians(yaw));
+	float y = glm::sin(glm::radians(pitch));
+	float z = glm::cos(glm::radians(pitch)) * glm::sin(glm::radians(yaw));
+
+	direction = glm::normalize(glm::vec3(x, y, z));
+}
+
+void Light::setDirection(const glm::vec3 _direction) {
+	direction = glm::normalize(_direction);
+}
+
+// angle in degree
+void Light::setYaw(const int _angle) {
+	yaw = _angle;
+}
+
+// angle in degree
+void Light::setPitch(const int _angle) {
+	pitch = _angle;
+}
+
+// orbital motion
+
+// enable/disable orbital motion
+void Light::setOrbital(const bool _orbitalMotion) {
+	orbitalMotion = _orbitalMotion;
+}
+
+// orbital motion radius
+void Light::setRadius(float _radius) {
+	radius = _radius;
+}
+
+// orbital motion speed
+void Light::setRotationalFreq(float _freq) {
+	rotationalFreq = _freq;
+}
+
+void Light::updateOrbitalPosition(const float time) {
+	if (!orbitalMotion) return;
+
+	// compute angle in radians
+	float angle = time * glm::radians(rotationalFreq);
+
+	// orbit in XZ plane around orbitCenter
+	position.x = orbitCenter.x + cosf(angle) * radius;
+	position.y = orbitCenter.y; // keep same Y as center
+	position.z = orbitCenter.z + sinf(angle) * radius;
+}
+
+void Light::updateOrbitalDirection(const float time) {
+	if (!orbitalMotion) return;
+
+	// compute angle in radians
+	float angle = time * glm::radians(rotationalFreq);
+
+	glm::vec3 baseDir = direction;
+
+	glm::mat4 rot = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 1.0f, 0.0f));
+
+	// orbit in XZ plane around orbitCenter
+	direction = glm::normalize(glm::vec3(rot * glm::vec4(baseDir, 0.0f)));
+}
+
+// opengl
 
 void Light::initBuffers() {
 	if (initialized) return;
@@ -116,68 +206,7 @@ unsigned int Light::getVertexCount() const {
 	return 36; // 6 faces * 2 triangles * 3 vertices
 }
 
-glm::vec3 Light::getAmbient() const {
-	return ambient;
-}
-
-glm::vec3 Light::getDiffuse() const {
-	return diffuse;
-}
-
-glm::vec3 Light::getSpecular() const {
-	return specular;
-}
-
-glm::vec3 Light::getDirection() const {
-	return glm::vec3(0.0f);
-}
-
-glm::vec3 Light::getPosition() const {
-	return glm::vec3(0.0f);
-}
-
-float Light::getX() const {
-	return 0.0f;
-}
-
-float Light::getY() const {
-	return 0.0f;
-}
-
-float Light::getZ() const {
-	return 0.0f;
-}
-
-glm::vec3 Light::getColor() const
-{
-	return color;
-}
-
-glm::vec3& Light::getColor_Ref()
-{
-	return this->color;
-}
-
-glm::vec3 Light::getStoredColor() const
-{
-	return storedColor;
-}
-
-float Light::getRadius() const {
-	return 0.0f;
-}
-
-float Light::getInnerCutOff() const {
-	return 0.0f;
-}
-
-float Light::getOuterCutOff() const {
-	return 0.0f;
-}
-
-int Light::getID() const {
-	return ID;
-}
+// visibility
 
 void Light::enable() {
 	if (!enabled) {
@@ -198,25 +227,118 @@ bool Light::isEnabled() const {
 	return enabled;
 }
 
-Light::~Light() {}
+// position and direction
+
+glm::vec3 Light::getPosition() const {
+	return position;
+}
+
+glm::vec3 Light::getDirection() const {
+	return direction;
+}
+
+float Light::getX() const {
+	return position.x;
+}
+
+float Light::getY() const {
+	return position.y;
+}
+
+float Light::getZ() const {
+	return position.z;
+}
+
+int Light::getYaw() const {
+	return yaw;
+}
+
+int Light::getPitch() const {
+	return pitch;
+}
+
+// color
+
+glm::vec3 Light::getColor() const
+{
+	return color;
+}
+
+//glm::vec3& Light::getColor_Ref()
+//{
+//	return color;
+//}
+
+glm::vec3 Light::getStoredColor() const
+{
+	return storedColor;
+}
+
+glm::vec3 Light::getAmbient() const {
+	return ambient;
+}
+
+glm::vec3 Light::getDiffuse() const {
+	return diffuse;
+}
+
+glm::vec3 Light::getSpecular() const {
+	return specular;
+}
+
+// orbital motion
+
+float Light::getRadius() const {
+	return radius;
+}
+
+float Light::getRotationalFreq() const {
+	return rotationalFreq;
+}
+
+// opengl
+
+int Light::getID() const {
+	return ID;
+}
 
 // Directional Light class
 // -----------------------
 
-DirectionalLight::DirectionalLight(Shader& shader) : Light(shader) {
+DirectionalLight::DirectionalLight(Shader& _shader) : Light(_shader) {
 	direction = glm::normalize(glm::vec3(0.0f, 0.0f, -1.0f));
 }
 
-void DirectionalLight::setDirection(const glm::vec3& _dir) {
-	direction =_dir;
+DirectionalLight::~DirectionalLight() {}
+
+// position
+
+void DirectionalLight::setPosition(const glm::vec3 _pos) {}
+
+float DirectionalLight::getX() const {
+	return 0.0f;
 }
 
-glm::vec3 DirectionalLight::getDirection() const {
-	return direction;
+float DirectionalLight::getY() const {
+	return 0.0f;
 }
+
+float DirectionalLight::getZ() const {
+	return 0.0f;
+}
+
+glm::vec3 DirectionalLight::getPosition() const {
+	return glm::vec3(0.0f, 0.0f, 0.0f);
+}
+
+// opengl
 
 std::string DirectionalLight::getType() const {
 	return "Directional";
+}
+
+void DirectionalLight::draw(const float time) {
+	updateOrbitalDirection(time);
 }
 
 void DirectionalLight::updateObjectShader(Shader& objectShader, unsigned int typeCount) const {
@@ -233,7 +355,7 @@ void DirectionalLight::updateObjectShader(Shader& objectShader, unsigned int typ
 // Point Light class
 // -----------------
 
-PointLight::PointLight(Shader& shader) : Light(shader) {
+PointLight::PointLight(Shader& _shader) : Light(_shader) {
 	position = glm::vec3(0.0f);
 	constant = 1.0f;
 	linear = 0.045f;
@@ -242,53 +364,15 @@ PointLight::PointLight(Shader& shader) : Light(shader) {
 	orbitalMotion = false;
 }
 
-//void PointLight::draw(const glm::mat4& view, const glm::mat4& projection) const {
-void PointLight::draw(float time) {
-	if (!isEnabled()) return;
+PointLight::~PointLight() {}
 
-	updatePosition(time);
+void PointLight::setDirection(const float _yaw, const float _pitch) {};
 
-	shader.use();
+void PointLight::setDirection(const glm::vec3 _direction) {}
 
-	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::translate(model, position);
-	model = glm::scale(model, glm::vec3(0.2f));
+void PointLight::setYaw(const int _angle) {};
 
-	shader.setMat4fv("model", model);
-	shader.setVec3fv("lightColor", color);
-
-	glBindVertexArray(getVAO());
-	glDrawArrays(GL_TRIANGLES, 0, getVertexCount());
-}
-
-void PointLight::updatePosition(float time) {
-	if (!orbitalMotion) return;
-
-	// compute angle in radians
-	float angle = time * glm::radians(rotationalFreq);
-
-	// orbit in XZ plane around orbitCenter
-	position.x = orbitCenter.x + cosf(angle) * radius;
-	position.y = orbitCenter.y; // keep same Y as center
-	position.z = orbitCenter.z + sinf(angle) * radius;
-}
-
-void PointLight::setPosition(const glm::vec3& _pos) {
-	position = _pos;
-	orbitCenter = _pos;
-}
-
-void PointLight::setCircularMotion(bool _circularMotion) {
-	orbitalMotion = _circularMotion;
-}
-
-void PointLight::setRadius(float _radius) {
-	radius = _radius;
-}
-
-void PointLight::setRotationalFreq(float _freq) {
-	rotationalFreq = _freq;
-}
+void PointLight::setPitch(const int _angle) {};
 
 float PointLight::getConstant() const {
 	return constant;
@@ -302,30 +386,30 @@ float PointLight::getQuadratic() const {
 	return quadratic;
 }
 
-glm::vec3 PointLight::getPosition() const
-{
-	return position;
-}
-
-float PointLight::getX() const {
-	return position.x;
-}
-
-float PointLight::getY() const {
-	return position.y;
-}
-
-float PointLight::getZ() const {
-	return position.z;
-}
-
-float PointLight::getRadius() const
-{
-	return radius;
+glm::vec3 PointLight::getDirection() const {
+	return glm::vec3(0.0f, 0.0f, 0.0f);
 }
 
 std::string PointLight::getType() const {
 	return "Point";
+}
+
+void PointLight::draw(float time) {
+	if (!isEnabled()) return;
+
+	updateOrbitalPosition(time);
+
+	shader.use();
+
+	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::translate(model, position);
+	model = glm::scale(model, glm::vec3(0.2f));
+
+	shader.setMat4fv("model", model);
+	shader.setVec3fv("lightColor", color);
+
+	glBindVertexArray(getVAO());
+	glDrawArrays(GL_TRIANGLES, 0, getVertexCount());
 }
 
 void PointLight::updateObjectShader(Shader& objectShader, unsigned int typeCount) const {
@@ -346,22 +430,41 @@ void PointLight::updateObjectShader(Shader& objectShader, unsigned int typeCount
 // Spot Light class
 // ----------------
 
-SpotLight::SpotLight(Shader& shader) : PointLight(shader) {
+SpotLight::SpotLight(Shader& _shader) : PointLight(_shader){
 	direction = glm::normalize(glm::vec3(0.0f, 0.0f, -1.0f));
+
 	innerCutOff = 12.5f;
 	outerCutOff = 17.5f;
 }
 
-void SpotLight::setDirection(const glm::vec3& _dir) {
-	direction = _dir;
+SpotLight::~SpotLight() {}
+
+void SpotLight::setDirection(const float _yaw, const float _pitch) {
+	Light::setDirection(_yaw, _pitch);
 }
 
-void SpotLight::setInnerCutOff(float _inner) {
+void SpotLight::setDirection(const glm::vec3 _direction) {
+	Light::setDirection(_direction);
+}
+
+void SpotLight::setYaw(const int _angle) {
+	Light::setYaw(_angle);
+}
+
+void SpotLight::setPitch(const int _angle) {
+	Light::setPitch(_angle);
+}
+
+void SpotLight::setInnerCutOff(const float _inner) {
 	innerCutOff = _inner;
 }
 
-void SpotLight::setOuterCutOff(float _outer) {
+void SpotLight::setOuterCutOff(const float _outer) {
 	outerCutOff = _outer;
+}
+
+glm::vec3 SpotLight::getDirection() const {
+	return Light::getDirection();
 }
 
 float SpotLight::getInnerCutOff() const {
@@ -370,11 +473,6 @@ float SpotLight::getInnerCutOff() const {
 
 float SpotLight::getOuterCutOff() const {
 	return outerCutOff;
-}
-
-glm::vec3 SpotLight::getDirection() const
-{
-	return direction;
 }
 
 std::string SpotLight::getType() const {

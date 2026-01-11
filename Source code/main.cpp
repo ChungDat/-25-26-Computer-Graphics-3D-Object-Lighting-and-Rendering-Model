@@ -227,11 +227,11 @@ int main() {
 	flashLight->setColor(glm::vec3(1.0f));
 
 	// main directional light
-	lightList[0]->setDirection(glm::vec3(-0.2f, -1.0f, -0.3f));
+	lightList[0]->setDirection(-90, 0);
 	lightList[0]->setColor(glm::vec3(1.0f, 1.0f, 1.0f));
 
 	// orbital point light
-	lightList[1]->setCircularMotion(true);
+	lightList[1]->setOrbital(true);
 
 	// point light
 	for (int i = 1; i < lightList.size(); i++) {

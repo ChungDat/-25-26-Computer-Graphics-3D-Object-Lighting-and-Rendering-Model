@@ -224,17 +224,14 @@ void LightProperties::show() {
 			}
 			if (lightList[currentSelect]->getType() != "Point") {
 				ImGui::SeparatorText("Direction");
-				glm::vec3 dir = lightList[currentSelect]->getDirection();
-				float dirX = dir.x;
-				float dirY = dir.y;
-				float dirZ = dir.z;
+				float yaw = lightList[currentSelect]->getYaw();
+				float pitch = lightList[currentSelect]->getPitch();
 
 				bool directionChanged = false;
-				directionChanged = ImGui::SliderFloat("X", &dirX, -10.0f, 10.0f, "%.1f") || directionChanged;
-				directionChanged = ImGui::SliderFloat("Y", &dirY, -10.0f, 10.0f, "%.1f") || directionChanged;
-				directionChanged = ImGui::SliderFloat("Z", &dirZ, -10.0f, 10.0f, "%.1f") || directionChanged;
+				directionChanged = ImGui::SliderFloat("yaw", &yaw, 0.0f, 360.0f, "%.f") || directionChanged;
+				directionChanged = ImGui::SliderFloat("pitch", &pitch, -90.0f, 90.0f, "%.f") || directionChanged;
 				if (directionChanged) {
-					lightList[currentSelect]->setDirection(glm::vec3(dirX, dirY, dirZ));
+					lightList[currentSelect]->setDirection(yaw, pitch);
 				}
 			}
 
@@ -248,14 +245,16 @@ void LightProperties::show() {
 
 			if (lightList[currentSelect]->getType() == "Spot") {
 				ImGui::SeparatorText("Cut Off");
-				float innerCutOff = lightList[currentSelect]->getInnerCutOff();
-				float outerCutOff = lightList[currentSelect]->getOuterCutOff();
+
+				SpotLight* s = dynamic_cast<SpotLight*>(lightList[currentSelect]);
+				float innerCutOff = s->getInnerCutOff();
+				float outerCutOff = s->getOuterCutOff();
 				bool cutOffChanged = false;
 				cutOffChanged = ImGui::SliderFloat("Inner", &innerCutOff, 0.0f, 15.0f, "%.1f") || cutOffChanged;
 				cutOffChanged = ImGui::SliderFloat("Outer", &outerCutOff, innerCutOff, innerCutOff + 10.0f, "%.1f") || cutOffChanged;
 				if (cutOffChanged && outerCutOff >= innerCutOff) {
-					lightList[currentSelect]->setInnerCutOff(innerCutOff);
-					lightList[currentSelect]->setOuterCutOff(outerCutOff);
+					s->setInnerCutOff(innerCutOff);
+					s->setOuterCutOff(outerCutOff);
 				}
 			}
 
@@ -266,7 +265,7 @@ void LightProperties::show() {
 			float colorB = _color.z;
 			float col[3] = {colorR, colorG, colorB};
 
-			glm::vec3& lightColorRef = lightList[currentSelect]->getColor_Ref();
+			//glm::vec3& lightColorRef = lightList[currentSelect]->getColor_Ref();
 			if (lightList[currentSelect]->isEnabled()) {
 				if (ImGui::ColorEdit3("##color", col))
 				{
