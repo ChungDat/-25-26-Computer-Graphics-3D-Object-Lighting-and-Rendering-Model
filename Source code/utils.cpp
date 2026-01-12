@@ -49,7 +49,7 @@ GLFWwindow* initWindow(int width, int height) {
 	return window;
 }
 
-std::string_view getTexturePath(std::string_view _texture) {
+std::string getTexturePath(std::string _texture) {
 	auto it = TEXTURE.find(_texture);
 	if (it != TEXTURE.end()) {
 		return it->second;

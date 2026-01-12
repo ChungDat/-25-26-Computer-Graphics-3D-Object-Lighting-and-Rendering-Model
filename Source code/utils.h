@@ -7,7 +7,6 @@
 
 // standard
 #include <string>
-#include <string_view>
 #include <utility>
 
 #include "constants.h"
@@ -16,4 +15,4 @@ unsigned int createTexture(const char*);
 
 GLFWwindow* initWindow(int, int);
 
-std::string_view getTexturePath(std::string_view);
+std::string getTexturePath(std::string);
