@@ -286,7 +286,7 @@ glm::vec3 Light::getSpecular() const {
 
 // orbital motion
 
-bool Light::getOrbital() const
+bool Light::isOrbital() const
 {
 	return orbitalMotion;
 }

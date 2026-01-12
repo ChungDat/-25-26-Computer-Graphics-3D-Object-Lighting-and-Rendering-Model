@@ -117,7 +117,7 @@ public:
 
 	// orbital motion
 
-	bool getOrbital() const;
+	bool isOrbital() const;
 	float getRadius() const;
 	float getRotationalFreq() const;
 

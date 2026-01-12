@@ -211,7 +211,7 @@ void LightProperties::show() {
 				positionChanged = ImGui::SliderFloat("X##l", &posX, -10.0f, 10.0f, "%.1f") || positionChanged;
 				positionChanged = ImGui::SliderFloat("Y##l", &posY, -10.0f, 10.0f, "%.1f") || positionChanged;
 				positionChanged = ImGui::SliderFloat("Z##l", &posZ, -10.0f, 10.0f, "%.1f") || positionChanged;
-				if (positionChanged) {
+				if (positionChanged && !lightList[currentSelect]->isOrbital()) {
 					lightList[currentSelect]->setPosition(glm::vec3(posX, posY, posZ));
 				}
 			}
@@ -223,7 +223,7 @@ void LightProperties::show() {
 				bool directionChanged = false;
 				directionChanged = ImGui::SliderFloat("yaw", &yaw, 0.0f, 360.0f, "%.f") || directionChanged;
 				directionChanged = ImGui::SliderFloat("pitch", &pitch, -90.0f, 90.0f, "%.f") || directionChanged;
-				if (directionChanged) {
+				if (directionChanged && !lightList[currentSelect]->isOrbital()) {
 					lightList[currentSelect]->setDirection(yaw, pitch);
 				}
 			}
@@ -277,7 +277,7 @@ void LightProperties::show() {
 				}
 			}
 
-			if (lightList[currentSelect]->getOrbital()) {
+			if (lightList[currentSelect]->isOrbital()) {
 				if (ImGui::Button("Disable orbital motion")) {
 					lightList[currentSelect]->setOrbital(false);
 				}
