@@ -59,7 +59,7 @@ void LightCollapse::addLight(const char* lightType) {
 	}
 }
 
-ObjectCollapse::ObjectCollapse(const char* _label, std::vector<Object*>& _objectList, int& _numObjects, Shader* _shader)
+ObjectCollapse::ObjectCollapse(const char* _label, std::vector<Object*>& _objectList, int& _numObjects, Shader*& _shader)
 	: ControlCollapse(_label), objectList(_objectList), numObjects(_numObjects), shader(_shader) {}
 
 void ObjectCollapse::show() {
@@ -364,6 +364,7 @@ void Settings::show() {
 				if (currentLighting != i) {
 					currentLighting = i;
 					objectShader = shaderList[currentLighting];
+					objectShader->use();
 					printf("Select %s\n", type);
 				}
 			}

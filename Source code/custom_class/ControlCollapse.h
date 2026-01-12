@@ -62,10 +62,10 @@ protected:
 
 	void addObject(const char*);
 
-	Shader* shader;
+	Shader*& shader;
 
 public:
-	ObjectCollapse(const char*, std::vector<Object*>&, int&, Shader*);
+	ObjectCollapse(const char*, std::vector<Object*>&, int&, Shader*&);
 	virtual ~ObjectCollapse() {};
 	void show();
 };

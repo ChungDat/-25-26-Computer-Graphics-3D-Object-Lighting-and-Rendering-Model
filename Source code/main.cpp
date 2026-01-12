@@ -92,8 +92,13 @@ int main() {
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetCursorPosCallback(window, mouseControl);
 	glfwSetScrollCallback(window, mouseScrollControl);
+
+	// optimization
+	// ------------
 	glEnable(GL_DEPTH_TEST);
 	//glEnable(GL_CULL_FACE);
+	//glCullFace(GL_BACK);
+	//glFrontFace(GL_CCW);
 
 	stbi_set_flip_vertically_on_load(true);
 
@@ -219,14 +224,13 @@ int main() {
 	backpackModel->setScale(scale);
 
 	boxRoom.setPosition(glm::vec3(0.0f));
-	boxRoom.setScale(glm::vec3(20.0f));
+	boxRoom.setScale(glm::vec3(25.0f));
 	boxRoom.setDiffuse(glm::vec3(0.5f));
+	boxRoom.setSpecular(glm::vec3(0.5f));
 	boxRoom.setAlbedo(glm::vec3(1.0f));
 
 	// set light color and positions
 	// ---------
-	// flash spot light
-	flashLight->setColor(glm::vec3(1.0f));
 
 	// main directional light
 	lightList[0]->setDirection(270, 0);
@@ -242,7 +246,6 @@ int main() {
 	}
 
 	// ImGui Settings
-	bool controlWindowOpened = true;
 	int currentRasterizationMode = 0;
 
 	//PresetScenesCollapse presetScenesCollapse = PresetScenesCollapse("Preset Scenes");
@@ -263,7 +266,6 @@ int main() {
 
 		// ============================================
 		// Start Dear ImGui control
-		ImVec2 controlWindowPos = ImVec2(WIDTH, 0);
 		ImVec2 controlWindowSize = ImVec2(WIDTH / 5, HEIGHT);
 		ImVec2 viewportSize = ImGui::GetMainViewport()->Size;
 		 
@@ -281,6 +283,11 @@ int main() {
 		lightProperties.show();
 		settings.show();
 
+		ImGui::End();
+
+		// End Dear ImGui control
+		// ============================================
+
 		switch (currentRasterizationMode) {
 		case 0:
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -293,11 +300,6 @@ int main() {
 			glPointSize(2.0f);
 			break;
 		}
-
-		ImGui::End();
-
-		// End Dear ImGui control
-		// ============================================
 
 		// calculate delta time
 		float currentFrame = glfwGetTime();
@@ -334,10 +336,6 @@ int main() {
 		// light source
 		// ------------
 
-		// ===================================================================
-		// PER-FRAME LIGHT UPDATES (Only for animated lights)
-		// ===================================================================
-
 		// draw light object
 		// -----------------
 		for (int i = 0; i < lightList.size(); i++) {
@@ -350,14 +348,12 @@ int main() {
 		flashLight->setDirection(camera.Front);
 
 		lightProperties.updateLightUniforms();
-
 		flashLight->updateObjectShader(*objectShader, numSpotLights++);
 
 		objectShader->setInt("numDirLights", numDirLights);
 		objectShader->setInt("numPointLights", numPointLights);
 		objectShader->setInt("numSpotLights", numSpotLights);
 
-		
 		// draw simple object;
 		// -------------------
 		for (unsigned int i = 0; i < objectList.size(); i++) {
@@ -379,12 +375,6 @@ int main() {
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
-	// optional: de-allocate all resources once they've outlived their purpose:
-	// ------------------------------------------------------------------------
-	//glDeleteVertexArrays(1, &cubeVAO);
-	//glDeleteVertexArrays(1, &lightVAO);
-	//glDeleteBuffers(1, &VBO);
-	//glDeleteBuffers(1, &EBO);
 
 	int nrAttributes;
 	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
