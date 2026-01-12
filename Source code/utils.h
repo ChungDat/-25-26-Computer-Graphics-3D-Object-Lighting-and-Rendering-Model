@@ -1,14 +1,19 @@
 #pragma once
 
-// openGL libraries
+// opengl
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "stb_image.h"
 
 // standard
 #include <string>
-#include <iostream>
+#include <string_view>
+#include <utility>
+
+#include "constants.h"
 
 unsigned int createTexture(const char*);
 
 GLFWwindow* initWindow(int, int);
+
+std::string_view getTexturePath(std::string_view);

@@ -1,13 +1,6 @@
 #pragma once
 
-// openGL libraries
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include "stb_image.h"
-
-// standard
-#include <string>
-#include <iostream>
+#include "utils.h"
 
 unsigned int createTexture(const char* texturePath) {
 	unsigned int texture;
@@ -54,4 +47,12 @@ GLFWwindow* initWindow(int width, int height) {
 	// ---------------------
 	GLFWwindow* window = glfwCreateWindow(width, height, "LearnOpenGL", NULL, NULL);
 	return window;
+}
+
+std::string_view getTexturePath(std::string_view _texture) {
+	auto it = TEXTURE.find(_texture);
+	if (it != TEXTURE.end()) {
+		return it->second;
+	}
+	return "";
 }

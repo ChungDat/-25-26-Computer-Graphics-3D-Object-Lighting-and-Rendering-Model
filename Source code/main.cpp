@@ -31,8 +31,6 @@
 #include <iostream>
 #include <vector>
 
-const float RADIUS = 10.0f;
-
 float horizontalRotateRate = 0.0f;
 float verticalRotateRate = 0.0f;
 
