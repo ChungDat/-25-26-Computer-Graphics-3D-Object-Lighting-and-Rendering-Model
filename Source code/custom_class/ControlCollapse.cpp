@@ -1,15 +1,6 @@
 #include "ControlCollapse.h"
 #include <iostream>
 
-const std::map<std::string, std::string> TEXTURE = {
-	{"wood crate", "custom_texture/container2.png"},
-};
-
-const std::map < std::string, glm::vec3> MATERIAL = {
-	{"gold", glm::vec3(1.0f, 0.71f, 0.29f)},
-	{"copper", glm::vec3(0.95, 0.64, 0.54)},
-};
-
 ControlCollapse::ControlCollapse()
 	: label(nullptr)
 {}
@@ -91,6 +82,8 @@ void ObjectCollapse::addObject(const char* objectType) {
 		objectList.push_back(new Sphere(shader));
 	else if (objectType == "Cylinder")
 		objectList.push_back(new Cylinder(shader));
+	else if (objectType == "Backpack")
+		objectList.push_back(new Backpack(shader));
 }
 
 ObjectProperties::ObjectProperties(const char* _label, std::vector<Object*>& _objectList, int& _numPbjects) 

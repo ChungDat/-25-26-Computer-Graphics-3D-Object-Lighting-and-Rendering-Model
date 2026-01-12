@@ -8,6 +8,7 @@
 #include "Light.h"
 #include "Axis.h"
 #include "Object.h"
+#include "Model.h"
 #include "../constants.h"
 
 class ControlCollapse
@@ -54,7 +55,7 @@ public:
 
 class ObjectCollapse : public ControlCollapse {
 protected:
-	std::vector<const char*> object = { "Cube", "Sphere", "Pyramid", "Cylinder", "Lamp", "Flower Pot", "Glass" };
+	std::vector<const char*> object = { "Cube", "Sphere", "Pyramid", "Cylinder", "Backpack" };
 	std::vector<Object*>& objectList;
 
 	int& numObjects;

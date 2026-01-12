@@ -2,6 +2,7 @@
 #include "../utils.h"
 
 // static definitions
+
 int Object::nextID = 0;
 
 unsigned int Cube::VAO = 0;
@@ -348,7 +349,7 @@ void Cube::initBuffers() {
 	initialized = true;
 }
 
-unsigned int Cube::getVAO() const {
+unsigned int Cube::getVAO() {
 	initBuffers();
 	return VAO;
 }
@@ -437,7 +438,7 @@ void Pyramid::initBuffers() {
 	initialized = true;
 }
 
-unsigned int Pyramid::getVAO() const {
+unsigned int Pyramid::getVAO() {
 	initBuffers();
 	return VAO;
 }
@@ -492,7 +493,7 @@ void Sphere::initBuffers() {
 	initialized = true;
 }
 
-unsigned int Sphere::getVAO() const {
+unsigned int Sphere::getVAO() {
 	initBuffers();
 	return VAO;
 }
@@ -671,7 +672,7 @@ void Cylinder::initBuffers() {
 	initialized = true;
 }
 
-unsigned int Cylinder::getVAO() const {
+unsigned int Cylinder::getVAO() {
 	initBuffers();
 	return VAO;
 }

@@ -14,28 +14,71 @@
 #include "Mesh.h"
 #include "Object.h"
 
-class Model: public Object
-{
+class Model : public Object {
 protected:
 	// model data
-	std::vector<Mesh> meshes;
-	std::vector<ModelTexture> textures_loaded;
-	std::string directory;
+	//std::vector<Mesh> meshes;
+	//std::vector<ModelTexture> textures_loaded;
+	//std::string directory;
+
 	bool gammaCorrection;
 
-	void loadModel(std::string);
-	void processNode(aiNode*, const aiScene*);
-	Mesh processMesh(aiMesh*, const aiScene*);
+	//void loadModel(std::string);
+	//void processNode(aiNode*, const aiScene*);
+	//Mesh processMesh(aiMesh*, const aiScene*);
 	std::vector<ModelTexture> loadMaterialTextures(aiMaterial*, aiTextureType, std::string);
 	unsigned int TextureFromFile(const char*, const std::string&, bool = false);
-	
-	std::string getType() const override;
-	unsigned int getVAO() const override { return 0; };
-	unsigned int getVertexCount() const override { return 0; };
+
+	void loadModelTo(const std::string& path,
+	                 std::vector<Mesh>& out_meshes,
+	                 std::vector<ModelTexture>& out_textures_loaded,
+	                 std::string& out_directory);
+
+	void processNodeTo(aiNode* node, const aiScene* scene,
+	                   std::vector<Mesh>& out_meshes,
+	                   std::vector<ModelTexture>& out_textures_loaded,
+	                   const std::string& out_directory);
+
+	Mesh processMeshTo(aiMesh* mesh, const aiScene* scene,
+	                   std::vector<ModelTexture>& out_textures_loaded,
+	                   const std::string& out_directory);
+
+	std::vector<ModelTexture> loadMaterialTexturesTo(aiMaterial* mat,
+	                                                 aiTextureType type,
+	                                                 std::string typeName,
+	                                                 std::vector<ModelTexture>& out_textures_loaded,
+	                                                 const std::string& out_directory);
+
+	virtual void initBuffers() override = 0;
+	unsigned int getVAO() override = 0;
+	unsigned int getVertexCount() const override = 0;
+
+	void drawFrom(std::vector<Mesh>, const glm::mat4&, const glm::mat4&);
 
 public:
-	Model(char*, Shader*&);
+	Model(Shader*&);
 	virtual ~Model();
-	//void draw(Shader&, const glm::mat4&, const glm::mat4&, const glm::vec3&, const glm::mat4&, const glm::mat4&);
+
+	std::string getType() const override = 0;
+
+};
+
+class Backpack : public Model {
+protected:
+	static bool initialized;
+	static std::vector<Mesh> meshes;
+	static std::vector<ModelTexture> textures_loaded;
+	static std::string directory;
+
+	void initBuffers() override;
+	unsigned int getVAO() override;
+	unsigned int getVertexCount() const override;
+
+public:
+	Backpack(Shader*&);
+	virtual ~Backpack();
+
+	std::string getType() const override;
+
 	void draw(const glm::mat4&, const glm::mat4&);
 };

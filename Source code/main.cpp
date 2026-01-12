@@ -186,7 +186,8 @@ int main() {
 	};
 
 	// assimp model
-	Model backpackModel((char*)"backpack/backpack.obj", objectShader);
+	Backpack* backpackModel = new Backpack(objectShader);
+	objectList.push_back(backpackModel);
 
 	// create lights
 	SpotLight* flashLight = new SpotLight(lightShader);
@@ -214,6 +215,9 @@ int main() {
 		if (i < 10)
 			objectList[i]->setPosition(initPositions[i]);
 	}
+	glm::vec3 scale(0.5, 0.5, 0.5);
+	backpackModel->setScale(scale);
+
 	boxRoom.setPosition(glm::vec3(0.0f));
 	boxRoom.setScale(glm::vec3(20.0f));
 	boxRoom.setDiffuse(glm::vec3(0.5f));
@@ -225,7 +229,6 @@ int main() {
 	flashLight->setColor(glm::vec3(1.0f));
 
 	// main directional light
-	lightList[0]->setDirection(-90, 0);
 	lightList[0]->setDirection(270, 0);
 	lightList[0]->setColor(glm::vec3(1.0f, 1.0f, 1.0f));
 
@@ -363,14 +366,6 @@ int main() {
 			objectList[i]->draw(horizontalRotate, verticalRotate);
 		}
 		boxRoom.draw();
-
-		// assimp loaded model
-		glm::vec3 pos(0.0f, -2.0f, 0.0f);
-		glm::vec3 scale(0.5, 0.5, 0.5);
-
-		backpackModel.setPosition(pos);
-		backpackModel.setScale(scale);
-		backpackModel.draw(horizontalRotate, verticalRotate);
 
 		if (axis.isEnabled()) {
 			axis.draw(view, projection);

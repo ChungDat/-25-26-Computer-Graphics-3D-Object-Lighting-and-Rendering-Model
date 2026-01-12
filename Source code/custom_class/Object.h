@@ -59,7 +59,8 @@ protected:
     int ID;
 
     void setModelMatrix();
-    virtual unsigned int getVAO() const = 0;
+    virtual void initBuffers() = 0;
+    virtual unsigned int getVAO() = 0;
     virtual unsigned int getVertexCount() const = 0;
     virtual GLenum getDrawMode() const;
 
@@ -121,10 +122,11 @@ class Cube : public Object {
 protected:
     static unsigned int VAO, VBO, EBO;
     static bool initialized;
-    static void initBuffers();
-    unsigned int getVAO() const;
-    unsigned int getVertexCount() const;
-    std::string getType() const;
+
+    void initBuffers() override;
+    unsigned int getVAO() override;
+    unsigned int getVertexCount() const override;
+    std::string getType() const override;
 
 public:
     Cube(Shader*&);
@@ -136,10 +138,11 @@ protected:
     static std::vector<float> vertices;
     static std::vector<unsigned int> indices;
     static bool initialized;
-    static void initBuffers();
-    unsigned int getVAO() const;
-    unsigned int getVertexCount() const;
-    std::string getType() const;
+
+    void initBuffers() override;
+    unsigned int getVAO();
+    unsigned int getVertexCount() const override;
+    std::string getType() const override;
     static void generateSphere(float radius, unsigned int sectorCount, unsigned int stackCount,
         std::vector<float>& vertices, std::vector<unsigned int>& indices);
 
@@ -153,10 +156,11 @@ class Pyramid : public Object {
 protected:
     static unsigned int VAO, VBO, EBO;
     static bool initialized;
-    static void initBuffers();
-    unsigned int getVAO() const;
-    unsigned int getVertexCount() const;
-    std::string getType() const;
+
+    void initBuffers() override;
+    unsigned int getVAO() override;
+    unsigned int getVertexCount() const override;
+    std::string getType() const override;
 
 public:
     Pyramid(Shader*&);
@@ -168,10 +172,11 @@ protected:
     static std::vector<float> vertices;
     static std::vector<unsigned int> indices;
     static bool initialized;
-    static void initBuffers();
-    unsigned int getVAO() const;
-    unsigned int getVertexCount() const;
-    std::string getType() const;
+
+    void initBuffers() override;
+    unsigned int getVAO() override;
+    unsigned int getVertexCount() const override;
+    std::string getType() const override;
     static void generateCylinder(float radius, float height, unsigned int sectorCount,
         std::vector<float>& vertices, std::vector<unsigned int>& indices);
 
