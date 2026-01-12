@@ -226,6 +226,7 @@ int main() {
 
 	// main directional light
 	lightList[0]->setDirection(-90, 0);
+	lightList[0]->setDirection(270, 0);
 	lightList[0]->setColor(glm::vec3(1.0f, 1.0f, 1.0f));
 
 	// orbital point light
