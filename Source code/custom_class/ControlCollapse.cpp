@@ -105,32 +105,34 @@ void ObjectProperties::show() {
 		}
 
 		if (currentSelect < objectList.size()) {
+			Object* object = objectList[currentSelect];
+
 			ImGui::SeparatorText("Position");
 
-			float posX = objectList[currentSelect]->getX();
-			float posY = objectList[currentSelect]->getY();
-			float posZ = objectList[currentSelect]->getZ();
+			float posX = object->getX();
+			float posY = object->getY();
+			float posZ = object->getZ();
 
 			bool positionChanged = false;
 			positionChanged = ImGui::SliderFloat("X##o", &posX, -10.0f, 10.0f, "%.1f") || positionChanged;
 			positionChanged = ImGui::SliderFloat("Y##o", &posY, -10.0f, 10.0f, "%.1f") || positionChanged;
 			positionChanged = ImGui::SliderFloat("Z##o", &posZ, -10.0f, 10.0f, "%.1f") || positionChanged;
 			if (positionChanged) {
-				objectList[currentSelect]->setPosition(glm::vec3(posX, posY, posZ));
+				object->setPosition(glm::vec3(posX, posY, posZ));
 			}
 			
 			ImGui::SeparatorText("Physical Attribute");
 			
-			float roughness = objectList[currentSelect]->getRoughness();
-			float metallic = objectList[currentSelect]->getMetallic();
+			float roughness = object->getRoughness();
+			float metallic = object->getMetallic();
 
 			if (ImGui::SliderFloat("Roughness##o", &roughness, 0.1f, 1.0f, "%.2f"))
 			{
-				objectList[currentSelect]->setRoughness(roughness);
+				object->setRoughness(roughness);
 			}
 			if (ImGui::SliderFloat("Metallic##o", &metallic, 0.0f, 1.0f, "%.2f"))
 			{
-				objectList[currentSelect]->setMetallic(metallic);
+				object->setMetallic(metallic);
 			}
 
 			ImGui::SeparatorText("Texture");
@@ -139,19 +141,19 @@ void ObjectProperties::show() {
 
 			ImGui::SeparatorText("Visibility");
 
-			if (objectList[currentSelect]->isEnabled()) {
+			if (object->isEnabled()) {
 				if (ImGui::Button("Hide##o")) {
-					objectList[currentSelect]->disable();
+					object->disable();
 				}
 			}
 			else {
 				if (ImGui::Button("Show##o")) {
-					objectList[currentSelect]->enable();
+					object->enable();
 				}
 			}
 
 			if (ImGui::Button("Remove##o")) {
-				delete objectList[currentSelect];
+				delete object;
 				objectList.erase(objectList.begin() + currentSelect);
 			}
 		}
@@ -201,45 +203,48 @@ void LightProperties::show() {
 			ImGui::PopID();
 		}
 		if (currentSelect < lightList.size()) {
-			if (lightList[currentSelect]->getType() != "Directional") {
+			Light* light = lightList[currentSelect];
+
+			if (light->getType() != "Directional") {
+
 				ImGui::SeparatorText("Position");
-				float posX = lightList[currentSelect]->getX();
-				float posY = lightList[currentSelect]->getY();
-				float posZ = lightList[currentSelect]->getZ();
+				float posX = light->getX();
+				float posY = light->getY();
+				float posZ = light->getZ();
 
 				bool positionChanged = false;
 				positionChanged = ImGui::SliderFloat("X##l", &posX, -10.0f, 10.0f, "%.1f") || positionChanged;
 				positionChanged = ImGui::SliderFloat("Y##l", &posY, -10.0f, 10.0f, "%.1f") || positionChanged;
 				positionChanged = ImGui::SliderFloat("Z##l", &posZ, -10.0f, 10.0f, "%.1f") || positionChanged;
-				if (positionChanged && !lightList[currentSelect]->isOrbital()) {
-					lightList[currentSelect]->setPosition(glm::vec3(posX, posY, posZ));
+				if (positionChanged && !light->isOrbital()) {
+					light->setPosition(glm::vec3(posX, posY, posZ));
 				}
 			}
-			if (lightList[currentSelect]->getType() != "Point") {
+			if (light->getType() != "Point") {
 				ImGui::SeparatorText("Direction");
-				float yaw = lightList[currentSelect]->getYaw();
-				float pitch = lightList[currentSelect]->getPitch();
+				float pitch = light->getPitch();
+				float yaw = light->getYaw();
 
 				bool directionChanged = false;
-				directionChanged = ImGui::SliderFloat("yaw", &yaw, 0.0f, 360.0f, "%.f") || directionChanged;
 				directionChanged = ImGui::SliderFloat("pitch", &pitch, -90.0f, 90.0f, "%.f") || directionChanged;
-				if (directionChanged && !lightList[currentSelect]->isOrbital()) {
-					lightList[currentSelect]->setDirection(yaw, pitch);
+				directionChanged = ImGui::SliderFloat("yaw", &yaw, 0.0f, 360.0f, "%.f") || directionChanged;
+				if (directionChanged && !light->isOrbital()) {
+					light->setDirection(pitch, yaw);
 				}
 			}
 
-			if (lightList[currentSelect]->getType() != "Directional") {
+			if (light->getType() != "Directional") {
 				ImGui::SeparatorText("Orbit");
-				float radius = lightList[currentSelect]->getRadius();
+				float radius = light->getRadius();
 				bool directionChanged = false;
 				if (ImGui::SliderFloat("Radius", &radius, 0.0, 10.0f, "%.1f"))
-					lightList[currentSelect]->setRadius(radius);
+					light->setRadius(radius);
 			}
 
-			if (lightList[currentSelect]->getType() == "Spot") {
+			if (light->getType() == "Spot") {
 				ImGui::SeparatorText("Cut Off");
 
-				SpotLight* s = dynamic_cast<SpotLight*>(lightList[currentSelect]);
+				SpotLight* s = dynamic_cast<SpotLight*>(light);
 				float innerCutOff = s->getInnerCutOff();
 				float outerCutOff = s->getOuterCutOff();
 				bool cutOffChanged = false;
@@ -252,57 +257,57 @@ void LightProperties::show() {
 			}
 
 			ImGui::SeparatorText("Color");
-			glm::vec3 _color = lightList[currentSelect]->getColor();
+			glm::vec3 _color = light->getColor();
 			float colorR = _color.x;
 			float colorG = _color.y;
 			float colorB = _color.z;
 			float col[3] = {colorR, colorG, colorB};
 
 			//glm::vec3& lightColorRef = lightList[currentSelect]->getColor_Ref();
-			if (lightList[currentSelect]->isEnabled()) {
+			if (light->isEnabled()) {
 				if (ImGui::ColorEdit3("##color", col))
 				{
-					lightList[currentSelect]->setColor(glm::vec3(col[0], col[1], col[2]));
+					light->setColor(glm::vec3(col[0], col[1], col[2]));
 				}
 			}
 
-			if (lightList[currentSelect]->isEnabled()) {
+			if (light->isEnabled()) {
 				if (ImGui::Button("Hide##l")) {
-					lightList[currentSelect]->disable();
+					light->disable();
 				}
 			}
 			else {
 				if (ImGui::Button("Show##l")) {
-					lightList[currentSelect]->enable();
+					light->enable();
 				}
 			}
 
-			if (lightList[currentSelect]->isOrbital()) {
+			if (light->isOrbital()) {
 				if (ImGui::Button("Disable orbital motion")) {
-					lightList[currentSelect]->setOrbital(false);
+					light->setOrbital(false);
 				}
 			}
 			else {
 				if (ImGui::Button("Enable orbital motion")) {
-					lightList[currentSelect]->setOrbital(true);
+					light->setOrbital(true);
 				}
 			}
 
 			if (ImGui::Button("Remove##l")) {
 				//lightList[currentSelect]->setColor(glm::vec3(0.0f));
 
-				if (DirectionalLight* s = dynamic_cast<DirectionalLight*>(lightList[currentSelect])) {
+				if (DirectionalLight* s = dynamic_cast<DirectionalLight*>(light)) {
 					numDirLights--;
 				}
 				// SpotLight is derived from PointLight -> CHECK THIS FIRST
-				else if (SpotLight* s = dynamic_cast<SpotLight*>(lightList[currentSelect])) {
+				else if (SpotLight* s = dynamic_cast<SpotLight*>(light)) {
 					numSpotLights--;
 				}
-				else if (PointLight* s = dynamic_cast<PointLight*>(lightList[currentSelect])) {
+				else if (PointLight* s = dynamic_cast<PointLight*>(light)) {
 					numPointLights--;
 				}
 
-				delete lightList[currentSelect];
+				delete light;
 				lightList.erase(lightList.begin() + currentSelect);
 
 				currentSelect = 0;
