@@ -12,21 +12,16 @@ uniform mat4 model; // model -> world
 uniform mat4 view; // world -> view
 uniform mat4 projection; // view -> clipping
 
-uniform mat4 horizontalRotate;
-uniform mat4 verticalRotate;
-
 void main() {
-    mat4 modelTransform = model * verticalRotate * horizontalRotate;
-
 	// world-space position
-	vec4 worldPos = modelTransform * vec4(aPos, 1.0f);
+	vec4 worldPos = model * vec4(aPos, 1.0f);
 	gl_Position = projection * view * worldPos;
 
 	fragPos = vec3(worldPos);
 
 	// world-space normal
     // transform normal with normal matrix (handles non-uniform scale)
-	mat3 normalMatrix = mat3(transpose(inverse(modelTransform)));
+	mat3 normalMatrix = mat3(transpose(inverse(model)));
 	fragNormal = normalize(normalMatrix * aNormal);
 	
 	texCoord = aTexCoord;

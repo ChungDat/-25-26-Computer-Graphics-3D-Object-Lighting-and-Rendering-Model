@@ -62,9 +62,9 @@ void Light::setPosition(const glm::vec3 _pos) {
 	orbitCenter = _pos;
 }
 
-void Light::setDirection(const float _yaw, const float _pitch) {
-	setYaw(_yaw);
+void Light::setDirection(const float _pitch, const float _yaw) {
 	setPitch(_pitch);
+	setYaw(_yaw);
 
 	float x = glm::cos(glm::radians(pitch)) * glm::cos(glm::radians(yaw));
 	float y = glm::sin(glm::radians(pitch));

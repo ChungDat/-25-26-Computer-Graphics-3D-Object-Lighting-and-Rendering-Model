@@ -12,7 +12,7 @@ Model::Model(Shader*& _shader) : Object(_shader) {}
 Model::~Model() {}
 
 //void Model::draw(Shader& shader, const glm::mat4& view, const glm::mat4& projection, const glm::vec3& viewPos, const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) {
-void Model::drawFrom(std::vector<Mesh> meshes, const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) {
+void Model::drawFrom(std::vector<Mesh> meshes) {
 	if (!isEnabled()) return;
 
 	setModelMatrix();
@@ -20,9 +20,6 @@ void Model::drawFrom(std::vector<Mesh> meshes, const glm::mat4& horizontalRotate
 	shader->use();
 
 	shader->setMat4fv("model", model);
-
-	shader->setMat4fv("horizontalRotate", horizontalRotate);
-	shader->setMat4fv("verticalRotate", verticalRotate);
 	
 	for (unsigned int i = 0; i < meshes.size(); i++) {
 		meshes[i].Draw(*shader);
@@ -255,6 +252,6 @@ unsigned int Backpack::getVertexCount() const {
 	return 0;
 }
 
-void Backpack::draw(const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) {
-	drawFrom(meshes, horizontalRotate, verticalRotate);
+void Backpack::draw() {
+	drawFrom(meshes);
 }

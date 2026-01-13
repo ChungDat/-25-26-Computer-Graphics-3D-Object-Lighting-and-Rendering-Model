@@ -46,7 +46,11 @@ protected:
     glm::mat4 model;
     glm::vec3 position;
     glm::vec3 scale;
+
     glm::vec3 rotation; // a vector representing rotation angles around x, y, z axes in degrees
+    float pitch; // along x
+    float yaw; // along y
+    float roll; // along z
 
     Material material;
     Texture texture;
@@ -67,7 +71,6 @@ protected:
 public:
     Object(Shader*&);
 
-    virtual void draw(const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate);
     virtual void draw();
     
     void setDiffusePath(const std::string);
@@ -89,6 +92,11 @@ public:
     void setPosition(const glm::vec3 _pos);
     void setScale(const glm::vec3 _scale);
     void setRotation(const glm::vec3 _rotation);
+    void setRotation(const float _pitch, const float _yaw, const float _roll);
+
+    void setYaw(const float _yaw);
+    void setPitch(const float _pitch);
+    void setRoll(const float _roll);
 
     void disable();
     void enable();
@@ -96,6 +104,11 @@ public:
 
     glm::vec3 getPosition() const;
     glm::vec3& getPosition_Ref();
+    glm::vec3 getScale() const;
+    glm::vec3 getRotation() const;
+    float getYaw() const;
+    float getPitch() const;
+    float getRoll() const;
 
     float getX() const;
     float getY() const;
@@ -148,7 +161,6 @@ protected:
 
 public:
     Sphere(Shader*&);
-    void draw(const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) override;
     void draw() override;
 };
 
@@ -182,6 +194,5 @@ protected:
 
 public:
     Cylinder(Shader*&);
-    void draw(const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) override;
     void draw() override;
 };

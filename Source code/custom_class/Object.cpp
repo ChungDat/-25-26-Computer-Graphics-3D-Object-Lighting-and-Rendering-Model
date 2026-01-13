@@ -32,10 +32,13 @@ bool Cylinder::initialized = false;
 
 Object::Object(Shader*& _shader) : ID(nextID++), shader(_shader)
 {
+	model = glm::mat4(1.0f);
 	position = glm::vec3(0.0f);
 	scale = glm::vec3(1.0f);
 	rotation = glm::vec3(0.0f);
-	model = glm::mat4(1.0f);
+	pitch = 0.0f;
+	yaw = 0.0f;
+	roll = 0.0f;
 
 	material.ambient = glm::vec3(0.1f);
 	material.diffuse = glm::vec3(0.5f);
@@ -58,15 +61,12 @@ Object::Object(Shader*& _shader) : ID(nextID++), shader(_shader)
 	enabled = true;
 }
 
-void Object::draw(const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) {
+void Object::draw() {
 	if (!isEnabled()) return;
 
 	setModelMatrix();
 
 	shader->use();
-
-	shader->setMat4fv("horizontalRotate", horizontalRotate);
-	shader->setMat4fv("verticalRotate", verticalRotate);
 
 	shader->setMat4fv("model", model);
 	
@@ -113,10 +113,6 @@ void Object::draw(const glm::mat4& horizontalRotate, const glm::mat4& verticalRo
 	glBindTexture(GL_TEXTURE_2D, texture.roughnessMap);
 
 	glDrawArrays(getDrawMode(), 0, getVertexCount());
-}
-
-void Object::draw() {
-	Object::draw(glm::mat4(1.0f), glm::mat4(1.0f));
 }
 
 void Object::setDiffusePath(const std::string _diffusePath)
@@ -188,6 +184,26 @@ void Object::setRotation(const glm::vec3 _rotation) {
 	rotation = glm::radians(_rotation);
 }
 
+void Object::setRotation(const float _pitch, const float _yaw, const float _roll) {
+	setPitch(_pitch);
+	setYaw(_yaw);
+	setRoll(_roll);
+
+	rotation = glm::radians(glm::vec3(pitch, yaw, roll));
+}
+
+void Object::setYaw(const float _yaw) {
+	yaw = _yaw;
+}
+
+void Object::setPitch(const float _pitch) {
+	pitch = _pitch;
+}
+
+void Object::setRoll(const float _roll) {
+	roll = _roll;
+}
+
 void Object::setModelMatrix() {
 	model = glm::mat4(1.0f);
 	model = glm::translate(model, position);
@@ -217,6 +233,27 @@ glm::vec3 Object::getPosition() const {
 
 glm::vec3& Object::getPosition_Ref() {
 	return this->position;
+}
+
+glm::vec3 Object::getScale() const
+{
+	return scale;
+}
+
+glm::vec3 Object::getRotation() const {
+	return rotation;
+}
+
+float Object::getYaw() const {
+	return yaw;
+}
+
+float Object::getPitch() const {
+	return pitch;
+}
+
+float Object::getRoll() const {
+	return roll;
 }
 
 float Object::getX() const {
@@ -577,15 +614,12 @@ void Sphere::generateSphere(float radius, unsigned int sectorCount, unsigned int
 	}
 }
 
-void Sphere::draw(const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) {
+void Sphere::draw() {
 	if (!isEnabled()) return;
 
 	setModelMatrix();
 
 	shader->use();
-
-	shader->setMat4fv("horizontalRotate", horizontalRotate);
-	shader->setMat4fv("verticalRotate", verticalRotate);
 	
 	shader->setMat4fv("model", model);
 	
@@ -632,10 +666,6 @@ void Sphere::draw(const glm::mat4& horizontalRotate, const glm::mat4& verticalRo
 	glBindTexture(GL_TEXTURE_2D, texture.roughnessMap);
 
 	glDrawElements(getDrawMode(), getVertexCount(), GL_UNSIGNED_INT, 0);
-}
-
-void Sphere::draw() {
-	Sphere::draw(glm::mat4(1.0f), glm::mat4(1.0f));
 }
 
 // Cylinder class
@@ -798,15 +828,12 @@ void Cylinder::generateCylinder(float radius, float height, unsigned int sectorC
 	}
 }
 
-void Cylinder::draw(const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) {
+void Cylinder::draw() {
 	if (!isEnabled()) return;
 
 	setModelMatrix();
 
 	shader->use();
-
-	shader->setMat4fv("horizontalRotate", horizontalRotate);
-	shader->setMat4fv("verticalRotate", verticalRotate);
 	
 	shader->setMat4fv("model", model);
 	
@@ -853,8 +880,4 @@ void Cylinder::draw(const glm::mat4& horizontalRotate, const glm::mat4& vertical
 	glBindTexture(GL_TEXTURE_2D, texture.roughnessMap);
 
 	glDrawElements(getDrawMode(), getVertexCount(), GL_UNSIGNED_INT, 0);
-}
-
-void Cylinder::draw() {
-	Cylinder::draw(glm::mat4(1.0f), glm::mat4(1.0f));
 }

@@ -120,7 +120,21 @@ void ObjectProperties::show() {
 			if (positionChanged) {
 				object->setPosition(glm::vec3(posX, posY, posZ));
 			}
-			
+
+			ImGui::SeparatorText("Rotation");
+
+			float yaw = object->getYaw();
+			float pitch = object->getPitch();
+			float roll = object->getRoll();
+
+			bool rotationChanged = false;
+			rotationChanged = ImGui::SliderFloat("Yaw##o", &yaw, 0.0f, 360.0f, "%.f") || rotationChanged;
+			rotationChanged = ImGui::SliderFloat("Pitch##o", &pitch, -90.0f, 90.0f, "%.f") || rotationChanged;
+			rotationChanged = ImGui::SliderFloat("Roll##o", &roll, 0.0f, 360.0f, "%.f") || rotationChanged;
+			if (rotationChanged) {
+				object->setRotation(pitch, yaw, roll);
+			}
+
 			ImGui::SeparatorText("Physical Attribute");
 			
 			float roughness = object->getRoughness();
@@ -137,7 +151,7 @@ void ObjectProperties::show() {
 
 			ImGui::SeparatorText("Texture");
 
-			if (true);
+			if (true); // NOT IMPLEMENT
 
 			ImGui::SeparatorText("Visibility");
 

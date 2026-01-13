@@ -72,7 +72,7 @@ public:
 	// position and direction
 
 	virtual void setPosition(const glm::vec3 _pos);
-	virtual void setDirection(const float _yaw, const float _pitch);
+	virtual void setDirection(const float _pitch, const float _yaw);
 	virtual void setDirection(const glm::vec3 _direction);
 
 	// orbital motion

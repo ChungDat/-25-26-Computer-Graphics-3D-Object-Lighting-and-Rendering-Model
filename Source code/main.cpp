@@ -31,9 +31,6 @@
 #include <iostream>
 #include <vector>
 
-float horizontalRotateRate = 0.0f;
-float verticalRotateRate = 0.0f;
-
 float fov = 45.0f;
 
 float deltaTime = 0.0f;	// Time between current frame and last frame
@@ -233,7 +230,7 @@ int main() {
 	// ---------
 
 	// main directional light
-	lightList[0]->setDirection(270, 0);
+	lightList[0]->setDirection(0.0f, 270.0f);
 	lightList[0]->setColor(glm::vec3(1.0f, 1.0f, 1.0f));
 
 	// orbital point light
@@ -318,10 +315,6 @@ int main() {
 
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
 		glm::mat4 view = camera.GetViewMatrix();
-		glm::mat4 horizontalRotate = glm::mat4(1.0f);
-		horizontalRotate = glm::rotate(horizontalRotate, glm::radians(horizontalRotateRate), glm::vec3(0.0f, 1.0f, 0.0f));
-		glm::mat4 verticalRotate = glm::mat4(1.0f);
-		verticalRotate = glm::rotate(verticalRotate, glm::radians(verticalRotateRate), glm::vec3(1.0f, 0.0f, 0.0f));
 		glm::vec3 viewPos = camera.Position;
 
 		objectShader->use();
@@ -359,7 +352,7 @@ int main() {
 		for (unsigned int i = 0; i < objectList.size(); i++) {
 			//float angle = 20.f * i;
 			//cubeList[i].setRotation(glm::vec3(angle * 0.2f, angle * 0.5f, angle * 0.8f));
-			objectList[i]->draw(horizontalRotate, verticalRotate);
+			objectList[i]->draw();
 		}
 		boxRoom.draw();
 
@@ -404,27 +397,6 @@ void keyboardInputControl(GLFWwindow* window) {
 	// terminate program
 	if ( glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
-
-	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-		verticalRotateRate += rotateSpeed;
-		if (verticalRotateRate >= 360)
-			verticalRotateRate = 0;
-	}
-	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-		verticalRotateRate -= rotateSpeed;
-		if (verticalRotateRate <= 0)
-			verticalRotateRate = 360;
-	}
-	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-		horizontalRotateRate -= rotateSpeed;
-		if (horizontalRotateRate <= 0)
-			horizontalRotateRate = 360;
-	}
-	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-		horizontalRotateRate += rotateSpeed;
-		if (horizontalRotateRate >= 360)
-			horizontalRotateRate = 0;
-	}
 
 	// camera movement
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)

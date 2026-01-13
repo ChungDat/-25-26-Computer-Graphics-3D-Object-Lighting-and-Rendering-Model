@@ -53,7 +53,7 @@ protected:
 	unsigned int getVAO() override = 0;
 	unsigned int getVertexCount() const override = 0;
 
-	void drawFrom(std::vector<Mesh>, const glm::mat4&, const glm::mat4&);
+	void drawFrom(std::vector<Mesh>);
 
 public:
 	Model(Shader*&);
@@ -80,5 +80,5 @@ public:
 
 	std::string getType() const override;
 
-	void draw(const glm::mat4&, const glm::mat4&);
+	void draw();
 };

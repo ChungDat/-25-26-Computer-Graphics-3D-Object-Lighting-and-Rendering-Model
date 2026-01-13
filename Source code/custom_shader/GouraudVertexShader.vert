@@ -11,9 +11,6 @@ uniform mat4 model; // model -> world
 uniform mat4 view; // world -> view
 uniform mat4 projection; // view -> clipping
 
-uniform mat4 horizontalRotate;
-uniform mat4 verticalRotate;
-
 struct DirectionalLight {
 	vec3 direction; // world-space direction
 
@@ -69,8 +66,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 
 void main() {
-    mat4 modelTransform = model * verticalRotate * horizontalRotate;
-	vec4 worldPos = modelTransform * vec4(aPos, 1.0f);
+	vec4 worldPos = model * vec4(aPos, 1.0f);
 	gl_Position = projection * view * worldPos;
     texCoord = aTexCoord;
 
@@ -79,7 +75,7 @@ void main() {
 
 	// world-space normal
     // transform normal with normal matrix (handles non-uniform scale)
-	mat3 normalMatrix = mat3(transpose(inverse(modelTransform)));
+	mat3 normalMatrix = mat3(transpose(inverse(model)));
 	vec3 norm = normalize(normalMatrix * aNormal); // World-space normal
 
 	// world-space view direction
