@@ -593,11 +593,19 @@ void Sphere::draw(const glm::mat4& horizontalRotate, const glm::mat4& verticalRo
 	shader->setVec3fv("material.diffuse", material.diffuse);
 	shader->setVec3fv("material.specular", material.specular);
 	
-	shader->setFloat("material.shininess", material.shininess);
+	//shader->setFloat("material.shininess", material.shininess);
 	
 	shader->setVec3fv("material.albedo", material.albedo);
 	shader->setFloat("material.metallic", material.metallic);
 	shader->setFloat("material.roughness", material.roughness);
+
+	shader->setBool("useDiffuseMap", texture.diffuseMap != 0);
+	shader->setBool("useSpecularMap", texture.specularMap != 0);
+	shader->setBool("useEmissionMap", texture.emissionMap != 0);
+
+	shader->setBool("useAlbedoMap", texture.albedoMap != 0);
+	shader->setBool("useMetallicMap", texture.metallicMap != 0);
+	shader->setBool("useRoughnessMap", texture.roughnessMap != 0);
 	
 	shader->setInt("diffuseMap", 0);
 	shader->setInt("specularMap", 1);
@@ -806,11 +814,19 @@ void Cylinder::draw(const glm::mat4& horizontalRotate, const glm::mat4& vertical
 	shader->setVec3fv("material.diffuse", material.diffuse);
 	shader->setVec3fv("material.specular", material.specular);
 	
-	shader->setFloat("material.shininess", material.shininess);
+	//shader->setFloat("material.shininess", material.shininess);
 	
 	shader->setVec3fv("material.albedo", material.albedo);
 	shader->setFloat("material.metallic", material.metallic);
 	shader->setFloat("material.roughness", material.roughness);
+
+	shader->setBool("useDiffuseMap", texture.diffuseMap != 0);
+	shader->setBool("useSpecularMap", texture.specularMap != 0);
+	shader->setBool("useEmissionMap", texture.emissionMap != 0);
+
+	shader->setBool("useAlbedoMap", texture.albedoMap != 0);
+	shader->setBool("useMetallicMap", texture.metallicMap != 0);
+	shader->setBool("useRoughnessMap", texture.roughnessMap != 0);
 	
 	shader->setInt("diffuseMap", 0);
 	shader->setInt("specularMap", 1);

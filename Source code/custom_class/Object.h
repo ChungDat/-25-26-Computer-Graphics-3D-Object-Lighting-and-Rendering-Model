@@ -140,7 +140,7 @@ protected:
     static bool initialized;
 
     void initBuffers() override;
-    unsigned int getVAO();
+    unsigned int getVAO() override;
     unsigned int getVertexCount() const override;
     std::string getType() const override;
     static void generateSphere(float radius, unsigned int sectorCount, unsigned int stackCount,
