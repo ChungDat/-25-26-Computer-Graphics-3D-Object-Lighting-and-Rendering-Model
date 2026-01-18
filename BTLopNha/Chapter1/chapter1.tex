@@ -933,6 +933,94 @@ struct s {
 
 \textbf{Câu 2: Xây dựng hàm sinh tập đỉnh, cạnh, mặt dựa trên phương trình cầu trong hệ toạ độ cực}
 
+Với bán kính $R$, hình cầu được tham số hoá bởi hai góc:
+
+\begin{itemize}
+	\item $\theta$ là góc phương vị: $0 \le \theta < 2 \pi$.
+	
+	\item $\varphi$ là góc cực: $0 \le \varphi \le \pi$.
+\end{itemize}
+
+Chuyển sang toạ độ cực:
+\begin{align*}
+	x &= R sin \varphi cos \theta \\
+	y &= R sin \varphi cos \theta \\
+	z &= R cos \varphi
+\end{align*}
+
+Rời rạc hoá hình cầu:
+
+\begin{itemize}
+	\item Chia $\varphi$ thành $N_{\varphi}$ dải.
+	
+	\item Chia $\theta$ thành $N_{\theta}$ lát.
+\end{itemize}
+
+\begin{lstlisting}
+int index(nTheta, int i, int j) {
+	return i * (nTheta + 1) + j;
+}
+
+int edge_theta(int i, int j) {
+	
+}
+	
+std::vector<v> generateVertex(int nPhi, int nTheta, float R) {
+	int idx = 0;
+	std::vector<v> V;
+	
+	for (int i = 0; i <= nPhi; i++) {
+		double phi = PI * i / nPhi;
+		for (int j = 0; j <= nTheta; j++) {
+			double theta = 2 * PI * j / nTheta;
+			
+			v[idx].x = R * sin(phi) * cos(theta);
+			v[idx].y = R * sin(phi) * sin(theta);
+			v[idx].z = R * cos(phi);
+			
+			idx++;
+		}
+	}
+	return V;
+}
+
+std::vector<e> generateEdge(int nPhi, int nTheta) {
+	int eidx = 0;
+	std::vector<e> E;
+	
+	for (int i = 0; i < nPhi; i++) {
+		for (int j = 0; j < nTheta; j++) {
+			int p1 = index(i, j);
+			int p2 = index(i, j + 1);
+			int p3 = index(i + 1, j);
+			
+			e[eidx++] = {v[p1], v[p2]};
+			e[edix++] = [v[p1], v[p3]];
+		}
+	}
+	return E;
+}
+
+std::vector<s> generateSurface(int nPhi, int nTheta) {
+	int sidx = 0;
+	std::vector<s> S;
+	
+	for (int i = 0; i < nPhi; i++) {
+		for (int j = 0; j < nTheta; j++) {
+			int p1 = index(i, j);
+			int p2 = index(i, j + 1);
+			int p3 = index(i + 1, j);
+			int p4 = index(i + 1, j + 1);
+			
+			S[sidx++] = { {v[p1], v[p2]}, {v[p2], v[p3]}, {v[p3], v[p1]} };
+			S[sidx++] = { {v[p2], v[p4]}, {v[p4], v[p3]}, {v[p3], v[p2]} };
+		}
+	}
+	return S;
+}
+
+\end{lstlisting}
+
 \textbf{Câu 3: Viết phương trình Tab Surf}
 
 Với $G(u, v_0)$ là đường cong cho trước
@@ -951,24 +1039,113 @@ trong đó: $\hat{n_v}$ là hướng cần mở rộng.
 
 \textbf{Câu 5: Giải thuật xây dựng Tab Surf}
 
+\begin{enumerate}
+	\item Rời rạc hoá đường sinh ban đầu bằng cách lấy mẫu thành các điểm.
+	
+	Chọn số mẫu $nSample = N$.
+	
+	\item Sinh tập đỉnh.
+	
+	Với mỗi đỉnh trên đường sinh ban đầu $C_i$, sinh hai đỉnh:
+	
+	\begin{itemize}
+		\item Đỉnh gốc: $V_{i, 0} = C_i$.
+		
+		\item Đỉnh dịch: $V_{i, 1} = C_i + \vec{d}$.
+	\end{itemize}
+	
+	Tổng số đỉnh: $2N$.
+	
+	\item Sinh tập cạnh.
+	
+	Nối các điểm lân cận để tạo cạnh.
+	
+	\item Sinh tập mặt.
+	
+	Với mỗi đoạn $i$ của đường sinh, tạo một hình chữ nhật gồm $(V_{i, 0}, V_{i + 1, 0}, V_{i + 1, 1}, V_{i, 1})$. Chia hình chữ nhật thành hai tam giác: $( (i, 0), (i + 1, 0), (i + 1, 1) )$ và $( (i, 0), (i + 1, 1), (i, 1) )$.
+\end{enumerate}
+
+Mã giả:
+
+\begin{lstlisting}
+for (int i = 0; i <= N; i++) {
+	V[i][0] = C(i);
+	V[i][1] = C(i) + d;
+}
+
+for (int i = 0; i < N; i++) {
+	addTriangle(V[i][0], V[i+1][0], V[i+1][1]);
+	addTriangle(V[i][0], V[i+1][1], V[i][1]);
+}
+\end{lstlisting}
+
 \textbf{Câu 6: Viết phương trình Ruled Surf}
+
+$S(u, v) = (1-v) C_1(u) + v C_2(u), \quad v \in [0; 1]$
 
 \textbf{Câu 7: Viết phương trình Coons Surf}
 
+Cho bốn đường cong:
+\begin{itemize}
+	\item Theo hướng $u$: $C_1(u), C_2(u), \quad u \in [0; 1]$.
+	
+	\item Theo hướng $v$: $D_1(v), D_2(v), \quad v \in [0; 1]$
+\end{itemize}
+
+$P_1(u, v) = (1-v) C_1(u) + v C_2(u)$
+
+$P_2(u, v) = (1-u) D_1(v) + u D_2(v)$
+
+$S(u, v) = P_1(u, v) + P_2(u, v) - [(1-u)(1-v)P_{00} + u(1-v)P_{10} + (1-u)vP_{01} + uvP_{11}]$
+
 \textbf{Câu 8: Vẽ mặt yên ngựa bằng Coons Surf}
+
+Mặt yên ngựa có dạng: $z = x^2 - y^2$. Trong đó, mặt cong lên theo một hướng và cong xuống theo hướng còn lại. Không mất tính tổng quát, giả sử mặt cong lên theo hướng $u$, cong xuống theo hướng $v$, ta có:
+
+\begin{align*}
+	C_0(u) &= (u, 0, u^2) \\
+	C_1(u) &= (u, 1, u^2) \\
+	D_0(v) &= (0, v, -v^2) \\
+	D_1(v) &= (1, v, -v^2)
+\end{align*}
+
+Bốn điểm góc là: $P_{00} = (0; 0; 0), P_{10} = (1; 0; 1), P_{01} = (0; 1; -1), P_{11} = (1; 1; 0)$.
+
+$S(u, v) = P_1(u, v) + P_2(u, v) - [(1-u)(1-v)P_{00} + u(1-v)P_{10} + (1-u)vP_{01} + uvP_{11}]$
 
 \textbf{Câu 9: Viết phương trình Revolution Surf}
 
-\textbf{Câu 10: Giải thuật xây dựng Revolution Surf}
+Với đường cong $C(t) = (x(t), y(t), z(t))$.
+
+Xoay $C$ theo trục $Oz$: $S(t, \theta) = (x(t) cos(\theta), y(t) sin(\theta), z(t))$.
+
+Xoay $C$ theo các trục $Oy, Oz$ được thực hiện tương tự. 
 
 \section{Buổi 8}
+\textbf{Câu 1: Xây dựng ma trận phép quay quanh 1 trục bất kỳ}
 
-\textbf{Câu 1: Xây dựng chương trình chiếu quả cầu (chỉ chiếu các đỉnh) lên 2D}
+Giả sử trục quay là vector đơn vị $\textbf{n} = (n_x, n_y, n_z), \quad ||n|| = 1$ và góc quay $\theta$.
 
-\textbf{Câu 2: Xây dựng ma trận phép quay quanh 1 trục bất kỳ}
+Áp dụng công thức Rodrigues dạng ma trận, ta có:
 
-\textbf{Câu 3: Nếu mắt người chiếu song song thay vì chiếu phối cảnh thì gặp trở ngại gì?}
+$R_\textbf{n}(\theta) =
+\begin{bmatrix}
+c + n_x^2 (1 - c) & n_x n_y (1-c) - n_z s & n_x n_z (1-c) + n_y s \\
+n_y n_x (1-c) + n_z s & c + n_y^2 (1 - c) & n_y n_z (1 - c) - n_x s \\
+n_z n_x (1 - c) - n_y s & n_z n_y (1 - c) + n_x sin(\theta) & c + n_z^2 (1 - c)
+\end{bmatrix}
+$
+Với $c = cos(\theta), s = sin(\theta)$.
 
+\textbf{Câu 2: Nếu mắt người chiếu song song thay vì chiếu phối cảnh thì gặp trở ngại gì?}
+
+\begin{itemize}
+	\item Không còn cảm giác chiều sâu tự nhiên: Chiếu phối cảnh có đặc trưng vật xa nhỏ, gần lớn, các đường song song đi về điểm tụ. Nếu chiếu song song, kích thước vật không thay đổi theo khoảng cách, không có điểm tụ. Hệ quả là não mất khả năng suy luận ra độ sâu, không phân biệt được vật ở gần hay ở xa.
+	
+	\item Không còn cảm giác chiều sâu tự nhiên: Các hành động của con người đều dựa vào khoảng cách để phản ứng lại như bắt bóng, né tránh vật cản. Nếu chiếu song song, khoảng cách bị đánh giá sai, phản xạ thiếu chính xác.
+	
+	\item Áp lực cho não bộ: Do thế giới thực là ba chiều nhưng thông tin mắt nhận được là hai chiều, não buộc phải suy luận độ sâu từ những tín hiệu yếu hơn như âm thanh, cảm giác, làm tăng áp lực, mệt mỏi mà không đảm bảo được hiệu suất nhận thức.
+\end{itemize}
 
 
 
