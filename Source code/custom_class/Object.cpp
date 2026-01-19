@@ -7,10 +7,12 @@ int Object::nextID = 0;
 
 unsigned int Cube::VAO = 0;
 unsigned int Cube::VBO = 0;
+unsigned int Cube::EBO = 0;
 bool Cube::initialized = false;
 
 unsigned int Pyramid::VAO = 0;
 unsigned int Pyramid::VBO = 0;
+unsigned int Pyramid::EBO = 0;
 bool Pyramid::initialized = false;
 
 unsigned int Sphere::VAO = 0;
@@ -69,12 +71,12 @@ void Object::draw() {
 	shader->use();
 
 	shader->setMat4fv("model", model);
-	
+
 	shader->setVec3fv("material.ambient", material.ambient);
 	shader->setVec3fv("material.diffuse", material.diffuse);
 	shader->setVec3fv("material.specular", material.specular);
 
-	//shader.setFloat("material.shininess", material.shininess);
+	//shader->setFloat("material.shininess", material.shininess);
 
 	shader->setVec3fv("material.albedo", material.albedo);
 	shader->setFloat("material.metallic", material.metallic);
@@ -112,7 +114,7 @@ void Object::draw() {
 	glActiveTexture(GL_TEXTURE5);
 	glBindTexture(GL_TEXTURE_2D, texture.roughnessMap);
 
-	glDrawArrays(getDrawMode(), 0, getVertexCount());
+	glDrawElements(getDrawMode(), getVertexCount(), GL_UNSIGNED_INT, 0);
 }
 
 void Object::setDiffusePath(const std::string _diffusePath)
@@ -318,57 +320,70 @@ void Cube::initBuffers() {
 	if (initialized) return;
 
 	float vertices[] = {
-		// positions          // normal vectors		// texture coords
-		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,	0.0f, 0.0f,
-		 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,	1.0f, 0.0f,
-		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,	1.0f, 1.0f,
-		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,	1.0f, 1.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,	0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,	0.0f, 0.0f,
-
+		// positions		// normal vectors		// texture coords
+		// front
 		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,	0.0f, 0.0f,
 		 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,	1.0f, 0.0f,
 		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,	1.0f, 1.0f,
-		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,	1.0f, 1.0f,
 		-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,	0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,	0.0f, 0.0f,
 
-		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,	1.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,	1.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,	0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,	0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,	0.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,	1.0f, 0.0f,
+		// back
+		 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,	0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,	1.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,	0.0f, 1.0f,
+		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,	1.0f, 1.0f,
 
-		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,	1.0f, 0.0f,
-		 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,	1.0f, 1.0f,
-		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,	0.0f, 1.0f,
-		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,	0.0f, 1.0f,
-		 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,	0.0f, 0.0f,
-		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,	1.0f, 0.0f,
+		// left
+		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,	0.0f, 0.0f,
+		-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,	1.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,	1.0f, 1.0f,
+		-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,	0.0f, 1.0f,
 
-		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,	0.0f, 1.0f,
-		 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,	1.0f, 1.0f,
-		 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,	1.0f, 0.0f,
-		 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,	1.0f, 0.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,	0.0f, 0.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,	0.0f, 1.0f,
+		// right
+		0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,	0.0f, 0.0f,
+		0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,	1.0f, 0.0f,
+		0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,	1.0f, 1.0f,
+		0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,	0.0f, 1.0f,
 
-		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,	0.0f, 1.0f,
-		 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,	1.0f, 1.0f,
-		 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,	1.0f, 0.0f,
-		 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,	1.0f, 0.0f,
+		// top
 		-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,	0.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,	1.0f, 0.0f,
+		 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,	1.0f, 1.0f,
 		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,	0.0f, 1.0f,
+
+		// bottom
+		-0.5f,  -0.5f, -0.5f,  0.0f,  1.0f,  0.0f,	0.0f, 0.0f,
+		 0.5f,  -0.5f, -0.5f,  0.0f,  1.0f,  0.0f,	1.0f, 0.0f,
+		 0.5f,  -0.5f,  0.5f,  0.0f,  1.0f,  0.0f,	1.0f, 1.0f,
+		-0.5f,  -0.5f,  0.5f,  0.0f,  1.0f,  0.0f,	0.0f, 1.0f,
+	};
+
+	unsigned int indices[] = {
+		// front
+		0, 1, 2,	2, 3, 0,
+		// back
+		4, 5, 6,	6, 7, 4,
+		// left
+		8, 9, 10,	10, 11, 8,
+		// right
+		12, 13, 14, 14, 15, 12,
+		// top
+		16, 17, 18,	18, 19, 16,
+		// bottom
+		20, 21, 22,	22, 23, 20
 	};
 
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
+	glGenBuffers(1, &EBO);
 
 	glBindVertexArray(VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 	// position attribute
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
@@ -420,44 +435,57 @@ void Pyramid::initBuffers() {
 
 	float vertices[] = {
 		// positions           // normals             // texcoords
+		// Side 1 (C, D, E) front
+		-0.5f, 0.0f,  0.5f,   0.0f, 0.707f, 0.707f,    0.0f, 0.0f,  // D
+		 0.5f, 0.0f,  0.5f,   0.0f, 0.707f, 0.707f,    1.0f, 0.0f,  // C
+		 0.0f, 1.0f,  0.0f,   0.0f, 0.707f, 0.707f,    0.5f, 1.0f,  // E
 
-    // Side 1 (A, B, E)
-    -0.5f, 0.0f, -0.5f,   0.0f, 0.707f, -0.707f,   0.0f, 0.0f,  // A
-     0.5f, 0.0f, -0.5f,   0.0f, 0.707f, -0.707f,   1.0f, 0.0f,  // B
-     0.0f, 1.0f,  0.0f,   0.0f, 0.707f, -0.707f,   0.5f, 1.0f,  // E
+		// Side 2 (A, B, E) back
+		 0.5f, 0.0f, -0.5f,   0.0f, 0.707f, -0.707f,   0.0f, 0.0f,  // B
+		-0.5f, 0.0f, -0.5f,   0.0f, 0.707f, -0.707f,   1.0f, 0.0f,  // A
+		 0.0f, 1.0f,  0.0f,   0.0f, 0.707f, -0.707f,   0.5f, 1.0f,  // E
 
-    // Side 2 (B, C, E)
-     0.5f, 0.0f, -0.5f,   0.707f, 0.707f, 0.0f,    0.0f, 0.0f,  // B
-     0.5f, 0.0f,  0.5f,   0.707f, 0.707f, 0.0f,    1.0f, 0.0f,  // C
-     0.0f, 1.0f,  0.0f,   0.707f, 0.707f, 0.0f,    0.5f, 1.0f,  // E
+		// Side 3 (D, A, E) left
+		-0.5f, 0.0f, -0.5f,  -0.707f, 0.707f, 0.0f,    0.0f, 0.0f,  // A
+		-0.5f, 0.0f,  0.5f,  -0.707f, 0.707f, 0.0f,    1.0f, 0.0f,  // D
+		 0.0f, 1.0f,  0.0f,  -0.707f, 0.707f, 0.0f,    0.5f, 1.0f,  // E
 
-    // Side 3 (C, D, E)
-     0.5f, 0.0f,  0.5f,   0.0f, 0.707f, 0.707f,    0.0f, 0.0f,  // C
-    -0.5f, 0.0f,  0.5f,   0.0f, 0.707f, 0.707f,    1.0f, 0.0f,  // D
-     0.0f, 1.0f,  0.0f,   0.0f, 0.707f, 0.707f,    0.5f, 1.0f,  // E
+		 // Side 4 (B, C, E) right
+		 0.5f, 0.0f,  0.5f,   0.707f, 0.707f, 0.0f,    0.0f, 0.0f,  // C
+		 0.5f, 0.0f, -0.5f,   0.707f, 0.707f, 0.0f,    1.0f, 0.0f,  // B
+		 0.0f, 1.0f,  0.0f,   0.707f, 0.707f, 0.0f,    0.5f, 1.0f,  // E
 
-    // Side 4 (D, A, E)
-    -0.5f, 0.0f,  0.5f,  -0.707f, 0.707f, 0.0f,    0.0f, 0.0f,  // D
-    -0.5f, 0.0f, -0.5f,  -0.707f, 0.707f, 0.0f,    1.0f, 0.0f,  // A
-     0.0f, 1.0f,  0.0f,  -0.707f, 0.707f, 0.0f,    0.5f, 1.0f,  // E
+		// Base (A, B, C, D) bottom
+		-0.5f, 0.0f, -0.5f,   0.0f, -1.0f,  0.0f,      0.0f, 0.0f,  // A
+		 0.5f, 0.0f, -0.5f,   0.0f, -1.0f,  0.0f,      1.0f, 0.0f,  // B
+		 0.5f, 0.0f,  0.5f,   0.0f, -1.0f,  0.0f,      1.0f, 1.0f,  // C
+		-0.5f, 0.0f,  0.5f,   0.0f, -1.0f,  0.0f,      0.0f, 1.0f,  // D
+	};
 
-    // Base (A, B, C, D)
-    -0.5f, 0.0f, -0.5f,   0.0f, -1.0f,  0.0f,      0.0f, 0.0f,  // A
-     0.5f, 0.0f, -0.5f,   0.0f, -1.0f,  0.0f,      1.0f, 0.0f,  // B
-     0.5f, 0.0f,  0.5f,   0.0f, -1.0f,  0.0f,      1.0f, 1.0f,  // C
-
-     0.5f, 0.0f,  0.5f,   0.0f, -1.0f,  0.0f,      1.0f, 1.0f,  // C
-    -0.5f, 0.0f,  0.5f,   0.0f, -1.0f,  0.0f,      0.0f, 1.0f,  // D
-    -0.5f, 0.0f, -0.5f,   0.0f, -1.0f,  0.0f,      0.0f, 0.0f,  // A
-};
+	unsigned int indices[] = {
+		// front
+		0, 1, 2,
+		// back
+		3, 4, 5,
+		// left
+		6, 7, 8,
+		// right
+		9, 10, 11,
+		// bottom
+		12, 13, 14,	14, 15, 12
+	};
 
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
+	glGenBuffers(1, &EBO);
 
 	glBindVertexArray(VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 	// position attribute
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
@@ -612,60 +640,6 @@ void Sphere::generateSphere(float radius, unsigned int sectorCount, unsigned int
 			}
 		}
 	}
-}
-
-void Sphere::draw() {
-	if (!isEnabled()) return;
-
-	setModelMatrix();
-
-	shader->use();
-	
-	shader->setMat4fv("model", model);
-	
-	shader->setVec3fv("material.ambient", material.ambient);
-	shader->setVec3fv("material.diffuse", material.diffuse);
-	shader->setVec3fv("material.specular", material.specular);
-	
-	//shader->setFloat("material.shininess", material.shininess);
-	
-	shader->setVec3fv("material.albedo", material.albedo);
-	shader->setFloat("material.metallic", material.metallic);
-	shader->setFloat("material.roughness", material.roughness);
-
-	shader->setBool("useDiffuseMap", texture.diffuseMap != 0);
-	shader->setBool("useSpecularMap", texture.specularMap != 0);
-	shader->setBool("useEmissionMap", texture.emissionMap != 0);
-
-	shader->setBool("useAlbedoMap", texture.albedoMap != 0);
-	shader->setBool("useMetallicMap", texture.metallicMap != 0);
-	shader->setBool("useRoughnessMap", texture.roughnessMap != 0);
-	
-	shader->setInt("diffuseMap", 0);
-	shader->setInt("specularMap", 1);
-	shader->setInt("emissionMap", 2);
-	
-	shader->setInt("albedoMap", 3);
-	shader->setInt("metallicMap", 4);
-	shader->setInt("roughnessMap", 5);
-
-	glBindVertexArray(getVAO());
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture.diffuseMap);
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, texture.specularMap);
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, texture.emissionMap);
-
-	glActiveTexture(GL_TEXTURE3);
-	glBindTexture(GL_TEXTURE_2D, texture.albedoMap);
-	glActiveTexture(GL_TEXTURE4);
-	glBindTexture(GL_TEXTURE_2D, texture.metallicMap);
-	glActiveTexture(GL_TEXTURE5);
-	glBindTexture(GL_TEXTURE_2D, texture.roughnessMap);
-
-	glDrawElements(getDrawMode(), getVertexCount(), GL_UNSIGNED_INT, 0);
 }
 
 // Cylinder class
@@ -826,58 +800,4 @@ void Cylinder::generateCylinder(float radius, float height, unsigned int sectorC
 			indices.push_back(baseIndex + i + 1);
 		}
 	}
-}
-
-void Cylinder::draw() {
-	if (!isEnabled()) return;
-
-	setModelMatrix();
-
-	shader->use();
-	
-	shader->setMat4fv("model", model);
-	
-	shader->setVec3fv("material.ambient", material.ambient);
-	shader->setVec3fv("material.diffuse", material.diffuse);
-	shader->setVec3fv("material.specular", material.specular);
-	
-	//shader->setFloat("material.shininess", material.shininess);
-	
-	shader->setVec3fv("material.albedo", material.albedo);
-	shader->setFloat("material.metallic", material.metallic);
-	shader->setFloat("material.roughness", material.roughness);
-
-	shader->setBool("useDiffuseMap", texture.diffuseMap != 0);
-	shader->setBool("useSpecularMap", texture.specularMap != 0);
-	shader->setBool("useEmissionMap", texture.emissionMap != 0);
-
-	shader->setBool("useAlbedoMap", texture.albedoMap != 0);
-	shader->setBool("useMetallicMap", texture.metallicMap != 0);
-	shader->setBool("useRoughnessMap", texture.roughnessMap != 0);
-	
-	shader->setInt("diffuseMap", 0);
-	shader->setInt("specularMap", 1);
-	shader->setInt("emissionMap", 2);
-	
-	shader->setInt("albedoMap", 3);
-	shader->setInt("metallicMap", 4);
-	shader->setInt("roughnessMap", 5);
-
-	glBindVertexArray(getVAO());
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture.diffuseMap);
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, texture.specularMap);
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, texture.emissionMap);
-
-	glActiveTexture(GL_TEXTURE3);
-	glBindTexture(GL_TEXTURE_2D, texture.albedoMap);
-	glActiveTexture(GL_TEXTURE4);
-	glBindTexture(GL_TEXTURE_2D, texture.metallicMap);
-	glActiveTexture(GL_TEXTURE5);
-	glBindTexture(GL_TEXTURE_2D, texture.roughnessMap);
-
-	glDrawElements(getDrawMode(), getVertexCount(), GL_UNSIGNED_INT, 0);
 }

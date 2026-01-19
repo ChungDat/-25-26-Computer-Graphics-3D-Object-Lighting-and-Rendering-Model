@@ -93,9 +93,9 @@ int main() {
 	// optimization
 	// ------------
 	glEnable(GL_DEPTH_TEST);
-	//glEnable(GL_CULL_FACE);
-	//glCullFace(GL_BACK);
-	//glFrontFace(GL_CCW);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK); // default
+	glFrontFace(GL_CCW); // default
 
 	stbi_set_flip_vertically_on_load(true);
 
@@ -326,6 +326,8 @@ int main() {
 		lightShader.setMat4fv("view", view);
 		lightShader.setMat4fv("projection", projection);
 
+		glEnable(GL_CULL_FACE);
+
 		// light source
 		// ------------
 
@@ -354,6 +356,8 @@ int main() {
 			//cubeList[i].setRotation(glm::vec3(angle * 0.2f, angle * 0.5f, angle * 0.8f));
 			objectList[i]->draw();
 		}
+
+		glDisable(GL_CULL_FACE);
 		boxRoom.draw();
 
 		if (axis.isEnabled()) {

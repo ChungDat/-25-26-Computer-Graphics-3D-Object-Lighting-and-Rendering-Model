@@ -161,7 +161,6 @@ protected:
 
 public:
     Sphere(Shader*&);
-    void draw() override;
 };
 
 class Pyramid : public Object {
@@ -194,5 +193,4 @@ protected:
 
 public:
     Cylinder(Shader*&);
-    void draw() override;
 };
