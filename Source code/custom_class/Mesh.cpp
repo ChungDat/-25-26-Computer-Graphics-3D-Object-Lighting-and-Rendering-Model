@@ -54,8 +54,9 @@ void Mesh::Draw(Shader& shader) {
 	unsigned int heightNr = 1;
 
 	// Reserve lower texture units (0..5) for simple geometry objects.
+	// Reserve (6..13) for lights depth map.
 	// Assimp model textures will start at this offset to avoid clashing.
-	const int MODEL_TEXTURE_UNIT_OFFSET = 6;
+	const int MODEL_TEXTURE_UNIT_OFFSET = 14;
 
 	// Track whether model provides diffuse/specular
 	bool hasDiffuse = false;

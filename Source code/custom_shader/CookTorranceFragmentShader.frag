@@ -62,6 +62,16 @@ uniform bool useAlbedoMap;
 uniform bool useMetallicMap;
 uniform bool useRoughnessMap;
 
+uniform sampler2D dirShadowMap[NR_DIR_LIGHTS];
+uniform mat4 dirLightSpace[NR_DIR_LIGHTS];
+uniform bool dirShadowCast[NR_DIR_LIGHTS];
+
+uniform sampler2D spotShadowMap[NR_SPOT_LIGHTS];
+uniform mat4 spotLightSpace[NR_SPOT_LIGHTS];
+uniform bool spotShadowCast[NR_SPOT_LIGHTS];
+
+uniform float shadowBias;
+
 float DistributionGGX(vec3 N, vec3 H, float roughness);
 float GeometrySchlickGGX(float NdotV, float roughness);
 float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness);
@@ -70,6 +80,8 @@ vec3 FresnelSchlick(float cosTheta, vec3 F0);
 vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir, vec3 F0, vec3 albedo, float roughness, float metallic);
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 F0, vec3 albedo, float roughness, float metallic);
 vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 F0, vec3 albedo, float roughness, float metallic);
+
+float ShadowCalculation(sampler2D shadowMap, vec4 fragPosLightSpace);
 
 void main() {
 	vec3 N = normalize(fragNormal);
@@ -84,13 +96,17 @@ void main() {
 	vec3 F0 = mix(vec3(0.04), albedo, metallic);
 
 	for (int i = 0; i < numDirLights; i++) {
-		result += CalcDirLight(dirLight[i], N, V, F0, albedo, roughness, metallic);
+		vec4 fragPosLightSpace = dirLightSpace[i] * vec4(fragPos, 1.0);
+		float shadow = dirShadowCast[i] ? ShadowCalculation(dirShadowMap[i], fragPosLightSpace) : 0.0;
+		result += (1.0 - shadow) * CalcDirLight(dirLight[i], N, V, F0, albedo, roughness, metallic);
 	}
 	for (int i = 0; i < numPointLights; i++) {
 		result += CalcPointLight(pointLight[i], N, fragPos, V, F0, albedo, roughness, metallic);
 	}
 	for (int i = 0; i < numSpotLights; i++) {
-		result += CalcSpotLight(spotLight[i], N, V, F0, albedo, roughness, metallic);
+		vec4 fragPosLightSpace = spotLightSpace[i] * vec4(fragPos, 1.0);
+		float shadow = spotShadowCast[i] ? ShadowCalculation(spotShadowMap[i], fragPosLightSpace) : 0.0;
+		result += (1.0 - shadow) * CalcSpotLight(spotLight[i], N, V, F0, albedo, roughness, metallic);
 	}
 
 	FragColor = vec4(result, 1.0);
@@ -210,4 +226,28 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, vec3 F0, vec3 alb
 	float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
 
 	return (diffuse + specular) * light.color * NdotL * attenuation * intensity;
+}
+
+float ShadowCalculation(sampler2D shadowMap, vec4 fragPosLightSpace)
+{
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    projCoords = projCoords * 0.5 + 0.5;
+
+    if(projCoords.x < 0.0 || projCoords.x > 1.0 || projCoords.y < 0.0 || projCoords.y > 1.0)
+        return 0.0;
+
+    float closestDepth = texture(shadowMap, projCoords.xy).r;
+    float currentDepth = projCoords.z;
+
+   //    float shadow = currentDepth - shadowBias > closestDepth ? 1.0 : 0.0;
+//
+	 // Optional: PCF
+	 float shadow = 0.0;
+	 float texelSize = 1.0 / 1024;
+	 for(int x = -1; x <= 1; ++x)
+	  for(int y = -1; y <= 1; ++y)
+	    shadow += currentDepth - shadowBias > texture(shadowMap, projCoords.xy + vec2(x,y) * texelSize).r ? 1.0 : 0.0;
+	 shadow /= 9.0;
+
+	return shadow;
 }

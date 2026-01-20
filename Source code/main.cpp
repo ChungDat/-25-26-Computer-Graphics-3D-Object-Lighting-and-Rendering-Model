@@ -116,6 +116,11 @@ int main() {
 	ImGui_ImplGlfw_InitForOpenGL(window, true);          // Second param install_callback=true will install GLFW callbacks and chain to existing ones.
 	ImGui_ImplOpenGL3_Init();
 
+	// depth buffer
+	// ------------
+	unsigned int depthMapFBO;
+	glGenFramebuffers(1, &depthMapFBO);
+
 	// initial position for objects
 	// ----------------------------
 	glm::vec3 initPositions[] = {
@@ -174,7 +179,8 @@ int main() {
 	Shader axisShader = Shader("custom_shader/axis.vert", "custom_shader/axis.frag");
 
 	// depth shader
-	Shader depthShader = Shader("custom_shader/depthVertexShader.vert", "custom_shader/depthFragmentShader.frag");
+	Shader* depthShader = new Shader("custom_shader/depthVertexShader.vert", "custom_shader/depthFragmentShader.frag");
+	Shader debugDepthShader = Shader("custom_shader/debugDepthMapVertexShader.vert", "custom_shader/debugDepthMapFragmentShader.frag");
 
 	// create objects
 	std::vector<Object*> objectList = {
@@ -195,15 +201,15 @@ int main() {
 	objectList.push_back(backpackModel);
 
 	// create lights
-	SpotLight* flashLight = new SpotLight();
+	SpotLight* flashLight = new SpotLight(depthMapFBO);
 
 	std::vector<Light*> lightList = {
-		new DirectionalLight(),// 2: Main directional light
-		new PointLight(),      // 1: White orbiting light
-		new PointLight(),      // 3: Orange point light
-		new PointLight(),      // 4: Red point light
-		new PointLight(),      // 5: Yellow point light
-		new PointLight(),      // 6: Blue point light
+		new DirectionalLight(depthMapFBO),// 2: Main directional light
+		new PointLight(depthMapFBO),      // 1: White orbiting light
+		new PointLight(depthMapFBO),      // 3: Orange point light
+		new PointLight(depthMapFBO),      // 4: Red point light
+		new PointLight(depthMapFBO),      // 5: Yellow point light
+		new PointLight(depthMapFBO),      // 6: Blue point light
 	};
 
 	// create axis
@@ -249,7 +255,7 @@ int main() {
 	int currentRasterizationMode = 0;
 
 	//PresetScenesCollapse presetScenesCollapse = PresetScenesCollapse("Preset Scenes");
-	LightCollapse lightCollapse = LightCollapse("Add Light", lightList, numDirLights, numPointLights, numSpotLights);
+	LightCollapse lightCollapse = LightCollapse("Add Light", lightList, numDirLights, numPointLights, numSpotLights, depthMapFBO);
 	ObjectCollapse objectCollapse = ObjectCollapse("Add Object", objectList, numObjects);
 	ObjectProperties objectProperties = ObjectProperties("Object Properties", objectList, numObjects);
 	LightProperties lightProperties = LightProperties("Light Properties", lightList, numDirLights, numPointLights, numSpotLights);
@@ -314,27 +320,67 @@ int main() {
 		// -----
 		keyboardInputControl(window);
 
-		// render background
-		// -----
-		//glClearColor(0.75f, 0.52f, 0.3f, 1.0f);
+		// render
+		// ------
 		glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		// 1. render depth map
+		// -------------------
+		depthShader->use();
+
+		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+
+		for (int i = 0; i < lightList.size(); i++) {
+			if (!lightList[i]->isShadowCaster())
+				continue;
+
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, lightList[i]->getDepthMap(), 0);
+
+			glClear(GL_DEPTH_BUFFER_BIT);
+
+			lightList[i]->updateDepthShader(depthShader);
+			
+			for (int j = 0; j < objectList.size(); j++) {
+				objectList[j]->draw(depthShader, true);
+			}
+		}
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, flashLight->getDepthMap(), 0);
+
+		glClear(GL_DEPTH_BUFFER_BIT);
+
+		flashLight->updateDepthShader(depthShader);
+
+		for (int j = 0; j < objectList.size(); j++) {
+			objectList[j]->draw(depthShader, true);
+		}
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
+		// 2. render scene
+		// ---------------
+
+		glViewport(0, 0, WIDTH, HEIGHT);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
 		glm::mat4 view = camera.GetViewMatrix();
 		glm::vec3 viewPos = camera.Position;
+		glm::mat4 lightSpace = lightList[0]->getLightMatrix();
 
 		objectShader->use();
 		objectShader->setMat4fv("view", view);
 		objectShader->setMat4fv("projection", projection);
 		objectShader->setVec3fv("viewPos", viewPos);
+		objectShader->setMat4fv("lightSpaceMatrix", lightSpace);
+
+		objectShader->setFloat("shadowBias", 0.005f);
 
 		lightShader.use();
 		lightShader.setMat4fv("view", view);
 		lightShader.setMat4fv("projection", projection);
-
-		// light source
-		// ------------
 
 		// draw light object
 		// -----------------
@@ -353,9 +399,56 @@ int main() {
 		objectShader->setInt("numPointLights", numPointLights);
 		objectShader->setInt("numSpotLights", numSpotLights);
 
-		// draw simple object;
-		// -------------------
+		// draw objects
+		// ------------------
 		objectShader->use();
+
+		int texUnit = 6;
+		int dirIdx = 0;
+		int spotIdx = 0;
+
+		for (int i = 0; i < lightList.size(); i++) {
+			if (DirectionalLight* s = dynamic_cast<DirectionalLight*>(lightList[i])) {
+				objectShader->setMat4fv("dirLightSpace[" + std::to_string(dirIdx) + "]", s->getLightMatrix());
+
+				if (s->isShadowCaster()) {
+					glActiveTexture(GL_TEXTURE0 + texUnit);
+					glBindTexture(GL_TEXTURE_2D, s->getDepthMap());
+					objectShader->setInt("dirShadowMap[" + std::to_string(dirIdx) + "]", texUnit);
+					objectShader->setBool("dirShadowCast[" + std::to_string(dirIdx) + "]", true);
+					texUnit++;
+				}
+				else {
+					objectShader->setBool("dirShadowCast[" + std::to_string(dirIdx) + "]", false);
+				}
+
+				dirIdx++;
+			}
+
+			else if (SpotLight* s = dynamic_cast<SpotLight*>(lightList[i])) {
+				objectShader->setMat4fv("spotLightSpace[" + std::to_string(spotIdx) + "]", s->getLightMatrix());
+
+				if (s->isShadowCaster()) {
+					glActiveTexture(GL_TEXTURE0 + texUnit);
+					glBindTexture(GL_TEXTURE_2D, s->getDepthMap());
+					objectShader->setInt("spotShadowMap[" + std::to_string(spotIdx) + "]", texUnit);
+					objectShader->setBool("spotShadowCast[" + std::to_string(spotIdx) + "]", true);
+					texUnit++;
+				}
+				else {
+					objectShader->setBool("spotShadowCast[" + std::to_string(spotIdx) + "]", false);
+				}
+
+				spotIdx++;
+			}
+		}
+		objectShader->setMat4fv("spotLightSpace[" + std::to_string(spotIdx) + "]", flashLight->getLightMatrix());
+		glActiveTexture(GL_TEXTURE0 + texUnit);
+		glBindTexture(GL_TEXTURE_2D, flashLight->getDepthMap());
+		objectShader->setInt("spotShadowMap[" + std::to_string(spotIdx) + "]", texUnit);
+		objectShader->setBool("spotShadowCast[" + std::to_string(spotIdx) + "]", true);
+		texUnit++;
+
 		for (int i = 0; i < objectList.size(); i++) {
 			objectList[i]->draw(objectShader);
 		}
@@ -368,6 +461,49 @@ int main() {
 			plane.draw(view, projection);
 		}
 
+		// 3. debug depth map
+		// ------------------
+		//debugDepthShader.use();
+		//debugDepthShader.setFloat("near_plane", lightList[0]->getNearPlane());
+		//debugDepthShader.setFloat("far_plane", lightList[0]->getFarPlane());
+
+		//glActiveTexture(GL_TEXTURE0);
+		//glBindTexture(GL_TEXTURE_2D, lightList[0]->getDepthMap());
+		//debugDepthShader.setInt("depthMap", 0);
+
+		//unsigned int quadVAO = 0;
+		//unsigned int quadVBO;
+
+		//if (quadVAO == 0)
+		//{
+		//	float quadVertices[] = {
+		//		// positions        // texture Coords
+		//		-1.0f,  1.0f, 0.0f, 0.0f, 1.0f, // top-left
+		//		-1.0f, -1.0f, 0.0f, 0.0f, 0.0f, // bottom-left
+		//		 1.0f,  1.0f, 0.0f, 1.0f, 1.0f, // top-right
+		//		 1.0f, -1.0f, 0.0f, 1.0f, 0.0f, // bottom-right
+		//	};
+		//	// setup plane VAO
+		//	glGenVertexArrays(1, &quadVAO);
+		//	glGenBuffers(1, &quadVBO);
+
+		//	glBindVertexArray(quadVAO);
+
+		//	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+		//	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+
+		//	glEnableVertexAttribArray(0);
+		//	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+
+		//	glEnableVertexAttribArray(1);
+		//	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+		//}
+		//glBindVertexArray(quadVAO);
+		//glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+		//glBindVertexArray(0);
+
+		// -------------------------------------------------------------------------------------------------
+
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
@@ -376,8 +512,8 @@ int main() {
 		glfwPollEvents();
 	}
 
-	int nrAttributes;
-	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
+	//int nrAttributes;
+	//glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
 
 	// glfw: terminate, clearing all previously allocated GLFW resources.
 	// ------------------------------------------------------------------

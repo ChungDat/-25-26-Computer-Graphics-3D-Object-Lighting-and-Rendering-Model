@@ -42,3 +42,6 @@ const float PITCH = 0.0f;
 const float SPEED = 2.5f;
 const float SENSITIVITY = 0.1f;
 const float ZOOM = 45.0f;
+
+// Default shadow map resolution
+const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;

@@ -61,6 +61,13 @@ uniform DirectionalLight dirLight[NR_DIR_LIGHTS];
 uniform PointLight pointLight[NR_POINT_LIGHTS];
 uniform SpotLight spotLight[NR_SPOT_LIGHTS];
 
+out vec4 dirFragPosLight[NR_DIR_LIGHTS];
+out vec4 spotFragPosLight[NR_SPOT_LIGHTS];
+
+// light-space matrices (used to compute positions in light clip-space for shadow lookups)
+uniform mat4 dirLightSpace[NR_DIR_LIGHTS];
+uniform mat4 spotLightSpace[NR_SPOT_LIGHTS];
+
 vec3 CalcDirLight(DirectionalLight light, vec3 normal, vec3 viewDir);
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
@@ -73,8 +80,15 @@ void main() {
 	// world-space position
 	vec3 fragPos = vec3(worldPos);
 
+	// compute per-light light-space positions for shadow sampling in the fragment stage
+	for (int i = 0; i < numDirLights && i < NR_DIR_LIGHTS; ++i) {
+		dirFragPosLight[i] = dirLightSpace[i] * worldPos;
+	}
+	for (int i = 0; i < numSpotLights && i < NR_SPOT_LIGHTS; ++i) {
+		spotFragPosLight[i] = spotLightSpace[i] * worldPos;
+	}
+
 	// world-space normal
-    // transform normal with normal matrix (handles non-uniform scale)
 	mat3 normalMatrix = mat3(transpose(inverse(model)));
 	vec3 norm = normalize(normalMatrix * aNormal); // World-space normal
 

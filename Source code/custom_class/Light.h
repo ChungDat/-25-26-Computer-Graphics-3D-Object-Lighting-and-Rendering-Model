@@ -5,6 +5,7 @@
 #include <GLFW/glfw3.h>
 #include "Shader.h"
 #include <string>
+#include "../constants.h"
 
 class Light
 {
@@ -26,6 +27,12 @@ protected:
 	float yaw; // left right - in degree
 	float pitch; // up down - in degree
 
+	// transformation
+	float nearPlane, farPlane;
+	glm::mat4 projection;
+	glm::mat4 view;
+	glm::mat4 lightSpaceMatrix;
+
 	virtual void setYaw(const int _angle);
 	virtual void setPitch(const int _angle);
 
@@ -45,13 +52,18 @@ protected:
 	int ID;
 
 	static unsigned int VAO, VBO, EBO;
+	unsigned int depthMap;
+
 	static bool initialized;
 
 	// visibility
 	bool enabled;
 
+	// shadow flag
+	bool castsShadow;
+
 public:
-	Light();
+	Light(unsigned int& depthMapFBO);
 	virtual ~Light();
 
 	// ==============
@@ -73,6 +85,10 @@ public:
 	void setOrbital(const bool _orbitalMotion);
 	void setRadius(const float _radius); // orbital motion radius
 	void setRotationalFreq(const float _freq);
+
+	// shadow control
+	void setCastShadow(const bool enable);
+	bool isShadowCaster() const;
 
 	// opengl
 
@@ -98,6 +114,14 @@ public:
 	virtual int getYaw() const;
 	virtual int getPitch() const;
 
+	// transformation
+
+	float getNearPlane() const;
+	float getFarPlane() const;
+	glm::mat4 getView() const;
+	glm::mat4 getProjection() const;
+	glm::mat4 getLightMatrix() const;
+
 	// color
 
 	glm::vec3 getColor() const;
@@ -121,16 +145,20 @@ public:
 	virtual std::string getType() const = 0;
 	int getID() const;
 	unsigned int getVAO() const;
+	unsigned int getDepthMap() const;
 	unsigned int getVertexCount() const;
 
 	virtual void draw(Shader& shader, const float deltaTime) = 0;
-
 	virtual void updateObjectShader(Shader*& shader, unsigned int typeCount) const = 0;
+	void updateDepthShader(Shader*& shader);
 };
 
 class DirectionalLight : public Light {
+protected:
+	float distance = 20.0f;
+
 public:
-	DirectionalLight();
+	DirectionalLight(unsigned int& depthMapFBO);
 	virtual ~DirectionalLight();
 
 	// ==============
@@ -140,6 +168,7 @@ public:
 	// position
 
 	void setPosition(const glm::vec3 _pos) override;
+	void setDirection(const float _pitch, const float _yaw) override;
 
 	// ==============
 	// GETTER
@@ -170,7 +199,7 @@ protected:
 	float quadratic;
 
 public:
-	PointLight();
+	PointLight(unsigned int& depthMapFBO);
 	virtual ~PointLight();
 
 	// ==============
@@ -178,8 +207,8 @@ public:
 	// ==============
 
 	// direction
-
-	void setDirection(const float _yaw, const float _pitch) override;
+	void setPosition(const glm::vec3 _pos) override;
+	void setDirection(const float _pitch, const float _yaw) override;
 	void setDirection(const glm::vec3 _direction) override;
 	void setYaw(const int _angle) override;
 	void setPitch(const int _angle) override;
@@ -226,7 +255,7 @@ protected:
 	void updateOrbitalDirection() override;
 
 public:
-	SpotLight();
+	SpotLight(unsigned int& depthMapFBO);
 	virtual ~SpotLight();
 
 	// ==============
@@ -235,7 +264,7 @@ public:
 
 	// direction
 
-	void setDirection(const float _yaw, const float _pitch) override;
+	void setDirection(const float _pitch, const float _yaw) override;
 	void setDirection(const glm::vec3 _direction) override;
 
 	void setInnerCutOff(const float _inner);

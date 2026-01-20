@@ -30,8 +30,8 @@ void PresetScenesCollapse::show() {
 	}
 }
 
-LightCollapse::LightCollapse(const char* _label, std::vector<Light*>& _lightList, int& _numDirLights, int& _numPointLights, int& _numSpotLights) 
-	: ControlCollapse(_label), lightList(_lightList), numDirLights(_numDirLights), numPointLights(_numPointLights), numSpotLights(_numSpotLights) {}
+LightCollapse::LightCollapse(const char* _label, std::vector<Light*>& _lightList, int& _numDirLights, int& _numPointLights, int& _numSpotLights, unsigned int& _depthMapFBO)
+	: ControlCollapse(_label), lightList(_lightList), numDirLights(_numDirLights), numPointLights(_numPointLights), numSpotLights(_numSpotLights), depthMapFBO(_depthMapFBO){}
 
 void LightCollapse::show() {
 	if (ImGui::CollapsingHeader(label ? label : "Light")) {
@@ -46,15 +46,15 @@ void LightCollapse::show() {
 
 void LightCollapse::addLight(const char* lightType) {
 	if (lightType == "Directional Light" && numDirLights < NR_DIR_LIGHTS) {
-		lightList.push_back(new DirectionalLight());
+		lightList.push_back(new DirectionalLight(depthMapFBO));
 		numDirLights++;
 	}
 	else if (lightType == "Point Light" && numPointLights < NR_POINT_LIGHTS) {
-		lightList.push_back(new PointLight());
+		lightList.push_back(new PointLight(depthMapFBO));
 		numPointLights++;
 	}
 	else if (lightType == "Spot Light" && numSpotLights < NR_SPOT_LIGHTS) {
-		lightList.push_back(new SpotLight());
+		lightList.push_back(new SpotLight(depthMapFBO));
 		numSpotLights++;
 	}
 }

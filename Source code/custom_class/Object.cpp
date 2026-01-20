@@ -63,7 +63,7 @@ Object::Object() : ID(nextID++)
 	enabled = true;
 }
 
-void Object::draw(Shader*& shader) {
+void Object::draw(Shader*& shader, bool isShadowMapping) {
 	if (!isEnabled()) return;
 
 	setModelMatrix();
@@ -72,49 +72,54 @@ void Object::draw(Shader*& shader) {
 
 	shader->setMat4fv("model", model);
 
-	shader->setVec3fv("material.ambient", material.ambient);
-	shader->setVec3fv("material.diffuse", material.diffuse);
-	shader->setVec3fv("material.specular", material.specular);
+	if (!isShadowMapping) {
+		shader->setVec3fv("material.ambient", material.ambient);
+		shader->setVec3fv("material.diffuse", material.diffuse);
+		shader->setVec3fv("material.specular", material.specular);
 
-	//shader->setFloat("material.shininess", material.shininess);
+		//shader->setFloat("material.shininess", material.shininess);
 
-	shader->setVec3fv("material.albedo", material.albedo);
-	shader->setFloat("material.metallic", material.metallic);
-	shader->setFloat("material.roughness", material.roughness);
+		shader->setVec3fv("material.albedo", material.albedo);
+		shader->setFloat("material.metallic", material.metallic);
+		shader->setFloat("material.roughness", material.roughness);
 
-	shader->setBool("useDiffuseMap", texture.diffuseMap != 0);
-	shader->setBool("useSpecularMap", texture.specularMap != 0);
-	shader->setBool("useEmissionMap", texture.emissionMap != 0);
+		shader->setBool("useDiffuseMap", texture.diffuseMap != 0);
+		shader->setBool("useSpecularMap", texture.specularMap != 0);
+		shader->setBool("useEmissionMap", texture.emissionMap != 0);
 
-	shader->setBool("useAlbedoMap", texture.albedoMap != 0);
-	shader->setBool("useMetallicMap", texture.metallicMap != 0);
-	shader->setBool("useRoughnessMap", texture.roughnessMap != 0);
+		shader->setBool("useAlbedoMap", texture.albedoMap != 0);
+		shader->setBool("useMetallicMap", texture.metallicMap != 0);
+		shader->setBool("useRoughnessMap", texture.roughnessMap != 0);
 
-	shader->setInt("diffuseMap", 0);
-	shader->setInt("specularMap", 1);
-	shader->setInt("emissionMap", 2);
+		shader->setInt("diffuseMap", 0);
+		shader->setInt("specularMap", 1);
+		shader->setInt("emissionMap", 2);
 
-	shader->setInt("albedoMap", 3);
-	shader->setInt("metallicMap", 4);
-	shader->setInt("roughnessMap", 5);
+		shader->setInt("albedoMap", 3);
+		shader->setInt("metallicMap", 4);
+		shader->setInt("roughnessMap", 5);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture.diffuseMap);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, texture.specularMap);
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, texture.emissionMap);
+
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, texture.albedoMap);
+		glActiveTexture(GL_TEXTURE4);
+		glBindTexture(GL_TEXTURE_2D, texture.metallicMap);
+		glActiveTexture(GL_TEXTURE5);
+		glBindTexture(GL_TEXTURE_2D, texture.roughnessMap);
+	}
 
 	glBindVertexArray(getVAO());
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture.diffuseMap);
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, texture.specularMap);
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, texture.emissionMap);
-
-	glActiveTexture(GL_TEXTURE3);
-	glBindTexture(GL_TEXTURE_2D, texture.albedoMap);
-	glActiveTexture(GL_TEXTURE4);
-	glBindTexture(GL_TEXTURE_2D, texture.metallicMap);
-	glActiveTexture(GL_TEXTURE5);
-	glBindTexture(GL_TEXTURE_2D, texture.roughnessMap);
-
 	glDrawElements(getDrawMode(), getVertexCount(), GL_UNSIGNED_INT, 0);
+}
+
+void Object::draw(Shader*& shader) {
+	draw(shader, false);
 }
 
 void Object::setDiffusePath(const std::string _diffusePath)

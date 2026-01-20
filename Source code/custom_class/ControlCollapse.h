@@ -43,10 +43,12 @@ protected:
 	int& numPointLights;
 	int& numSpotLights;
 
+	unsigned int& depthMapFBO;
+
 	void addLight(const char*);
 
 public:
-	LightCollapse(const char*, std::vector<Light*>&, int&, int&, int&);
+	LightCollapse(const char*, std::vector<Light*>&, int&, int&, int&, unsigned int&);
 	virtual ~LightCollapse() {};
 	void show();
 };

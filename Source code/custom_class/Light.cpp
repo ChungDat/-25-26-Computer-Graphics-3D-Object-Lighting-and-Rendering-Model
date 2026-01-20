@@ -10,7 +10,7 @@ bool Light::initialized = false;
 // abstract Light class
 // --------------------
 
-Light::Light() : ID(nextID++) {
+Light::Light(unsigned int& depthMapFBO) : ID(nextID++) {
 	// color
 	color = glm::vec3(1.0f);
 	storedColor = color; // Initialize storedColor
@@ -32,6 +32,27 @@ Light::Light() : ID(nextID++) {
 	orbitAngle = 0.0f; // degree
 	rotationalFreq = 45.0f; // degree
 	radius = 0.8f;
+
+	initBuffers();
+
+	// depth map
+	glGenTextures(1, &depthMap);
+	glBindTexture(GL_TEXTURE_2D, depthMap);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
+		SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+	float borderColor[] = { 1.0f,1.0f,1.0f,1.0f };
+	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+	glDrawBuffer(GL_NONE);
+	glReadBuffer(GL_NONE);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	enabled = true;      // Lights are enabled by default
 }
@@ -205,12 +226,16 @@ void Light::initBuffers() {
 	glBindVertexArray(0);
 
 	initialized = true;
-
 }
 
 unsigned int Light::getVAO() const {
 	initBuffers();
 	return VAO;
+}
+
+unsigned int Light::getDepthMap() const
+{
+	return depthMap;
 }
 
 unsigned int Light::getVertexCount() const {
@@ -268,6 +293,37 @@ int Light::getPitch() const {
 	return pitch;
 }
 
+float Light::getNearPlane() const
+{
+	return nearPlane;
+}
+
+float Light::getFarPlane() const {
+	return farPlane;
+}
+
+glm::mat4 Light::getView() const {
+	return view;
+}
+
+glm::mat4 Light::getProjection() const {
+	return projection;
+}
+
+glm::mat4 Light::getLightMatrix() const {
+	return lightSpaceMatrix;
+}
+
+// shadow control
+
+void Light::setCastShadow(const bool enable) {
+	castsShadow = enable;
+}
+
+bool Light::isShadowCaster() const {
+	return castsShadow;
+}
+
 // color
 
 glm::vec3 Light::getColor() const
@@ -312,6 +368,13 @@ float Light::getRotationalFreq() const {
 	return rotationalFreq;
 }
 
+void Light::updateDepthShader(Shader*& shader)
+{
+	shader->use();
+
+	shader->setMat4fv("lightSpaceMatrix", lightSpaceMatrix);
+}
+
 // opengl
 
 int Light::getID() const {
@@ -321,8 +384,19 @@ int Light::getID() const {
 // Directional Light class
 // -----------------------
 
-DirectionalLight::DirectionalLight(Shader& _shader) : Light(_shader) {
-	//direction = glm::normalize(glm::vec3(0.0f, 0.0f, -1.0f));
+DirectionalLight::DirectionalLight(unsigned int& depthMapFBO) : Light(depthMapFBO) {
+	castsShadow = true;
+	
+	// transformation
+	nearPlane = -20.0f;
+	farPlane = 80.0f;
+	float orthoSize = 25.0f;
+	projection = glm::ortho(-orthoSize, orthoSize, -orthoSize, orthoSize, nearPlane, farPlane);
+	
+	position = glm::vec3(0.0f, 0.0f, 0.0f) - direction * distance;
+	view = glm::lookAt(position, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+	lightSpaceMatrix = projection * view;
 }
 
 DirectionalLight::~DirectionalLight() {}
@@ -330,6 +404,14 @@ DirectionalLight::~DirectionalLight() {}
 // position
 
 void DirectionalLight::setPosition(const glm::vec3 _pos) {}
+
+void DirectionalLight::setDirection(const float _pitch, const float _yaw) {
+	Light::setDirection(_pitch, _yaw);
+
+	position = glm::vec3(0.0f, 0.0f, 0.0f) - direction * distance;
+	view = glm::lookAt(position, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	lightSpaceMatrix = projection * view;
+}
 
 float DirectionalLight::getX() const {
 	return 0.0f;
@@ -378,15 +460,37 @@ void DirectionalLight::updateObjectShader(Shader*& objectShader, unsigned int ty
 // Point Light class
 // -----------------
 
-PointLight::PointLight() : Light() {
+PointLight::PointLight(unsigned int& depthMapFBO) : Light(depthMapFBO) {
+	castsShadow = false;
+	
 	constant = 1.0f;
 	linear = 0.045f;
 	quadratic = 0.0075f;
+
+	nearPlane = 0.1f;
+	farPlane = 30.0f;
+	projection = glm::perspective(glm::radians(90.0f), 1.0f, nearPlane, farPlane);
+
+	view = glm::lookAt(position, position + glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f));
+	//glm::mat4 view0 = glm::lookAt(position, position + glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f));
+	//glm::mat4 view1 = glm::lookAt(position, position + glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f));
+	//glm::mat4 view2 = glm::lookAt(position, position + glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	//glm::mat4 view3 = glm::lookAt(position, position + glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	//glm::mat4 view4 = glm::lookAt(position, position + glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, -1.0f, 0.0f));
+	//glm::mat4 view5 = glm::lookAt(position, position + glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, -1.0f, 0.0f));
+
+	lightSpaceMatrix = projection * view;
 }
 
 PointLight::~PointLight() {}
 
-void PointLight::setDirection(const float _yaw, const float _pitch) {};
+void PointLight::setPosition(const glm::vec3 _pos) {
+	Light::setPosition(_pos);
+	view = glm::lookAt(position, position + glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f));
+	lightSpaceMatrix = projection * view;
+}
+
+void PointLight::setDirection(const float _pitch, const float _yaw) {};
 
 void PointLight::setDirection(const glm::vec3 _direction) {}
 
@@ -455,19 +559,32 @@ void PointLight::updateObjectShader(Shader*& objectShader, unsigned int typeCoun
 // Spot Light class
 // ----------------
 
-SpotLight::SpotLight() : PointLight(){
+SpotLight::SpotLight(unsigned int& depthMapFBO) : PointLight(depthMapFBO){
+	castsShadow = true;
+	
 	innerCutOff = 12.5f;
 	outerCutOff = 17.5f;
+	view = glm::lookAt(position, position + direction, glm::vec3(0.0f, 1.0f, 0.0f));
+
+	nearPlane = 0.3f;
+	farPlane = 30.0f;
+	projection = glm::perspective(glm::radians(outerCutOff * 2), 1.0f, nearPlane, farPlane);
+
+	lightSpaceMatrix = projection * view;
 }
 
 SpotLight::~SpotLight() {}
 
-void SpotLight::setDirection(const float _yaw, const float _pitch) {
-	Light::setDirection(_yaw, _pitch);
+void SpotLight::setDirection(const float _pitch, const float _yaw) {
+	Light::setDirection(_pitch, _yaw);
+	view = glm::lookAt(position, position + direction, glm::vec3(0.0f, 1.0f, 0.0f));
+	lightSpaceMatrix = projection * view;
 }
 
 void SpotLight::setDirection(const glm::vec3 _direction) {
 	Light::setDirection(_direction);
+	view = glm::lookAt(position, position + direction, glm::vec3(0.0f, 1.0f, 0.0f));
+	lightSpaceMatrix = projection * view;
 }
 
 void SpotLight::setYaw(const int _angle) {
@@ -484,6 +601,8 @@ void SpotLight::setInnerCutOff(const float _inner) {
 
 void SpotLight::setOuterCutOff(const float _outer) {
 	outerCutOff = _outer;
+	projection = glm::perspective(glm::radians(outerCutOff * 2), 1.0f, nearPlane, farPlane);
+	lightSpaceMatrix = projection * view;
 }
 
 glm::vec3 SpotLight::getDirection() const {
@@ -531,7 +650,7 @@ void SpotLight::draw(Shader& shader, const float deltaTime) {
 	shader.setVec3fv("lightColor", color);
 
 	glBindVertexArray(getVAO());
-	glDrawArrays(GL_TRIANGLES, 0, getVertexCount());
+	glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
 }
 
 void SpotLight::updateObjectShader(Shader*& objectShader, unsigned int typeCount) const {

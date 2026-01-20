@@ -69,6 +69,7 @@ protected:
 public:
     Object();
 
+    virtual void draw(Shader*&, bool);
     virtual void draw(Shader*&);
     
     void setDiffusePath(const std::string);
