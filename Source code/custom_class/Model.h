@@ -53,10 +53,10 @@ protected:
 	unsigned int getVAO() override = 0;
 	unsigned int getVertexCount() const override = 0;
 
-	void drawFrom(std::vector<Mesh>);
+	void drawFrom(Shader*&, std::vector<Mesh>);
 
 public:
-	Model(Shader*&);
+	Model();
 	virtual ~Model();
 
 	std::string getType() const override = 0;
@@ -75,10 +75,10 @@ protected:
 	unsigned int getVertexCount() const override;
 
 public:
-	Backpack(Shader*&);
+	Backpack();
 	virtual ~Backpack();
 
 	std::string getType() const override;
 
-	void draw();
+	void draw(Shader*&);
 };

@@ -32,7 +32,7 @@ bool Cylinder::initialized = false;
 // abstract Object class
 // ---------------------
 
-Object::Object(Shader*& _shader) : ID(nextID++), shader(_shader)
+Object::Object() : ID(nextID++)
 {
 	model = glm::mat4(1.0f);
 	position = glm::vec3(0.0f);
@@ -63,7 +63,7 @@ Object::Object(Shader*& _shader) : ID(nextID++), shader(_shader)
 	enabled = true;
 }
 
-void Object::draw() {
+void Object::draw(Shader*& shader) {
 	if (!isEnabled()) return;
 
 	setModelMatrix();
@@ -311,7 +311,7 @@ Object::~Object() {}
 // Cube class
 // ----------
 
-Cube::Cube(Shader*& _shader) : Object(_shader)
+Cube::Cube() : Object()
 {
 	initBuffers();
 }
@@ -418,7 +418,7 @@ std::string Cube::getType() const
 // Pyramid class
 // -------------
 
-Pyramid::Pyramid(Shader*& _shader) : Object(_shader)
+Pyramid::Pyramid() : Object()
 {
 	initBuffers();
 }
@@ -519,7 +519,7 @@ std::string Pyramid::getType() const {
 // Sphere class
 // ------------
 
-Sphere::Sphere(Shader*& _shader) : Object(_shader)
+Sphere::Sphere() : Object()
 {
 	initBuffers();
 }
@@ -645,7 +645,7 @@ void Sphere::generateSphere(float radius, unsigned int sectorCount, unsigned int
 // Cylinder class
 // --------------
 
-Cylinder::Cylinder(Shader*& _shader) : Object(_shader)
+Cylinder::Cylinder() : Object()
 {
 	initBuffers();
 }

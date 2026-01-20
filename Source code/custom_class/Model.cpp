@@ -7,17 +7,15 @@ std::vector<Mesh> Backpack::meshes = std::vector<Mesh>();
 std::vector<ModelTexture> Backpack::textures_loaded = std::vector<ModelTexture>();
 std::string Backpack::directory = std::string();
 
-Model::Model(Shader*& _shader) : Object(_shader) {}
+Model::Model() : Object() {}
 
 Model::~Model() {}
 
 //void Model::draw(Shader& shader, const glm::mat4& view, const glm::mat4& projection, const glm::vec3& viewPos, const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) {
-void Model::drawFrom(std::vector<Mesh> meshes) {
+void Model::drawFrom(Shader*& shader, std::vector<Mesh> meshes) {
 	if (!isEnabled()) return;
 
 	setModelMatrix();
-
-	shader->use();
 
 	shader->setMat4fv("model", model);
 	
@@ -226,7 +224,7 @@ unsigned int Model::getVertexCount() const {
 	return 0;
 }
 
-Backpack::Backpack(Shader*& _shader) : Model(_shader) {
+Backpack::Backpack() : Model() {
 	initBuffers();
 }
 
@@ -252,6 +250,6 @@ unsigned int Backpack::getVertexCount() const {
 	return 0;
 }
 
-void Backpack::draw() {
-	drawFrom(meshes);
+void Backpack::draw(Shader*& shader) {
+	drawFrom(shader, meshes);
 }

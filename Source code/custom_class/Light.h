@@ -10,7 +10,6 @@ class Light
 {
 protected:
 	// color
-
 	glm::vec3 color;
 	glm::vec3 storedColor; // To remember the color when disabled
 
@@ -21,7 +20,6 @@ protected:
 	void updateAttribute();
 
 	// position and direction
-
 	glm::vec3 position;
 	glm::vec3 direction;
 	glm::vec3 baseDir;
@@ -32,7 +30,6 @@ protected:
 	virtual void setPitch(const int _angle);
 
 	// orbital motion
-
 	bool orbitalMotion;
 	float orbitAngle; // radian
 	float rotationalFreq; // degree
@@ -44,21 +41,17 @@ protected:
 	virtual void updateOrbitalDirection();
 
 	// opengl
-
 	static int nextID;
 	int ID;
 
 	static unsigned int VAO, VBO, EBO;
 	static bool initialized;
 
-	Shader& shader;
-
 	// visibility
-
 	bool enabled;
 
 public:
-	Light(Shader& _shader);
+	Light();
 	virtual ~Light();
 
 	// ==============
@@ -130,14 +123,14 @@ public:
 	unsigned int getVAO() const;
 	unsigned int getVertexCount() const;
 
-	virtual void draw(const float deltaTime) = 0;
+	virtual void draw(Shader& shader, const float deltaTime) = 0;
 
 	virtual void updateObjectShader(Shader& shader, unsigned int typeCount) const = 0;
 };
 
 class DirectionalLight : public Light {
 public:
-	DirectionalLight(Shader& _shader);
+	DirectionalLight();
 	virtual ~DirectionalLight();
 
 	// ==============
@@ -165,7 +158,7 @@ public:
 
 	std::string getType() const override;
 
-	void draw(const float deltaTime) override;
+	void draw(Shader& shader, const float deltaTime) override;
 
 	void updateObjectShader(Shader& shader, unsigned int typeCount) const override;
 };
@@ -177,7 +170,7 @@ protected:
 	float quadratic;
 
 public:
-	PointLight(Shader& _shader);
+	PointLight();
 	virtual ~PointLight();
 
 	// ==============
@@ -217,7 +210,7 @@ public:
 
 	std::string getType() const override;
 
-	void draw(const float deltaTime) override;
+	void draw(Shader& shader, const float deltaTime) override;
 
 	void updateObjectShader(Shader& objectShader, unsigned int typeCount) const override;
 };
@@ -233,7 +226,7 @@ protected:
 	void updateOrbitalDirection() override;
 
 public:
-	SpotLight(Shader& _shader);
+	SpotLight();
 	virtual ~SpotLight();
 
 	// ==============
@@ -266,7 +259,7 @@ public:
 
 	std::string getType() const override;
 
-	void draw(const float deltaTime) override;
+	void draw(Shader& shader, const float deltaTime) override;
 
 	void updateObjectShader(Shader& shader, unsigned int typeCount) const override;
 };

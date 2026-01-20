@@ -30,8 +30,8 @@ void PresetScenesCollapse::show() {
 	}
 }
 
-LightCollapse::LightCollapse(const char* _label, std::vector<Light*>& _lightList, int& _numDirLights, int& _numPointLights, int& _numSpotLights, Shader& _lightShader) 
-	: ControlCollapse(_label), lightList(_lightList), numDirLights(_numDirLights), numPointLights(_numPointLights), numSpotLights(_numSpotLights), lightShader(_lightShader) {}
+LightCollapse::LightCollapse(const char* _label, std::vector<Light*>& _lightList, int& _numDirLights, int& _numPointLights, int& _numSpotLights) 
+	: ControlCollapse(_label), lightList(_lightList), numDirLights(_numDirLights), numPointLights(_numPointLights), numSpotLights(_numSpotLights) {}
 
 void LightCollapse::show() {
 	if (ImGui::CollapsingHeader(label ? label : "Light")) {
@@ -46,21 +46,21 @@ void LightCollapse::show() {
 
 void LightCollapse::addLight(const char* lightType) {
 	if (lightType == "Directional Light" && numDirLights < NR_DIR_LIGHTS) {
-		lightList.push_back(new DirectionalLight(lightShader));
+		lightList.push_back(new DirectionalLight());
 		numDirLights++;
 	}
 	else if (lightType == "Point Light" && numPointLights < NR_POINT_LIGHTS) {
-		lightList.push_back(new PointLight(lightShader));
+		lightList.push_back(new PointLight());
 		numPointLights++;
 	}
 	else if (lightType == "Spot Light" && numSpotLights < NR_SPOT_LIGHTS) {
-		lightList.push_back(new SpotLight(lightShader));
+		lightList.push_back(new SpotLight());
 		numSpotLights++;
 	}
 }
 
-ObjectCollapse::ObjectCollapse(const char* _label, std::vector<Object*>& _objectList, int& _numObjects, Shader*& _shader)
-	: ControlCollapse(_label), objectList(_objectList), numObjects(_numObjects), shader(_shader) {}
+ObjectCollapse::ObjectCollapse(const char* _label, std::vector<Object*>& _objectList, int& _numObjects)
+	: ControlCollapse(_label), objectList(_objectList), numObjects(_numObjects) {}
 
 void ObjectCollapse::show() {
 	if (ImGui::CollapsingHeader(label ? label : "Add object")) {
@@ -75,15 +75,15 @@ void ObjectCollapse::show() {
 
 void ObjectCollapse::addObject(const char* objectType) {
 	if (objectType == "Cube")
-		objectList.push_back(new Cube(shader));
+		objectList.push_back(new Cube());
 	else if (objectType == "Pyramid")
-		objectList.push_back(new Pyramid(shader));
+		objectList.push_back(new Pyramid());
 	else if (objectType == "Sphere")
-		objectList.push_back(new Sphere(shader));
+		objectList.push_back(new Sphere());
 	else if (objectType == "Cylinder")
-		objectList.push_back(new Cylinder(shader));
+		objectList.push_back(new Cylinder());
 	else if (objectType == "Backpack")
-		objectList.push_back(new Backpack(shader));
+		objectList.push_back(new Backpack());
 }
 
 ObjectProperties::ObjectProperties(const char* _label, std::vector<Object*>& _objectList, int& _numPbjects) 

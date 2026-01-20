@@ -9,7 +9,7 @@ bool Light::initialized = false;
 // abstract Light class
 // --------------------
 
-Light::Light(Shader& _shader) : shader(_shader), ID(nextID++) {
+Light::Light() : ID(nextID++) {
 	// color
 	color = glm::vec3(1.0f);
 	storedColor = color; // Initialize storedColor
@@ -340,7 +340,7 @@ std::string DirectionalLight::getType() const {
 	return "Directional";
 }
 
-void DirectionalLight::draw(const float deltaTime) {
+void DirectionalLight::draw(Shader& shader, const float deltaTime) {
 	if (!isEnabled()) return;
 
 	if (orbitalMotion) {
@@ -365,8 +365,7 @@ void DirectionalLight::updateObjectShader(Shader& objectShader, unsigned int typ
 // Point Light class
 // -----------------
 
-PointLight::PointLight(Shader& _shader) : Light(_shader) {
-	//position = glm::vec3(0.0f);
+PointLight::PointLight() : Light() {
 	constant = 1.0f;
 	linear = 0.045f;
 	quadratic = 0.0075f;
@@ -404,7 +403,7 @@ std::string PointLight::getType() const {
 	return "Point";
 }
 
-void PointLight::draw(const float deltaTime) {
+void PointLight::draw(Shader& shader, const float deltaTime) {
 	if (!isEnabled()) return;
 
 	if (orbitalMotion) {
@@ -413,8 +412,6 @@ void PointLight::draw(const float deltaTime) {
 
 		updateOrbitalPosition();
 	}
-
-	shader.use();
 
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, position);
@@ -445,7 +442,7 @@ void PointLight::updateObjectShader(Shader& objectShader, unsigned int typeCount
 // Spot Light class
 // ----------------
 
-SpotLight::SpotLight(Shader& _shader) : PointLight(_shader){
+SpotLight::SpotLight() : PointLight(){
 	innerCutOff = 12.5f;
 	outerCutOff = 17.5f;
 }
@@ -500,7 +497,7 @@ void SpotLight::updateOrbitalDirection() {
 	yaw = atan2(direction.z, direction.x) * 180 / glm::pi<float>() + 180.0f;
 }
 
-void SpotLight::draw(const float deltaTime) {
+void SpotLight::draw(Shader& shader, const float deltaTime) {
 	if (!isEnabled()) return;
 
 	if (orbitalMotion) {
@@ -510,8 +507,6 @@ void SpotLight::draw(const float deltaTime) {
 		updateOrbitalPosition();
 		updateOrbitalDirection();
 	}
-
-	shader.use();
 
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, position);

@@ -95,7 +95,7 @@ int main() {
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK); // default
-	glFrontFace(GL_CCW); // default
+	//glFrontFace(GL_CCW); // default
 
 	stbi_set_flip_vertically_on_load(true);
 
@@ -173,34 +173,37 @@ int main() {
 	// axis shader
 	Shader axisShader = Shader("custom_shader/axis.vert", "custom_shader/axis.frag");
 
+	// depth shader
+	Shader depthShader = Shader("custom_shader/depthVertexShader.vert", "custom_shader/depthFragmentShader.frag");
+
 	// create objects
 	std::vector<Object*> objectList = {
-		new Cube(objectShader),
-		new Cube(objectShader),
-		new Cube(objectShader),
-		new Cube(objectShader),
-		new Cube(objectShader),
-		new Cube(objectShader),
-		new Cube(objectShader),
-		new Cube(objectShader),
-		new Cube(objectShader),
-		new Cube(objectShader)
+		new Cube(),
+		new Cube(),
+		new Cube(),
+		new Cube(),
+		new Cube(),
+		new Cube(),
+		new Cube(),
+		new Cube(),
+		new Cube(),
+		new Cube()
 	};
 
 	// assimp model
-	Backpack* backpackModel = new Backpack(objectShader);
+	Backpack* backpackModel = new Backpack();
 	objectList.push_back(backpackModel);
 
 	// create lights
-	SpotLight* flashLight = new SpotLight(lightShader);
+	SpotLight* flashLight = new SpotLight();
 
 	std::vector<Light*> lightList = {
-		new DirectionalLight(lightShader),// 2: Main directional light
-		new PointLight(lightShader),      // 1: White orbiting light
-		new PointLight(lightShader),      // 3: Orange point light
-		new PointLight(lightShader),      // 4: Red point light
-		new PointLight(lightShader),      // 5: Yellow point light
-		new PointLight(lightShader),      // 6: Blue point light
+		new DirectionalLight(),// 2: Main directional light
+		new PointLight(),      // 1: White orbiting light
+		new PointLight(),      // 3: Orange point light
+		new PointLight(),      // 4: Red point light
+		new PointLight(),      // 5: Yellow point light
+		new PointLight(),      // 6: Blue point light
 	};
 
 	// create axis
@@ -208,7 +211,7 @@ int main() {
 	Plane plane = Plane(axisShader);
 
 	// create box room
-	Cube boxRoom = Cube(objectShader);
+	Cube boxRoom = Cube();
 
 	// set object positions
 	// --------------------
@@ -217,8 +220,8 @@ int main() {
 		if (i < 10)
 			objectList[i]->setPosition(initPositions[i]);
 	}
-	glm::vec3 scale(0.5, 0.5, 0.5);
-	backpackModel->setScale(scale);
+
+	backpackModel->setScale(glm::vec3(0.5, 0.5, 0.5));
 
 	boxRoom.setPosition(glm::vec3(0.0f));
 	boxRoom.setScale(glm::vec3(25.0f));
@@ -246,8 +249,8 @@ int main() {
 	int currentRasterizationMode = 0;
 
 	//PresetScenesCollapse presetScenesCollapse = PresetScenesCollapse("Preset Scenes");
-	LightCollapse lightCollapse = LightCollapse("Add Light", lightList, numDirLights, numPointLights, numSpotLights, lightShader);
-	ObjectCollapse objectCollapse = ObjectCollapse("Add Object", objectList, numObjects, objectShader);
+	LightCollapse lightCollapse = LightCollapse("Add Light", lightList, numDirLights, numPointLights, numSpotLights);
+	ObjectCollapse objectCollapse = ObjectCollapse("Add Object", objectList, numObjects);
 	ObjectProperties objectProperties = ObjectProperties("Object Properties", objectList, numObjects);
 	LightProperties lightProperties = LightProperties("Light Properties", lightList, numDirLights, numPointLights, numSpotLights, objectShader);
 	Settings settings = Settings("Settings", flashLight, axis, boxRoom, objectShader, shaderModel, shaderList, currentRasterizationMode);
@@ -288,13 +291,17 @@ int main() {
 		switch (currentRasterizationMode) {
 		case 0:
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			glEnable(GL_CULL_FACE);
+			glCullFace(GL_BACK); // default
 			break;
 		case 1:
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			glDisable(GL_CULL_FACE);
 			break;
 		case 2:
 			glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
 			glPointSize(2.0f);
+			glDisable(GL_CULL_FACE);
 			break;
 		}
 
@@ -326,15 +333,13 @@ int main() {
 		lightShader.setMat4fv("view", view);
 		lightShader.setMat4fv("projection", projection);
 
-		glEnable(GL_CULL_FACE);
-
 		// light source
 		// ------------
 
 		// draw light object
 		// -----------------
 		for (int i = 0; i < lightList.size(); i++) {
-			lightList[i]->draw(deltaTime);
+			lightList[i]->draw(lightShader, deltaTime);
 		}
 
 		// extract world-space light position and upload to objectShader
@@ -354,11 +359,11 @@ int main() {
 		for (unsigned int i = 0; i < objectList.size(); i++) {
 			//float angle = 20.f * i;
 			//cubeList[i].setRotation(glm::vec3(angle * 0.2f, angle * 0.5f, angle * 0.8f));
-			objectList[i]->draw();
+			objectList[i]->draw(objectShader);
 		}
 
 		glDisable(GL_CULL_FACE);
-		boxRoom.draw();
+		boxRoom.draw(objectShader);
 
 		if (axis.isEnabled()) {
 			axis.draw(view, projection);

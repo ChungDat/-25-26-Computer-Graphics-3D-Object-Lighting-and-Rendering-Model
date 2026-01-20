@@ -55,8 +55,6 @@ protected:
     Material material;
     Texture texture;
 
-    Shader*& shader;
-
     bool enabled;
 
     static int nextID;
@@ -69,9 +67,9 @@ protected:
     virtual GLenum getDrawMode() const;
 
 public:
-    Object(Shader*&);
+    Object();
 
-    virtual void draw();
+    virtual void draw(Shader*&);
     
     void setDiffusePath(const std::string);
     void setSpecularPath(const std::string);
@@ -142,7 +140,7 @@ protected:
     std::string getType() const override;
 
 public:
-    Cube(Shader*&);
+    Cube();
 };
 
 class Sphere : public Object {
@@ -160,7 +158,7 @@ protected:
         std::vector<float>& vertices, std::vector<unsigned int>& indices);
 
 public:
-    Sphere(Shader*&);
+    Sphere();
 };
 
 class Pyramid : public Object {
@@ -174,7 +172,7 @@ protected:
     std::string getType() const override;
 
 public:
-    Pyramid(Shader*&);
+    Pyramid();
 };
 
 class Cylinder : public Object {
@@ -192,5 +190,5 @@ protected:
         std::vector<float>& vertices, std::vector<unsigned int>& indices);
 
 public:
-    Cylinder(Shader*&);
+    Cylinder();
 };
