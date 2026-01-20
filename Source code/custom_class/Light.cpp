@@ -364,15 +364,15 @@ void DirectionalLight::draw(Shader& shader, const float deltaTime) {
 	}
 }
 
-void DirectionalLight::updateObjectShader(Shader& objectShader, unsigned int typeCount) const {
-	objectShader.use();
+void DirectionalLight::updateObjectShader(Shader*& objectShader, unsigned int typeCount) const {
+	objectShader->use();
 
-	objectShader.setVec3fv("dirLight[" + std::to_string(typeCount) + "].direction", direction);
-	objectShader.setVec3fv("dirLight[" + std::to_string(typeCount) + "].color", color);
+	objectShader->setVec3fv("dirLight[" + std::to_string(typeCount) + "].direction", direction);
+	objectShader->setVec3fv("dirLight[" + std::to_string(typeCount) + "].color", color);
 
-	objectShader.setVec3fv("dirLight[" + std::to_string(typeCount) + "].ambient", ambient);
-	objectShader.setVec3fv("dirLight[" + std::to_string(typeCount) + "].diffuse", diffuse);
-	objectShader.setVec3fv("dirLight[" + std::to_string(typeCount) + "].specular", specular);
+	objectShader->setVec3fv("dirLight[" + std::to_string(typeCount) + "].ambient", ambient);
+	objectShader->setVec3fv("dirLight[" + std::to_string(typeCount) + "].diffuse", diffuse);
+	objectShader->setVec3fv("dirLight[" + std::to_string(typeCount) + "].specular", specular);
 }
 
 // Point Light class
@@ -382,8 +382,6 @@ PointLight::PointLight() : Light() {
 	constant = 1.0f;
 	linear = 0.045f;
 	quadratic = 0.0075f;
-	//orbitCenter = position;
-	//orbitalMotion = false;
 }
 
 PointLight::~PointLight() {}
@@ -430,6 +428,8 @@ void PointLight::draw(Shader& shader, const float deltaTime) {
 	model = glm::translate(model, position);
 	model = glm::scale(model, glm::vec3(0.2f));
 
+	shader.use();
+
 	shader.setMat4fv("model", model);
 	shader.setVec3fv("lightColor", color);
 
@@ -437,19 +437,19 @@ void PointLight::draw(Shader& shader, const float deltaTime) {
 	glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
 }
 
-void PointLight::updateObjectShader(Shader& objectShader, unsigned int typeCount) const {
-	objectShader.use();
+void PointLight::updateObjectShader(Shader*& objectShader, unsigned int typeCount) const {
+	objectShader->use();
 
-	objectShader.setVec3fv("pointLight[" + std::to_string(typeCount) + "].position", position);
+	objectShader->setVec3fv("pointLight[" + std::to_string(typeCount) + "].position", position);
 
-	objectShader.setFloat("pointLight[" + std::to_string(typeCount) + "].constant", constant);
-	objectShader.setFloat("pointLight[" + std::to_string(typeCount) + "].linear", linear);
-	objectShader.setFloat("pointLight[" + std::to_string(typeCount) + "].quadratic", quadratic);
+	objectShader->setFloat("pointLight[" + std::to_string(typeCount) + "].constant", constant);
+	objectShader->setFloat("pointLight[" + std::to_string(typeCount) + "].linear", linear);
+	objectShader->setFloat("pointLight[" + std::to_string(typeCount) + "].quadratic", quadratic);
 
-	objectShader.setVec3fv("pointLight[" + std::to_string(typeCount) + "].color", color);
-	objectShader.setVec3fv("pointLight[" + std::to_string(typeCount) + "].ambient", ambient);
-	objectShader.setVec3fv("pointLight[" + std::to_string(typeCount) + "].diffuse", diffuse);
-	objectShader.setVec3fv("pointLight[" + std::to_string(typeCount) + "].specular", specular);
+	objectShader->setVec3fv("pointLight[" + std::to_string(typeCount) + "].color", color);
+	objectShader->setVec3fv("pointLight[" + std::to_string(typeCount) + "].ambient", ambient);
+	objectShader->setVec3fv("pointLight[" + std::to_string(typeCount) + "].diffuse", diffuse);
+	objectShader->setVec3fv("pointLight[" + std::to_string(typeCount) + "].specular", specular);
 }
 
 // Spot Light class
@@ -525,6 +525,8 @@ void SpotLight::draw(Shader& shader, const float deltaTime) {
 	model = glm::translate(model, position);
 	model = glm::scale(model, glm::vec3(0.2f));
 
+	shader.use();
+
 	shader.setMat4fv("model", model);
 	shader.setVec3fv("lightColor", color);
 
@@ -532,21 +534,21 @@ void SpotLight::draw(Shader& shader, const float deltaTime) {
 	glDrawArrays(GL_TRIANGLES, 0, getVertexCount());
 }
 
-void SpotLight::updateObjectShader(Shader& objectShader, unsigned int typeCount) const {
-	objectShader.use();
+void SpotLight::updateObjectShader(Shader*& objectShader, unsigned int typeCount) const {
+	objectShader->use();
 
-	objectShader.setVec3fv("spotLight[" + std::to_string(typeCount) + "].position", position);
-	objectShader.setVec3fv("spotLight[" + std::to_string(typeCount) + "].direction", direction);
+	objectShader->setVec3fv("spotLight[" + std::to_string(typeCount) + "].position", position);
+	objectShader->setVec3fv("spotLight[" + std::to_string(typeCount) + "].direction", direction);
 
-	objectShader.setFloat("spotLight[" + std::to_string(typeCount) + "].constant", constant);
-	objectShader.setFloat("spotLight[" + std::to_string(typeCount) + "].linear", linear);
-	objectShader.setFloat("spotLight[" + std::to_string(typeCount) + "].quadratic", quadratic);
+	objectShader->setFloat("spotLight[" + std::to_string(typeCount) + "].constant", constant);
+	objectShader->setFloat("spotLight[" + std::to_string(typeCount) + "].linear", linear);
+	objectShader->setFloat("spotLight[" + std::to_string(typeCount) + "].quadratic", quadratic);
 
-	objectShader.setFloat("spotLight[" + std::to_string(typeCount) + "].innerCutOff", glm::cos(glm::radians(innerCutOff)));
-	objectShader.setFloat("spotLight[" + std::to_string(typeCount) + "].outerCutOff", glm::cos(glm::radians(outerCutOff)));
+	objectShader->setFloat("spotLight[" + std::to_string(typeCount) + "].innerCutOff", glm::cos(glm::radians(innerCutOff)));
+	objectShader->setFloat("spotLight[" + std::to_string(typeCount) + "].outerCutOff", glm::cos(glm::radians(outerCutOff)));
 
-	objectShader.setVec3fv("spotLight[" + std::to_string(typeCount) + "].color", color);
-	objectShader.setVec3fv("spotLight[" + std::to_string(typeCount) + "].ambient", ambient);
-	objectShader.setVec3fv("spotLight[" + std::to_string(typeCount) + "].diffuse", diffuse);
-	objectShader.setVec3fv("spotLight[" + std::to_string(typeCount) + "].specular", specular);
+	objectShader->setVec3fv("spotLight[" + std::to_string(typeCount) + "].color", color);
+	objectShader->setVec3fv("spotLight[" + std::to_string(typeCount) + "].ambient", ambient);
+	objectShader->setVec3fv("spotLight[" + std::to_string(typeCount) + "].diffuse", diffuse);
+	objectShader->setVec3fv("spotLight[" + std::to_string(typeCount) + "].specular", specular);
 }

@@ -86,15 +86,13 @@ protected:
 	int& numPointLights;
 	int& numSpotLights;
 
-	Shader*& objectShader;
-
 	int currentSelect = 0;
 
 public:
-	LightProperties(const char*, std::vector<Light*>&, int&, int&, int&, Shader*&);
+	LightProperties(const char*, std::vector<Light*>&, int&, int&, int&);
 	virtual ~LightProperties() {};
 
-	void updateLightUniforms();
+	void updateLightUniforms(Shader*&);
 	void show();
 };
 

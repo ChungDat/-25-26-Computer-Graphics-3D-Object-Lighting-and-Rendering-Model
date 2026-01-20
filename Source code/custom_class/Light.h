@@ -125,7 +125,7 @@ public:
 
 	virtual void draw(Shader& shader, const float deltaTime) = 0;
 
-	virtual void updateObjectShader(Shader& shader, unsigned int typeCount) const = 0;
+	virtual void updateObjectShader(Shader*& shader, unsigned int typeCount) const = 0;
 };
 
 class DirectionalLight : public Light {
@@ -160,7 +160,7 @@ public:
 
 	void draw(Shader& shader, const float deltaTime) override;
 
-	void updateObjectShader(Shader& shader, unsigned int typeCount) const override;
+	void updateObjectShader(Shader*& shader, unsigned int typeCount) const override;
 };
 
 class PointLight : public Light {
@@ -212,7 +212,7 @@ public:
 
 	void draw(Shader& shader, const float deltaTime) override;
 
-	void updateObjectShader(Shader& objectShader, unsigned int typeCount) const override;
+	void updateObjectShader(Shader*& objectShader, unsigned int typeCount) const override;
 };
 
 class SpotLight : public PointLight {
@@ -261,5 +261,5 @@ public:
 
 	void draw(Shader& shader, const float deltaTime) override;
 
-	void updateObjectShader(Shader& shader, unsigned int typeCount) const override;
+	void updateObjectShader(Shader*& shader, unsigned int typeCount) const override;
 };

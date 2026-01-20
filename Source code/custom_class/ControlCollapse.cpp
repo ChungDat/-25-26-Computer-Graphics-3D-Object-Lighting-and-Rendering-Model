@@ -174,10 +174,10 @@ void ObjectProperties::show() {
 	}
 }
 
-LightProperties::LightProperties(const char* _label, std::vector<Light*>& _lightList, int& _numDirLights, int& _numPointLights, int& _numSpotLights, Shader*& _objectShader)
-	: ControlCollapse(_label), lightList(_lightList), numDirLights(_numDirLights), numPointLights(_numPointLights), numSpotLights(_numSpotLights), objectShader(_objectShader) {}
+LightProperties::LightProperties(const char* _label, std::vector<Light*>& _lightList, int& _numDirLights, int& _numPointLights, int& _numSpotLights)
+	: ControlCollapse(_label), lightList(_lightList), numDirLights(_numDirLights), numPointLights(_numPointLights), numSpotLights(_numSpotLights) {}
 
-void LightProperties::updateLightUniforms() {
+void LightProperties::updateLightUniforms(Shader*& objectShader) {
 	objectShader->use();
 
 	// extract world-space light position, attributes and upload to objectShader
@@ -185,14 +185,14 @@ void LightProperties::updateLightUniforms() {
 	int n_DirLight = 0, n_SpotLight = 0, n_PointLight = 0;
 	for (int i = 0; i < lightList.size(); i++) {
 		if (DirectionalLight* s = dynamic_cast<DirectionalLight*>(lightList[i])) {
-			s->updateObjectShader(*objectShader, n_DirLight++);
+			s->updateObjectShader(objectShader, n_DirLight++);
 		}
 		// SpotLight is derived from PointLight -> CHECK THIS FIRST
 		else if (SpotLight* s = dynamic_cast<SpotLight*>(lightList[i])) {
-			s->updateObjectShader(*objectShader, n_SpotLight++);
+			s->updateObjectShader(objectShader, n_SpotLight++);
 		}
 		else if (PointLight* s = dynamic_cast<PointLight*>(lightList[i])) {
-			s->updateObjectShader(*objectShader, n_PointLight++);
+			s->updateObjectShader(objectShader, n_PointLight++);
 		}
 	}
 	

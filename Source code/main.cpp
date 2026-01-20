@@ -252,7 +252,7 @@ int main() {
 	LightCollapse lightCollapse = LightCollapse("Add Light", lightList, numDirLights, numPointLights, numSpotLights);
 	ObjectCollapse objectCollapse = ObjectCollapse("Add Object", objectList, numObjects);
 	ObjectProperties objectProperties = ObjectProperties("Object Properties", objectList, numObjects);
-	LightProperties lightProperties = LightProperties("Light Properties", lightList, numDirLights, numPointLights, numSpotLights, objectShader);
+	LightProperties lightProperties = LightProperties("Light Properties", lightList, numDirLights, numPointLights, numSpotLights);
 	Settings settings = Settings("Settings", flashLight, axis, boxRoom, objectShader, shaderModel, shaderList, currentRasterizationMode);
 
 	// render loop
@@ -338,17 +338,16 @@ int main() {
 
 		// draw light object
 		// -----------------
+
+		lightShader.use();
 		for (int i = 0; i < lightList.size(); i++) {
 			lightList[i]->draw(lightShader, deltaTime);
 		}
-
-		// extract world-space light position and upload to objectShader
-		// -------------------------------------------------------------
 		flashLight->setPosition(camera.Position);
 		flashLight->setDirection(camera.Front);
 
-		lightProperties.updateLightUniforms();
-		flashLight->updateObjectShader(*objectShader, numSpotLights++);
+		lightProperties.updateLightUniforms(objectShader);
+		flashLight->updateObjectShader(objectShader, numSpotLights++);
 
 		objectShader->setInt("numDirLights", numDirLights);
 		objectShader->setInt("numPointLights", numPointLights);
@@ -356,9 +355,8 @@ int main() {
 
 		// draw simple object;
 		// -------------------
-		for (unsigned int i = 0; i < objectList.size(); i++) {
-			//float angle = 20.f * i;
-			//cubeList[i].setRotation(glm::vec3(angle * 0.2f, angle * 0.5f, angle * 0.8f));
+		objectShader->use();
+		for (int i = 0; i < objectList.size(); i++) {
 			objectList[i]->draw(objectShader);
 		}
 
