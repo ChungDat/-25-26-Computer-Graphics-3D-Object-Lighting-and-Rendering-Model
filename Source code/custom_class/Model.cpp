@@ -7,6 +7,11 @@ std::vector<Mesh> Backpack::meshes = std::vector<Mesh>();
 std::vector<ModelTexture> Backpack::textures_loaded = std::vector<ModelTexture>();
 std::string Backpack::directory = std::string();
 
+bool Chair::initialized = false;
+std::vector<Mesh> Chair::meshes = std::vector<Mesh>();
+std::vector<ModelTexture> Chair::textures_loaded = std::vector<ModelTexture>();
+std::string Chair::directory = std::string();
+
 Model::Model() : Object() {}
 
 Model::~Model() {}
@@ -253,7 +258,7 @@ std::string Backpack::getType() const {
 void Backpack::initBuffers() {
 	if (initialized) return;
 
-	loadModelTo("backpack/backpack.obj", meshes, textures_loaded, directory);
+	loadModelTo("assimp/backpack/backpack.obj", meshes, textures_loaded, directory);
 	
 	initialized = true;
 }
@@ -271,5 +276,40 @@ void Backpack::draw(Shader*& shader) {
 }
 
 void Backpack::draw(Shader*& shader, bool isShadowMapping) {
+	drawFrom(shader, meshes);
+}
+
+Chair::Chair() : Model() {
+	initBuffers();
+	scale = glm::vec3(0.2f, 0.2f, 0.2f);
+}
+
+Chair::~Chair() {}
+
+std::string Chair::getType() const {
+	return "Chair";
+}
+
+void Chair::initBuffers() {
+	if (initialized) return;
+
+	loadModelTo("assimp/chair/modern chair.obj", meshes, textures_loaded, directory);
+
+	initialized = true;
+}
+
+unsigned int Chair::getVAO() {
+	return 0;
+}
+
+unsigned int Chair::getVertexCount() const {
+	return 0;
+}
+
+void Chair::draw(Shader*& shader) {
+	drawFrom(shader, meshes);
+}
+
+void Chair::draw(Shader*& shader, bool isShadowMapping) {
 	drawFrom(shader, meshes);
 }

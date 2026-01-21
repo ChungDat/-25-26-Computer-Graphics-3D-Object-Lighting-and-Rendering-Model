@@ -22,7 +22,6 @@
 #include "custom_class/Object.h"
 #include "custom_class/Light.h"
 #include "custom_class/Axis.h"
-#include "custom_class/Container.h"
 #include "constants.h"
 
 // standard
@@ -122,29 +121,17 @@ int main() {
 
 	// initial position for objects
 	// ----------------------------
-	//glm::vec3 initPositions[] = {
-	//	glm::vec3(0.0f,  0.0f,  0.0f),
-	//	glm::vec3(2.0f,  5.0f, -15.0f),
-	//	glm::vec3(-1.5f, -2.2f, -2.5f),
-	//	glm::vec3(-3.8f, -2.0f, -12.3f),
-	//	glm::vec3(2.4f, -0.4f, -3.5f),
-	//	glm::vec3(-1.7f,  3.0f, -7.5f),
-	//	glm::vec3(1.3f, -2.0f, -2.5f),
-	//	glm::vec3(1.5f,  2.0f, -2.5f),
-	//	glm::vec3(1.5f,  0.2f, -1.5f),
-	//	glm::vec3(-1.3f,  1.0f, -1.5f)
-	//};
 	glm::vec3 initPositions[] = {
 		glm::vec3(0.0f,  0.0f,  0.0f),
-		glm::vec3(0.0f,  0.0f,  2.0f),
-		glm::vec3(0.0f,  0.0f,  4.0f),
-		glm::vec3(0.0f,  0.0f,  6.0f),
-		glm::vec3(0.0f,  0.0f,  8.0f),
-		glm::vec3(0.0f,  0.0f,  10.0f),
-		glm::vec3(0.0f,  0.0f,  12.0f),
-		glm::vec3(0.0f,  0.0f,  14.0f),
-		glm::vec3(0.0f,  0.0f,  16.0f),
-		glm::vec3(0.0f,  0.0f,  18.0f)
+		glm::vec3(2.0f,  5.0f, -15.0f),
+		glm::vec3(-1.5f, -2.2f, -2.5f),
+		glm::vec3(-3.8f, -2.0f, -12.3f),
+		glm::vec3(2.4f, -0.4f, -3.5f),
+		glm::vec3(-1.7f,  3.0f, -7.5f),
+		glm::vec3(1.3f, -2.0f, -2.5f),
+		glm::vec3(1.5f,  2.0f, -2.5f),
+		glm::vec3(1.5f,  0.2f, -1.5f),
+		glm::vec3(-1.3f,  1.0f, -1.5f)
 	};
 
 	glm::vec3 lightPositions[] = {
@@ -206,20 +193,16 @@ int main() {
 	// create objects
 	std::vector<Object*> objectList = {
 		new Cube(),
-		new Cube(),
-		new Cube(),
-		new Cube(),
-		new Cube(),
-		new Cube(),
-		new Cube(),
+		new Pyramid(),
+		new Pyramid(),
+		new Sphere(),
+		new Sphere(),
+		new Cylinder(),
+		new Cylinder(),
 		new Cube(),
 		new Cube(),
 		new Cube()
 	};
-
-	// assimp model
-	Backpack* backpackModel = new Backpack();
-	objectList.push_back(backpackModel);
 
 	// create lights
 	SpotLight* flashLight = new SpotLight(depthMapFBO);
@@ -251,13 +234,13 @@ int main() {
 			objectList[i]->setPosition(initPositions[i]);
 	}
 
-	backpackModel->setScale(glm::vec3(0.5, 0.5, 0.5));
-
+	boxRoom.disable();
 	boxRoom.setScale(glm::vec3(30.0f));
 	boxRoom.setDiffuse(glm::vec3(0.5f));
 	boxRoom.setSpecular(glm::vec3(0.5f));
 	boxRoom.setAlbedo(glm::vec3(1.0f));
 
+	surface.disable();
 	surface.setScale(glm::vec3(60.0f, 0.0f, 60.0f));
 	boxRoom.setDiffuse(glm::vec3(0.5f));
 	boxRoom.setSpecular(glm::vec3(0.5f));
@@ -399,6 +382,7 @@ int main() {
 		glCullFace(GL_BACK);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glActiveTexture(GL_TEXTURE0);
 		glViewport(0, 0, WIDTH, HEIGHT);
 
 		// 2. render scene

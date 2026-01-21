@@ -84,3 +84,24 @@ public:
 	void draw(Shader*&);
 	void draw(Shader*&, bool);
 };
+
+class Chair : public Model {
+protected:
+	static bool initialized;
+	static std::vector<Mesh> meshes;
+	static std::vector<ModelTexture> textures_loaded;
+	static std::string directory;
+
+	void initBuffers() override;
+	unsigned int getVAO() override;
+	unsigned int getVertexCount() const override;
+
+public:
+	Chair();
+	virtual ~Chair();
+
+	std::string getType() const override;
+
+	void draw(Shader*&);
+	void draw(Shader*&, bool);
+};
