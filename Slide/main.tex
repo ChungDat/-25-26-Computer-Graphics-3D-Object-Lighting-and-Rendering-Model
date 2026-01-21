@@ -79,9 +79,10 @@
 \section{Giới thiệu}
 \subsection{Bối cảnh}
 \begin{frame}{Bối cảnh}
-	Đồ họa máy tính là lĩnh vực kết hợp giữa khoa học máy tính và quang học, đã phát triển từ giữa thế kỷ 20 thành một công nghệ nền tảng cho nhiều ngành công nghiệp hiện đại.\\
+	Đồ họa máy tính là một lĩnh vực khoa học liên ngành, hình thành từ sự kết hợp giữa khoa học máy tính, quang học và toán học, bắt đầu phát triển mạnh mẽ từ giữa thế kỷ XX. Trải qua nhiều giai đoạn phát triển, đồ họa máy tính đã trở thành công nghệ nền tảng cho nhiều lĩnh vực quan trọng như thiết kế công nghiệp, kiến trúc, y sinh, mô phỏng khoa học, trò chơi điện tử, điện ảnh và thực tế ảo.\\
 	
-	Mục tiêu của đồ hoạ máy tính là nhằm \textbf{mô phỏng thế giới thực vào không gian hai chiều trên màn hình} và có thể giao tiếp với người dùng thông qua các thiết bị tương tác. Nền tảng của lĩnh vực này là hai khái niệm cốt lõi: mô hình chiếu sáng (Lighting Models) và kết xuất đối tượng (Object Rendering).
+	Mục tiêu cốt lõi của đồ họa máy tính là mô phỏng và biểu diễn thế giới thực trong không gian số, chủ yếu dưới dạng hai chiều hoặc ba chiều, đồng thời cho phép người dùng quan sát và tương tác với các đối tượng thông qua các thiết bị nhập xuất. Nền tảng của đồ họa máy tính hiện đại dựa trên hai khái niệm cốt lõi là
+	mô hình chiếu sáng (Lighting Models) và kết xuất đối tượng (Object Rendering).
 \end{frame}
 
 \begin{frame}{Bối cảnh}
@@ -131,27 +132,26 @@
 \end{frame}
 
 \begin{frame}{Thập niên 1970 - Các mô hình thực nghiệm}
-	Giai đoạn này tập trung vào các mô hình thực nghiệm được thiết kế để tạo ra hình ảnh "hợp lý" với chi phí tính toán tối thiểu. \pause \\
+	Giai đoạn đầu của đồ họa máy tính hiện đại tập trung vào việc xây dựng các mô hình thực nghiệm nhằm tạo ra hình ảnh có tính thuyết phục thị giác với chi phí tính toán tối thiểu. \pause \\
 	Các công trình tiêu biểu làm nền tảng:
 	\begin{itemize}
 		\item Gouraud Shading
 		\item Phong Reflectance Model và Phong Shading
 		\item Blinn-Phong Reflectance Model
 	\end{itemize} \pause
-	Các kĩ thuật được sử dụng được dựa trên quan sát thay vì các nguyên tắc vật lý và hiện thực hoá bằng các mô hình xấp xỉ.
+	Mặc dù không mang tính chính xác vật lý, các mô hình này có ảnh hưởng sâu rộng và vẫn được sử dụng trong nhiều hệ thống kết xuất thời gian thực nhờ tính đơn giản và hiệu quả.
 \end{frame}
 
 \begin{frame}{Thập niên 1980 - Cách mạng dựa trên vật lý}
-	\textit{Phương trình kết xuất (The Rendering Equation)} được giới thiệu vào năm 1986 đã đặt nền móng cho hầu hết các trình kết xuất quang thực (photorealistic) hiện đại. \pause \\
-	Các công trình dựa trên \textit{Phương trình kết xuất}:
-	\begin{itemize}
-		\item Radiosity
-		\item Kết xuất dựa trên vật lý (Physically Based Rendering - PBR)
-	\end{itemize}
+	Từ thập niên 1980, trọng tâm nghiên cứu dần chuyển sang việc mô phỏng sự tương tác ánh sáng toàn cục trong cảnh, hay còn gọi là chiếu sáng toàn cục (global illumination).
+	
+	Một cột mốc quan trọng là sự ra đời của \textit{Hàm phân phối phản xạ hai chiều} (Bidirectional Reflectance Distribution Function -- BRDF) vào năm 1982, cung cấp một khung toán học tổng quát để mô tả cách ánh sáng phản xạ trên bề mặt vật thể.
+	
+	Tiếp đó, \textit{Phương trình kết xuất} (The Rendering Equation) được giới thiệu năm 1986 đã thống nhất nhiều hiện tượng chiếu sáng trong một biểu thức toán học duy nhất, trở thành nền tảng lý thuyết cho hầu hết các thuật toán kết xuất quang thực hiện đại.
 \end{frame}
 
 \begin{frame}{Thập niên 2010 - Mô hình dựa trên học sâu}
-	Trong thập kỷ qua, học sâu đã nổi lên không chỉ để tăng tốc các quy trình kết xuất truyền thống mà còn để định nghĩa lại chúng. Gần đây hơn, một lĩnh vực mới gọi là kết xuất thần kinh (Neural Rendering) đã xuất hiện, sử dụng các mạng nơ-ron để tổng hợp hình ảnh từ đầu.
+	Trong thập niên gần đây, học sâu đã trở thành một hướng tiếp cận quan trọng, không chỉ nhằm tăng tốc các quy trình kết xuất truyền thống mà còn để tái định nghĩa bản chất của quá trình kết xuất.
 \end{frame}
 
 \begin{frame}{Thập niên 2010 - Mô hình dựa trên học sâu}
@@ -177,12 +177,16 @@
 
 \subsection{Động lực nghiên cứu}
 \begin{frame}{Động lực nghiên cứu}
-	Dù đồ họa máy tính hiện đại đã đạt đến mức quang thực đáng kinh ngạc, đủ sức đánh lừa thị giác con người trong nhiều bối cảnh, các cải tiến công nghệ vẫn không chưa dừng lại. Các thiết bị giao tiếp ngày càng mạnh mẽ hơn, trong khi đó chi phí sản xuất thiết bị giảm nhanh chóng. Đồ hoạ máy tính dễ dàng tiếp cận hơn, kỳ vọng của người dùng cũng tăng theo \cite{principles}.\\
-	Chính sự phát triển của mô phỏng thế giới thực là nền tảng cho sự phát triển của nhiều ngành công nghiệp khác:
+	Mặc dù đồ họa máy tính hiện đại đã đạt đến mức độ quang thực rất cao, quá trình cải tiến công nghệ trong lĩnh vực này vẫn chưa dừng lại.
+	
+	Năng lực tính toán của các thiết bị phần cứng ngày càng tăng, trong khi chi phí sản xuất liên tục giảm, khiến đồ họa máy tính trở nên dễ tiếp cận hơn đối với cả nhà phát triển lẫn người dùng cuối. Song song với đó, kỳ vọng của người dùng về chất lượng hình ảnh, mức độ chân thực và khả năng tương tác cũng không ngừng gia tăng.
+	
+	Điều này tạo ra một động lực mạnh mẽ thúc đẩy nghiên cứu và phát triển các mô hình chiếu sáng và kỹ thuật kết xuất ngày càng chính xác và hiệu quả hơn.
+
 \end{frame}
 
 \begin{frame}{Động lực nghiên cứu}
-	\textbf{Giải trí và truyền thông:} Trong ngành công nghiệp điện ảnh và trò chơi điện tử, cải thiện trải nghiệm đắm chìm (Immersive Experience) của người dùng là mục tiêu của mọi công ty nhằm thu hút khách hàng mới. Các trò chơi có thể hiển thị hàng triệu đa giác mỗi giây, và các kỹ xảo được sử dụng trong phim điện ảnh đã quá thực tế và không thể dễ dàng phân biệt với các tài nguyên được tạo dựng thủ công \cite{principles_1990}. Các kỹ thuật kết xuất tiên tiến, đặc biệt là dò tia thời gian thực (Real-time Ray Tracing), cho phép tạo ra các hiệu ứng phản xạ, bóng đổ, và chiếu sáng toàn cục phức tạp, mang lại trải nghiệm chân thực và hấp dẫn hơn.
+	\textbf{Giải trí và truyền thông:} Trong ngành công nghiệp điện ảnh và trò chơi điện tử, tiêu chuẩn về chất lượng hình ảnh và mức độ đắm chìm của người dùng ngày càng cao. Việc nâng cao trải nghiệm nhập vai và cảm giác hiện diện trong không gian ảo trở thành mục tiêu then chốt để thu hút và giữ chân người dùng. Các kỹ thuật kết xuất tiên tiến, đặc biệt là dò tia thời gian thực, cho phép mô phỏng phản xạ, bóng đổ và chiếu sáng toàn cục phức tạp, góp phần nâng cao đáng kể tính chân thực và sức hấp dẫn của nội dung số.
 \end{frame}
 
 \begin{frame}{Động lực nghiên cứu}
@@ -194,7 +198,7 @@
 \end{frame}
 
 \begin{frame}{Động lực nghiên cứu}
-	\textbf{Kỹ thuật, kiến trúc và thiết kế:} Một mô hình chiếu sáng chính xác về mặt vật lý cho phép các kiến trúc sư đánh giá các nguồn tự nhiên trong một công trình vào các thời điểm khác nhau trong ngày, cho phép họ đưa ra các quyết định chính xác hơn. Các bản vẽ kỹ thuật có thể tận dụng mô hình chiếu sáng và kết xuất đối tượng để mô phỏng sản phẩm, giúp tiết kiệm chi phí và thời gian tạo mẫu thử nghiệm.
+	\textbf{Kỹ thuật, kiến trúc và thiết kế:} Các mô hình chiếu sáng có độ chính xác vật lý cao cho phép kiến trúc sư và kỹ sư đánh giá tác động của ánh sáng tự nhiên và nhân tạo trong các công trình ở những điều kiện khác nhau. Nhờ đó, các quyết định thiết kế có thể được đưa ra dựa trên mô phỏng đáng tin cậy thay vì chỉ dựa vào kinh nghiệm. Trong thiết kế công nghiệp, việc kết xuất đối tượng với vật liệu và ánh sáng chân thực giúp mô phỏng sản phẩm trước khi chế tạo, góp phần giảm chi phí và thời gian cho các giai đoạn thử nghiệm.
 \end{frame}
 
 \begin{frame}{Động lực nghiên cứu}
@@ -242,16 +246,18 @@
 \end{frame}
 
 \begin{frame}{Động lực nghiên cứu}
-	\textbf{Khoa học:} Trong y học, kỹ thuật kết xuất thể tích (Volume Rendering) giúp các bác sĩ tái tạo các cấu trúc bên trong cơ thể từ các dữ liệu 2 chiều như CT/MRI. Trong các ngành khoa học khác, việc trực quan hoá các dữ liệu phức tạp đòi hỏi các mô hình chiếu sáng có khả năng làm nổi bật các chi tiết hình học có kích thước nhỏ.
+	\textbf{Khoa học:} Trong lĩnh vực y học, các kỹ thuật như kết xuất thể tích cho phép tái tạo và quan sát các cấu trúc bên trong cơ thể từ dữ liệu hai chiều như CT hoặc MRI, hỗ trợ chẩn đoán và lập kế hoạch điều trị. Trong các ngành khoa học khác, việc trực quan hóa các tập dữ liệu phức tạp đòi hỏi các mô hình chiếu sáng có khả năng làm nổi bật những chi tiết hình học nhỏ hoặc các cấu trúc khó quan sát, từ đó giúp nhà nghiên cứu hiểu rõ hơn bản chất của hiện tượng được mô phỏng.
 \end{frame}
 
 \subsection{Ý nghĩa khoa học}
 \begin{frame}{Ý nghĩa khoa học}
-	Phương trình kết xuất của Kajiya tuy là nền móng cho các trình kết xuất hiện đại nhưng lại không có lời giải trong hầu hết các trường hợp phức tạp. Do đó, việc phát triển các thuật toán số hiệu quả để giải phương trình này vẫn là một lĩnh vực nghiên cứu tích cực.
+	Phương trình kết xuất do Kajiya đề xuất là nền tảng lý thuyết cho hầu hết các trình kết xuất hiện đại, tuy nhiên phương trình này không có lời giải giải tích trong hầu hết các trường hợp thực tế phức tạp. Do đó, việc phát triển các thuật toán số hiệu quả nhằm xấp xỉ lời giải của phương trình kết xuất, chẳng hạn như \textit{Vận chuyển ánh sáng Metropolis} (Metropolis Light Transport) hay \textit{Ước tính mật độ photon tiến bộ} (Progressive Photon Mapping), vẫn là một hướng nghiên cứu tích cực và có ý nghĩa lâu dài.
 \end{frame}
 
 \begin{frame}{Ý nghĩa khoa học}
-	Sự phát triển của các kỹ thuật như NeRF mở ra một hướng đi hoàn toàn mới. Thay vì mô phỏng vật lý một cách tường minh, các mô hình này học một biểu diễn ngầm của cảnh từ dữ liệu. Với xu hướng phát triển trí tuệ nhân tạo khả diễn giải (xAI), đã thúc đẩy việc tìm hiểu các giới hạn và khả năng của những biểu diễn ngầm này: Làm thế nào để đảm bảo chúng tuân thủ các định luật vật lý? Qua đó các mạng nơ-ron có thể đề xuất phương pháp để cải thiện cách mô phỏng ánh sáng trong biểu diễn 3 chiều.
+	Sự phát triển của các kỹ thuật như NeRF mở ra một hướng đi hoàn toàn mới. Thay vì mô phỏng vật lý một cách tường minh, các mô hình này học một biểu diễn ngầm của cảnh từ dữ liệu. 
+	
+	Với xu hướng phát triển trí tuệ nhân tạo khả diễn giải (xAI), đã thúc đẩy việc tìm hiểu các giới hạn và khả năng của những biểu diễn ngầm này. Các câu hỏi đặt ra bao gồm việc làm thế nào để đảm bảo các mô hình học máy tuân thủ các định luật vật lý, cũng như khả năng sử dụng mạng nơ-ron để đề xuất các phương pháp mới nhằm cải thiện việc mô phỏng ánh sáng trong không gian ba chiều.
 \end{frame}
 
 \subsection{Ý nghĩa thực tiễn}
@@ -265,72 +271,58 @@
 
 \subsection{Phát biểu bài toán}
 \begin{frame}{Phát biểu bài toán}
-	Bài toán tổng hợp hình ảnh trong đồ họa máy tính là quá trình biến đổi một mô tả toán học trừu tượng của một cảnh ba chiều thành một hình ảnh hai chiều quang thực. Mục tiêu cuối cùng là làm cho hình ảnh 2 chiều đầu ra trở nên không thể phân biệt được (hoặc càng giống càng tốt) với một bức ảnh chụp của một cảnh tương tự trong thế giới thực. Quá trình này có thể được phân tách thành hai bài toán con: định nghĩa Mô hình Chiếu sáng và thực thi quá trình Kết xuất Đối tượng.
+	Bài toán tổng hợp hình ảnh trong đồ họa máy tính có thể được mô tả như quá trình ánh xạ một mô tả toán học trừu tượng của một cảnh ba chiều sang một biểu diễn hai chiều dưới dạng hình ảnh số. Mục tiêu của quá trình này là tạo ra một hình ảnh đầu ra có mức độ chân thực cao, sao cho trong giới hạn nhận thức thị giác của con người, hình ảnh đó không thể hoặc khó phân biệt với một bức ảnh chụp của một cảnh tương tự trong thế giới thực.
 \end{frame}
 
 \begin{frame}{Phát biểu bài toán}
-	Mô hình chiếu sáng là một hàm toán học, được ký hiệu là \boldmath$f$, có nhiệm vụ mô tả sự tương tác của ánh sáng tới với một điểm trên bề mặt vật thể. Nó xác định lượng bức xạ (radiance) được phản xạ hoặc tán xạ từ điểm đó theo một hướng quan sát cụ thể. \\
-	
-	Quá trình kết xuất đối tượng là một thuật toán hoặc một hệ thống, ký hiệu là \boldmath$R$, nhận vào một mô tả cảnh hoàn chỉnh và tạo ra một hình ảnh 2D cuối cùng. Thuật toán này sử dụng mô hình chiếu sáng \boldmath$f$ như một thành phần cốt lõi để xác định màu sắc của từng điểm ảnh. \\
+	Mô hình chiếu sáng là một mô hình toán học, ký hiệu là $\textbf{f}$, mô tả cách ánh sáng tương tác với vật chất tại một điểm trên bề mặt vật thể. Cụ thể, với một điểm bề mặt $p$, hàm $\textbf{f}$ nhận vào thông tin hình học, vật liệu, chiếu sáng và hướng quan sát, và trả về lượng bức xạ hoặc giá trị màu được phản xạ từ điểm $p$ theo hướng quan sát đó. Do đó, $\textbf{f}$ quyết định màu sắc cục bộ tại từng điểm nhìn thấy trong cảnh.
 \end{frame}
+
+\begin{frame}{Phát biểu bài toán}
+	Quá trình kết xuất đối tượng là một thuật toán hoặc một hệ thống, ký hiệu là $\textbf{R}$, có nhiệm vụ tổng hợp hình ảnh hai chiều cuối cùng từ một mô tả cảnh hoàn chỉnh. Hàm kết xuất $\textbf{R}$ đóng vai trò là cơ chế toàn cục, chịu trách nhiệm tổ chức và thực thi việc đánh giá hàm $\textbf{f}$ trên toàn bộ cảnh. Hàm $\textbf{R}$ xác định, đối với mỗi điểm ảnh trên mặt phẳng ảnh, điểm tương ứng trên bề mặt các đối tượng trong cảnh, cũng như các điều kiện quan sát và chiếu sáng cần thiết. Trên cơ sở đó, $\textbf{R}$ gọi và tổng hợp kết quả của hàm $\textbf{f}$ để tính toán giá trị màu cuối cùng cho từng điểm ảnh.
+\end{frame}
+
 
 \begin{frame}{Phát biểu bài toán}
 	\textbf{Input:} Một mô tả cảnh ba chiều (3D Scene Description) hoàn chỉnh dưới dạng dữ liệu số. Dữ liệu này bao gồm:
 	\begin{enumerate}
-		\item Hình học (Geometry - G): Hình dạng và vị trí của tất cả các đối tượng trong không gian.
-		\item Vật liệu (Materials - M): Các thuộc tính bề mặt của mỗi đối tượng, xác định cách chúng tương tác với ánh sáng.
-		\item Chiếu sáng (Lighting - L): Vị trí, màu sắc, và cường độ của tất cả các nguồn sáng.
-		\item Camera - C: Vị trí và hướng của người quan sát (hoặc camera ảo), xác định góc nhìn của cảnh sẽ được kết xuất.
+		\item \textbf{Hình học (Geometry -- $G$):} Mô tả hình dạng, vị trí và cấu trúc không gian của các đối tượng trong cảnh.
+		\item \textbf{Vật liệu (Materials -- $M$):} Các tham số bề mặt xác định đặc tính phản xạ và tán xạ ánh sáng của mỗi đối tượng.
+		\item \textbf{Chiếu sáng (Lighting -- $L$):} Mô tả các nguồn sáng trong cảnh, bao gồm vị trí, phổ năng lượng và cường độ.
+		\item \textbf{Camera (Camera -- $C$):} Vị trí, hướng và các tham số quang học của camera ảo, xác định góc nhìn và miền quan sát của cảnh.
 	\end{enumerate}
 \end{frame}
 
 \begin{frame}{Phát biểu bài toán}
 	\textbf{Output:} Một hình ảnh hai chiều. Mỗi điểm ảnh (pixel) trên hình ảnh 2 chiều này chứa một giá trị màu, là kết quả của việc mô phỏng cách ánh sáng từ các nguồn sáng trong cảnh tương tác với các vật thể và cuối cùng đi đến "cảm biến" của camera ảo.\\
-	\begin{center}
-		\begin{math}
-			x_{ij} = f(G, M, L, C)\\
-			Output = R(X) \quad X=\{x_{ij} | i, j \in O\}\\
-		\end{math}
-	\end{center}
+	\begin{gather*}
+		x_{ij} = \textbf{f}(p_{ij}, G, M, L, C), \\
+		Output = \textbf{R}(X), \quad X = \{ x_{ij} \mid i, j \in \Omega \},
+	\end{gather*}
 \end{frame}
 
 \begin{frame}{Framework bài toán}
 	\begin{enumerate}
-		\item \textbf{Thiết lập Không gian:} Mô tả cảnh 3D đầu vào và thiết lập một hệ quy chiếu nhất quán:
-		\begin{itemize}
-			\item \textbf{Xác định điểm nhìn:} Thiết lập vị trí và hướng của camera, giới hạn phần không gian sẽ được hiển thị.
-			
-			\item \textbf{Biến đổi Hình học (Geometric Transformation):} Sắp xếp tất cả các đối tượng và camera vào một hệ quy chiếu chung. Điều này bao gồm các thao tác di chuyển, xoay, và thay đổi kích thước các đối tượng từ không gian mô hình riêng của chúng vào một không gian thế giới (world space) thống nhất.
-		\end{itemize}
+		\item \textbf{Thiết lập không gian và hệ quy chiếu:} Xây dựng mô tả cảnh ba chiều và thiết lập các hệ tọa độ cần thiết, bao gồm không gian mô hình, không gian thế giới và không gian camera.
 		
+		\item \textbf{Xác định miền quan sát:} Thiết lập vị trí và hướng của camera, đồng thời xác định những phần của cảnh có khả năng đóng góp vào hình ảnh cuối cùng.
+		
+		\item \textbf{Ánh xạ hình học và phép chiếu:} Thực hiện các phép biến đổi hình học và phép chiếu nhằm ánh xạ các đối tượng từ không gian ba chiều sang miền hình ảnh hai chiều.
 	\end{enumerate}
 \end{frame}
 
 \begin{frame}{Framework bài toán}
 	\begin{enumerate}
-		\item \textbf{Tính toán Chiếu sáng và Tô bóng (Lighting and Shading Calculation):} Đây là công đoạn Mô hình Chiếu sáng được áp dụng. Sau khi xác định được bề mặt nhìn thấy tại mỗi pixel, hệ thống sẽ tính toán màu sắc của điểm đó. Kết quả là giá trị màu cuối cùng cho pixel đó.
+		\item \textbf{Tính toán chiếu sáng và tô bóng:} Áp dụng mô hình chiếu sáng để tính toán lượng bức xạ đóng góp vào mỗi điểm ảnh, có thể bao gồm các hiệu ứng như bóng đổ, phản xạ, khúc xạ và chiếu sáng toàn cục.
 		
-		\item \textbf{Chiếu (Projection)}: Sau khi cảnh được định vị tương đối so với camera, công đoạn này thực hiện phép chiếu để biến đổi các tọa độ 3D thành tọa độ 2D. Quá trình này mô phỏng cách mắt người hoặc ống kính máy ảnh hoạt động, tạo ra hiệu ứng phối cảnh (perspective) nơi các vật thể ở xa trông nhỏ hơn các vật thể ở gần. Các vật thể không được nhìn thấy sẽ được loại bỏ.
-		
-		\item \textbf{Tổng hợp hình ảnh (Image Synthesis:)} Các kết quả tính toán màu sắc được thu thập và sắp xếp để tạo thành hình ảnh 2D hoàn chỉnh. Các bước hậu xử lý được thực hiện để đảm bảo hình ảnh hiển thị một cách chính xác trên các thiết bị đầu ra.
+		\item \textbf{Tổng hợp và hậu xử lý hình ảnh:} Thu thập các giá trị màu đã tính toán để tạo thành hình ảnh hai chiều hoàn chỉnh, đồng thời thực hiện các bước hiệu chỉnh cần thiết cho thiết bị hiển thị.
 	\end{enumerate}
-\end{frame}
-
-
-\subsection{Đóng góp}
-\begin{frame}{Đóng góp}
-	\begin{itemize}
-		\item Các công trình về Mô hình Chiếu sáng và Kết xuất Đối tượng được xây dựng trên một di sản phong phú của các công trình học thuật kéo dài nhiều thập kỷ. Các đóng góp nền tảng có thể được phân loại thành ba làn sóng chính: Các mô hình thực nghiệm thiết lập các nguyên tắc cơ bản cho đồ họa thời gian thực; Cuộc cách mạng dựa trên vật lý đặt ra tiêu chuẩn cho sự quang thực; Sự phát triển của các phương pháp kết xuất thần kinh định nghĩa lại cách chúng ta có thể tổng hợp các cảnh từ dữ liệu quan sát.
-		
-		\item Trong bối cảnh đó, đóng góp chính của báo cáo này không nằm ở việc giới thiệu một thuật toán mới, mà là cung cấp một sự tổng hợp, phân tích và so sánh có cấu trúc nhằm làm sáng tỏ mối liên hệ và sự phát triển giữa các phương pháp đa dạng này.
-	\end{itemize}
 \end{frame}
 
 \section{Các công trình nghiên cứu liên quan}
 \subsection{Mô hình chiếu sáng}
 \begin{frame}{Mô hình chiếu sáng}
-	Trong thế giới thực, ánh sáng là các photon di chuyển theo tia trong không gian và phân tán trên bề mặt các vật. Sinh vật có thể nhìn thấy một vật do ánh sáng từ các nguồn sáng (Mặt trời, đèn đường, ...) chiếu đến vật, vật hấp thụ một phần ánh sáng và phản xạ phần còn lại vào mắt. Trong mắt có các tế bào thụ cảm ánh sáng (photoreceptors) chuyển đổi ánh sáng thành tín hiệu điện hoá, gửi đến não để tạo ra hình ảnh thị giác.\\
-%	Trong đồ hoạ máy tính, các mô hình chiếu sáng mô phỏng nguồn sáng thực bằng việc biểu diễn mức độ năng lượng chiếu qua một điểm trong không gian \cite{principles}. Các mô hình phản xạ (reflectance model) sẽ dựa vào các biểu diễn toán học này để tính toán mối quan hệ tương đối giữa các vật liệu và nguồn sáng khác nhau. \cite{1982_a_reflectance_model}.
+	Trong thế giới vật lý, ánh sáng có thể được xem như dòng năng lượng điện từ lan truyền trong không gian và tương tác với vật chất thông qua các quá trình hấp thụ, phản xạ và tán xạ. Con người quan sát được các vật thể là nhờ ánh sáng từ các nguồn phát xạ tự nhiên hoặc nhân tạo chiếu tới bề mặt vật thể, sau đó một phần năng lượng được phản xạ về phía mắt, thông qua các tế bào thụ cảm ánh sáng (photoreceptor) chuyển đổi ánh sáng thành tín hiệu điện hoá, gửi đến não để tạo ra hình ảnh thị giác.
 \end{frame}
 
 \begin{frame}{Mô hình chiếu sáng}
@@ -341,21 +333,31 @@
 
 \begin{frame}{Mô hình chiếu sáng}
 	\textbf{Nguồn sáng hình học - Geometric Light}\\
-	Nguồn sáng hình học là nguồn sáng được đặt trong cảnh và có sự suy giảm độ sáng phụ thuộc khoảng cách giữa nguồn sáng và mặt phẳng phản chiếu\cite{principles_1990}.
+	Nguồn sáng hình học là các nguồn sáng được gán một vị trí cụ thể trong cảnh ba chiều. Cường độ ánh sáng phát ra từ các nguồn này suy giảm theo khoảng cách tới bề mặt được chiếu sáng, phản ánh quy luật lan truyền năng lượng trong không gian.
+	
+	Về mặt toán học, các nguồn sáng hình học thường được đặc trưng bởi:
+	\begin{itemize}
+		\item Vị trí không gian $p_i$.
+		\item Cường độ phát xạ $I_i$.
+		\item Hàm suy giảm theo khoảng cách \textit{attenuation} $f_{att}(r)$.
+	\end{itemize}
 \end{frame}
 
 
 \begin{frame}{Nguồn sáng hình học}
 	\textbf{Nguồn sáng điểm - Point Light}\\
-	Nguồn sáng điểm được đặt trong cảnh và chiếu sáng theo mọi hướng, mô phỏng nguồn sáng như bóng đèn điện \cite{principles_1990}.\\
-	\begin{center}
-		\begin{math}
-			I_o(x) = I_i * f_{att}(r) * max(0, n \cdot l)\\
-			f_{att}(r) = \frac{1}{k_c + k_l * r + k_q * r^2}\\
-			l = \frac{(p_i - x)}{||p_i - x||}
-			
-		\end{math}
-	\end{center}
+	Nguồn sáng điểm là mô hình đơn giản nhất của nguồn sáng hình học, trong đó ánh sáng được phát ra đồng đều theo mọi hướng từ một điểm trong không gian. Mô hình này thường được sử dụng để xấp xỉ các nguồn sáng nhỏ như bóng đèn.
+	
+	Đóng góp ánh sáng tại một điểm bề mặt $x$ được tính như sau:
+	\begin{gather*}
+		I_o(x) = I_i * f_{att}(r) * max(0, n \cdot l)
+	\end{gather*}
+	trong đó:
+	\begin{gather*}
+		f_{att}(r) = \frac{1}{k_c + k_l * r + k_q * r^2}, \quad
+		l = \frac{(p_i - x)}{||p_i - x||}
+	\end{gather*}
+	với $r = ||p_i - x||, n$ là vector pháp tuyến bề mặt tại $x$, và các hệ số $k_c, k_l, k_q$ điều chỉnh mức suy giảm cường độ theo khoảng cách.
 \end{frame}
 
 \begin{frame}{Nguồn sáng hình học}
@@ -373,22 +375,21 @@
 
 \begin{frame}{Nguồn sáng hình học}
 	\textbf{Nguồn sáng chiếu điểm - Spot Light}\\
-	Nguồn sáng chiếu điểm là nguồn sáng điểm, với giới hạn chiếu nằm trong một hình nón, mô phỏng nguồn sáng như đèn pha \cite{principles_1990}.
-	\begin{center}
-		\begin{math}
-			I_o(x) = I_i * f_{att}(r) * f_{spot}(\theta) * max(0, n \cdot l)\\
-			f_{spot}(\theta) =
-			\begin{cases}
-				1 \qquad cos\theta \ge cos\theta_{in}\\
-				\frac{cos \theta - cos \theta_{out}}{cos \theta_{in} - cos \theta_{out}} \qquad cos \theta_{out} < cos \theta < cos \theta_{in}\\
-				0 \qquad cos(\theta) \le cos(\theta_{out})
-			\end{cases}\\
-			\vfill
-			l = \frac{(p_i - x)}{||p_i - x||}\\
-			cos \theta = l \cdot (-d)\\
-			
-		\end{math}
-	\end{center}
+	Nguồn sáng chiếu điểm mở rộng mô hình nguồn sáng điểm bằng cách giới hạn vùng chiếu sáng trong một hình nón, mô phỏng các nguồn sáng có hướng rõ ràng như đèn pha hoặc đèn sân khấu.
+	
+	Công thức chiếu sáng được mở rộng thêm một hàm góc:
+	\begin{gather*}
+		I_o(x) = I_i * f_{att}(r) * f_{spot}(\theta) * max(0, n \cdot l)\\
+		f_{spot}(\theta) =
+		\begin{cases}
+			1 \qquad cos\theta \ge cos\theta_{in},\\
+			\frac{cos \theta - cos \theta_{out}}{cos \theta_{in} - cos \theta_{out}} \qquad cos \theta_{out} < cos \theta < cos \theta_{in},\\
+			0 \qquad cos(\theta) \le cos(\theta_{out})
+		\end{cases}\\
+		l = \frac{(p_i - x)}{||p_i - x||}\\
+		cos \theta = l \cdot (-d)
+	\end{gather*}
+	trong đó $d$ là vector hướng phát sáng từ nguồn sáng.
 \end{frame}
 
 \begin{frame}{Nguồn sáng hình học}
@@ -408,19 +409,22 @@
 
 \begin{frame}{Mô hình chiếu sáng}
 	\textbf{Nguồn sáng phi hình học - Non-Geometry Light}\\
-	Nguồn sáng phi hình học là nguồn sáng không có vị trí trong cảnh, ánh sáng phát ra không từ một điểm cụ thể trong cảnh và có độ sáng không đổi đến tất cả các mặt phẳng phản chiếu trong cảnh \cite{principles_1990}.
+	Nguồn sáng phi hình học là các mô hình chiếu sáng không được gán vị trí cụ thể trong cảnh, có độ sáng không đổi đến tất cả các mặt phẳng phản chiếu trong cảnh.
 \end{frame}
 
 \begin{frame}{Nguồn sáng phi hình học}
 	\textbf{Nguồn sáng định hướng - Directional Light}\\
-	Nguồn sáng định hướng được mô hình hoá dựa trên một mặt trời ở khoảng cách vô hạn. Đây là mô hình cho trường hợp nguồn sáng điểm được đặt ở khoảng cách vô hạn, nghĩa là các tia sáng từ nguồn sáng này được xem như các tia chiếu song song \cite{principles_1990}, mô phỏng ánh sáng từ mặt trời.
-	\begin{center}
-		\begin{math}
-			I_o(x) = I_i * max(0, n \cdot l)\\
-			l = -d\\
-			||d|| = 1
-		\end{math}
-	\end{center}
+	Nguồn sáng định hướng mô phỏng một nguồn sáng ở khoảng cách vô hạn, điển hình là mặt trời. Trong mô hình này, tất cả các tia sáng được giả định là song song và có cùng cường độ tại mọi điểm trong cảnh.
+	
+	Đóng góp ánh sáng được tính như:
+	\begin{gather*}
+		I_o(x) = I_i * max(0, n \cdot l)
+	\end{gather*}
+	với:
+	\begin{gather*}
+		l = -d, \quad
+		||d|| = 1
+	\end{gather*}
 \end{frame}
 
 \begin{frame}{Nguồn sáng phi hình học}
@@ -436,7 +440,7 @@
 		% --- LEFT COLUMN ---
 		\begin{column}{0.4\textwidth}
 			\textbf{Nguồn sáng môi trường - Ambient Light}\\
-			Nguồn sáng môi trường là một lượng ánh sáng được chiếu lên tất cả bề mặt, không phụ thuộc vào hướng và khoảng cách. Nguồn sáng môi trường giúp loại bỏ các vùng "thuần tối" (pure black) ở các bề mặt hướng ra xa nguồn sáng \cite{principles_1990}.
+			Nguồn sáng môi trường là một mô hình xấp xỉ nhằm biểu diễn ánh sáng gián tiếp từ môi trường xung quanh. Nó cung cấp một lượng chiếu sáng đồng đều lên mọi bề mặt, không phụ thuộc vào hướng hay vị trí, nhằm tránh các vùng tối hoàn toàn trong cảnh, thường ở các bề mặt hướng ra xa khỏi nguồn sáng.
 		\end{column}
 		
 		% --- RIGHT COLUMN ---
@@ -451,7 +455,7 @@
 
 \begin{frame}{Nguồn sáng phi hình học}
 	\textbf{Nguồn sáng phát xạ - Emissive Light}\\
-	Nguồn sáng phát xạ được sử dụng để mô tả các bề mặt có khả năng tự phát sáng nhưng không phải một nguồn sáng đúng nghĩa, cho phép bề mặt "phản xạ" ánh sáng ảo dù không tồn tại nguồn sáng trong cảnh \cite{principles_1990}, mô phỏng các vật thể tự phát sáng.
+	Nguồn sáng phát xạ mô tả các bề mặt có khả năng tự phát sáng nhưng không phải một nguồn sáng đúng nghĩa, cho phép bề mặt "phản xạ" ánh sáng ảo dù không tồn tại nguồn sáng trong cảnh, mô phỏng các vật thể tự phát sáng như đèn neon.
 
 	\begin{center}
 		\includegraphics[height=0.35\textheight]{imagens/emission.jpg}
@@ -577,7 +581,7 @@
 
 \subsubsection{Mô hình thực nghiệm}
 \begin{frame}{Flat Shading}
-	\textbf{Nguyên lý:} Với vật thể được biểu diễn bằng một lưới hình học (mesh), xem mỗi đa giác trong lưới là một mặt phẳng độc lập. Màu sắc tại đa giác là một màu đồng nhất được tính toán dựa trên góc hợp bởi vector pháp tuyến của đa giác và vector hướng tới nguồn sáng\cite{principles}.\\
+	\textbf{Nguyên lý:} Với vật thể được biểu diễn bằng một lưới hình học (mesh), xem mỗi đa giác trong lưới là một mặt phẳng độc lập. Màu sắc tại đa giác là một màu đồng nhất được tính toán dựa trên góc hợp bởi vector pháp tuyến của đa giác và vector hướng tới nguồn sáng.\\
 	\begin{center}
 		\includegraphics[height=0.3\linewidth]{imagens/sphere_1.png}
 	\end{center}
@@ -612,7 +616,7 @@
 \end{frame}
 
 \begin{frame}{Gouraud Shading}
-	\textbf{Nguyên lý:} Với vật thể được biểu diễn bằng một lưới hình học (mesh), xem mỗi đa giác trong lưới là một mặt phẳng độc lập. Màu sắc tại cạnh đa giác được nội suy từ các đỉnh đa giác, màu sắc tại các pixel bên trong đa giác được nội suy từ giao điểm giữa đường quét và cạnh đa giác\cite{gouraud2}.
+	\textbf{Nguyên lý:} Với vật thể được biểu diễn bằng một lưới hình học (mesh), xem mỗi đa giác trong lưới là một mặt phẳng độc lập. Màu sắc tại cạnh đa giác được nội suy từ các đỉnh đa giác, màu sắc tại các pixel bên trong đa giác được nội suy từ giao điểm giữa đường quét và cạnh đa giác.
 	\begin{center}
 		\includegraphics[height=0.3\linewidth]{imagens/sphere_1.png}
 		\includegraphics[height=0.3\linewidth]{imagens/sphere_1_zoom.png}
@@ -621,14 +625,12 @@
 
 \begin{frame}{Gouraud Shading}
 	\textbf{Phương pháp:}\\
-%	Tại mỗi đỉnh, tồn tại một vector pháp tuyến $\vec{N}$, được tính bằng trung bình của các pháp tuyến của các mặt chung đỉnh.\\
-	\begin{center}
-		\begin{math}
-			\vec{N^*} = \frac{1}{m} \sum_{i=1}^{m} \vec{N_i} \quad \quad \vec{N} = \frac{\vec{N^*}}{||\vec{N^*}||}\\
-			I_v = k * I_l * max(0, \vec{N^*} \cdot \vec{L})
-		\end{math}
-	\end{center}
-%	
+	Tại mỗi đỉnh, tồn tại một vector pháp tuyến $\vec{N}$, được tính bằng trung bình của các pháp tuyến của các mặt chung đỉnh.
+	\begin{gather*}
+		\vec{N^*} = \frac{1}{m} \sum_{i=1}^{m} \vec{N_i}, \quad \quad \vec{N} = \frac{\vec{N^*}}{||\vec{N^*}||}\\
+		I_v = k * I_l * max(0, \vec{N^*} \cdot \vec{L})
+	\end{gather*}
+
 	Với:\\
 	- $\vec{N_i}$ là vector pháp tuyến đơn vị của bề mặt đa giác $i$.\\
 	- $\vec{N}$ là vector pháp tuyến đơn vị trung bình tại đỉnh đang xét.\\
@@ -639,7 +641,7 @@
 \end{frame}
 
 \begin{frame}{Gouraud Shading}
-%	Tại mỗi dòng quét cắt qua đa giác, cường độ màu tại các giao điểm trên các cạnh của đa giác được nội suy tuyến tính từ màu của các đỉnh tương ứng.\\
+	Tại mỗi dòng quét cắt qua đa giác, cường độ màu tại các giao điểm trên các cạnh của đa giác được nội suy tuyến tính từ màu của các đỉnh tương ứng.\\
 	\begin{center}
 		\begin{math}
 			I_i = t * I_A + (1 - t) * I_B \quad t \in [0; 1]
@@ -650,7 +652,7 @@
 	- $I_i$ là cường độ ánh sáng tại một điểm trên cạnh nối giữa đỉnh A và B.\\
 	- $I_A, I_B$ là cường độ ánh sáng tại hai đỉnh A và B.\\
 %	
-%	Tại mỗi pixel trên dòng quét nằm bên trong đa giác, cường độ màu được nội suy từ màu của các giao điểm trên cạnh.\\
+	Tại mỗi pixel trên dòng quét nằm bên trong đa giác, cường độ màu được nội suy từ màu của các giao điểm trên cạnh.\\
 	\begin{center}
 		\begin{math}
 			I_j = t * I_1 + (1 - t) * I_2 \quad t \in (0; 1)
@@ -711,18 +713,14 @@
 \end{frame}
 
 \begin{frame}{Phong Shading}
-	\textbf{Nguyên lý:} Mô hình Phong xấp xỉ ánh sáng phản xạ từ một điểm trên bề mặt thành ba thành phần độc lập: Môi trường (Ambient), Khuếch tán (Diffuse), và Phản xạ gương (Specular)\cite{phong2}.
+	\textbf{Nguyên lý:} Mô hình Phong xấp xỉ ánh sáng phản xạ từ một điểm trên bề mặt thành ba thành phần độc lập: Môi trường (Ambient), Khuếch tán (Diffuse), và Phản xạ gương (Specular).
 \end{frame}
 
 \begin{frame}{Phong Shading}
 	\begin{center}
-%		\includegraphics[width=\linewidth]{imagens/diffuse-vs-specular.png}
 		\includegraphics[width=\linewidth]{imagens/specular_vs_diffuse.png}
 	\end{center}
 \end{frame}
-
-%\item \textbf{Phản xạ gương (Specular Reflection):} Xảy ra ngay tại bề mặt phân cách giữa không khí và vật liệu. Nó chịu trách nhiệm cho các điểm sáng (highlights) và bị ảnh hưởng mạnh bởi độ nhám bề mặt.
-%\item \textbf{Phản xạ khuếch tán (Diffuse Reflection):} Xảy ra do tán xạ bên trong (internal scattering) hoặc phản xạ nhiều lần trên bề mặt thô. Ánh sáng xâm nhập vào vật liệu, tán xạ và thoát ra theo mọi hướng.
 
 \begin{frame}{Phong Shading}
 	\begin{center}
@@ -740,12 +738,10 @@
 	\textbf{Phương pháp:}
 		\textit{Xử lý đỉnh}\\
 %		Tại mỗi đỉnh, tồn tại một vector pháp tuyến $\vec{N}$, được tính bằng trung bình của các pháp tuyến của các mặt chung đỉnh.\\
-		\begin{center}
-			\begin{math}
-				\vec{\hat{N}} = \frac{1}{m} \sum_{i=1}^{m} \vec{N_i} \quad \quad \vec{N^*} = \frac{\vec{\hat{N}}}{||\vec{\hat{N}}||}\\
-				I_v = k * I_l * max(0, \vec{N} \cdot \vec{L})
-			\end{math}
-		\end{center}
+		\begin{gather*}
+			\vec{\hat{N}} = \frac{1}{m} \sum_{i=1}^{m} \vec{N_i}, \quad \quad \vec{N^*} = \frac{\vec{\hat{N}}}{||\vec{\hat{N}}||}\\
+			I_v = k * I_l * max(0, \vec{N} \cdot \vec{L})
+		\end{gather*}
 		
 %		
 		Với:\\
@@ -767,13 +763,13 @@
 	\textit{Tính toán chiếu sáng}\\
 %	Tại mỗi mảnh, mô hình Phong được áp dụng và tính toán cường độ sáng.\\
 \begin{center}
-	\begin{math}
-		\vec{R^*} = 2 * (\vec{L} \cdot \vec{N}) * \vec{N} - \vec{L} \quad \quad \quad \vec{R} = \frac{\vec{R^*}}{||\vec{R^*}||}\\
+	\begin{gather*}
+		\vec{R^*} = 2 * (\vec{L} \cdot \vec{N}) * \vec{N} - \vec{L}, \quad \quad \quad \vec{R} = \frac{\vec{R^*}}{||\vec{R^*}||}\\
 		Ambient = k_a * I_a\\
 		Diffuse = k_d * I_d * max(0, \vec{N} \cdot \vec{L})\\
 		Specular = k_s * I_s * max(0, \vec{R} \cdot \vec{V})^n\\
 		I = Ambient + Diffuse + Specular
-	\end{math}
+	\end{gather*}
 \end{center}
 %	
 	Với:\\
@@ -785,12 +781,12 @@
 	- $\vec{V}$ là vector đơn vị từ vị trí của mảnh đến camera.
 \end{frame}
 
-%\begin{frame}{Phong Shading}
-%	\begin{center}
-%		\includegraphics[height=0.4\linewidth]{imagens/phong_1.png}\\
-%		\cite{phong2}
-%	\end{center}
-%\end{frame}
+\begin{frame}{Phong Shading}
+	\begin{center}
+		\includegraphics[height=0.4\linewidth]{imagens/phong_1.png}\\
+		\cite{phong2}
+	\end{center}
+\end{frame}
 
 \begin{frame}{Phong Shading}
 	\textbf{Đóng góp:} Tô bóng Phong tạo ra các đốm sáng phản xạ gương mượt mà và chính xác hơn nhiều. Mô hình đã trở thành tiêu chuẩn trong nhiều thập kỷ cho cả đồ họa thời gian thực và ngoại tuyến.\\
@@ -802,24 +798,19 @@
 
 \begin{frame}{Blinn-Phong Shading}
 	\textbf{Phương pháp:} Tương tự mô hình của Phong\\
-%	\begin{enumerate}
-%		\item Tính toán chiếu sáng\\
-		Tại thành phần phản xạ gương, thay thế vector phản xạ $\vec{R}$ bằng vector nửa góc (Halfway vector) $\vec{H}$.\\
-		\begin{center}
-			\begin{math}
-				\vec{H} = \frac{\vec{L} + \vec{V}}{||\vec{L} + \vec{V}||}\\
-				Specular = k_s * I_s * max(0, \vec{R} \cdot \vec{V})^n\\
-			\end{math}
-		\end{center}
-%		
-%		Với:\\
-%		- $k_s$ là hệ số phản xạ gương tương ứng với thành phần ánh sáng.\\
-%		- $I_s$ là cường độ của thành phần ánh sáng.\\
-%		- $\vec{L}$ là vector đơn vị chỉ hướng từ mảnh đang xét đến nguồn sáng.\\
-%		- $\vec{R}$ là vector đơn vị phản xạ hướng chiếu sáng.\\
-%		- $\vec{V}$ là vector đơn vị từ vị trí của mảnh đến camera.\\
-%		- $\vec{H}$ là vector đơn vị nửa góc.
-%	\end{enumerate}
+
+	Tại thành phần phản xạ gương, thay thế vector phản xạ $\vec{R}$ bằng vector nửa góc (Halfway vector) $\vec{H}$.\\
+	\begin{gather*}
+		\vec{H} = \frac{\vec{L} + \vec{V}}{||\vec{L} + \vec{V}||}\\
+		Specular = k_s * I_s * max(0, \vec{R} \cdot \vec{V})^n
+	\end{gather*}
+	Với:\\
+	- $k_s$ là hệ số phản xạ gương tương ứng với thành phần ánh sáng.\\
+	- $I_s$ là cường độ của thành phần ánh sáng.\\
+	- $\vec{L}$ là vector đơn vị chỉ hướng từ mảnh đang xét đến nguồn sáng.\\
+	- $\vec{R}$ là vector đơn vị phản xạ hướng chiếu sáng.\\
+	- $\vec{V}$ là vector đơn vị từ vị trí của mảnh đến camera.\\
+	- $\vec{H}$ là vector đơn vị nửa góc.
 \end{frame}
 
 \begin{frame}{Blinn-Phong Shading}
@@ -841,11 +832,11 @@
 \begin{frame}{Phương trình kết xuất}
 	\textbf{Phương pháp:}\\
 	Phương trình có dạng tích phân Fredholm loại thứ hai:\\
-	\begin{center}
-		\begin{math}
+	\begin{gather*}
 			L_o(x, \omega_o) = L_e(x, \omega_o) + \int_\Omega f_r(x, \omega_i, \omega_o) * L_i(x, \omega_i)(n \cdot \omega_i) d\omega_i\\
 			L_o \approx L_e + \frac{1}{N} \Sigma_{k=1}^N \frac{f_r(x, \omega_k, \omega_o) * L_i(\omega_k)(n \cdot \omega_i) d\omega_i}{p(\omega_k)}
-		\end{math}\\
+	\end{gather*}
+	\begin{center}
 		\includegraphics[width=0.5\linewidth]{imagens/rendering_equa1.png}
 	\end{center}
 \end{frame}
@@ -924,12 +915,145 @@
 	Nguyên lý cốt lõi của mô hình Cook-Torrance dựa trên quang học hình học (ray theory) và mô hình vi bề mặt (microfacet model).
 \end{frame}
 
-\section{Lý thuyết Vi bề mặt}
+\subsection{Lý thuyết Vi bề mặt}
 \begin{frame}{Lý thuyết Vi bề mặt}
-	Mô hình giả định rằng một bề mặt thô nhám (rough surface) được cấu tạo từ vô số các mặt phẳng gương siêu nhỏ gọi là các vi bề mặt (microfacets). 
+	Lý thuyết vi bề mặt giả định rằng một bề mặt thô nhám (rough surface) ở cấp độ vĩ mô thực chất được cấu tạo từ vô số các mặt phẳng gương siêu nhỏ gọi là các vi bề mặt (microfacets). Mỗi vi bề mặt này có pháp tuyến riêng và phản xạ ánh sáng theo định luật phản xạ gương lý tưởng. 
 	\begin{center}
 		\includegraphics[width=\linewidth]{imagens/microfacet.jpg}
 	\end{center}
+\end{frame}
+
+\begin{frame}{Lý thuyết Vi bề mặt}
+	Chỉ những vi bề mặt nào có vector pháp tuyến hướng đúng về phía vector nửa góc (halfway vector) giữa nguồn sáng và người quan sát mới đóng góp vào thành phần phản xạ gương nhìn thấy được.
+	\begin{gather*}
+		\mathbf{H} = \frac{\mathbf{L} + \mathbf{V}}{||\mathbf{L} + \mathbf{V}||}
+	\end{gather*}
+	trong đó, $\mathbf{L}$ là vector hướng nguồn sáng đơn vị và $\mathbf{V}$ là vector hướng người quan sát đơn vị.
+\end{frame}
+
+\subsection{Các thành phần của sự phản xạ}
+\begin{frame}{Các thành phần của sự phản xạ}
+	Dựa trên cơ chế tương tác ánh sáng với vật liệu, mô hình Cook--Torrance chia sự phản xạ thành hai thành phần chính:
+	
+	\begin{enumerate}
+		\item \textbf{Phản xạ gương (Specular Reflection):}\\
+		Xảy ra tại bề mặt phân cách giữa không khí và vật liệu. Thành phần này mô tả ánh sáng phản xạ trực tiếp từ các vi bề mặt theo định luật phản xạ gương. Nó chịu ảnh hưởng mạnh bởi độ nhám bề mặt và chiết suất của vật liệu, đồng thời tạo ra các điểm sáng đặc trưng (specular highlights).
+		
+		\item \textbf{Phản xạ khuếch tán (Diffuse Reflection):}\\
+		Xảy ra khi ánh sáng xâm nhập vào bên trong vật liệu, bị tán xạ nhiều lần và thoát ra ngoài theo nhiều hướng khác nhau. Thành phần này thường được giả định là khuếch tán đẳng hướng và ít phụ thuộc vào góc nhìn.
+	\end{enumerate}
+\end{frame}
+
+\subsection{Hàm phân bố phản xạ hai chiều - BRDF}
+\begin{frame}{Hàm phân bố phản xạ hai chiều - BRDF}
+	Hàm BRDF (Bidirectional Reflectance Distribution Function) là một mô hình toán học trung tâm trong kết xuất dựa trên vật lý, dùng để mô tả cách một bề mặt phản xạ ánh sáng tại một điểm xác định. BRDF thiết lập mối quan hệ giữa ánh sáng đi tới bề mặt từ một hướng cho trước và ánh sáng được phản xạ ra khỏi bề mặt theo một hướng quan sát cụ thể. Thông qua BRDF, các đặc tính quang học của vật liệu được mã hóa một cách độc lập với hình học cảnh và nguồn sáng.
+\end{frame}
+
+\begin{frame}{Hàm phân bố phản xạ hai chiều - BRDF}
+	\begin{gather*}
+		f_r(p, \omega_i, \omega_o) = \frac{dL_o(p, \omega_o)}{dE_i(p, \omega_i)}
+	\end{gather*}
+	
+	Trong đó:
+	\begin{itemize}
+		\item $p$ là điểm đang xét trên bề mặt.
+		\item $\omega_i$ là hướng ánh sáng tới.
+		\item $\omega_o$ là hướng ánh sáng phản xạ hay hướng quan sát.
+		\item $dL_o$ là độ chói phản xạ theo hướng $\omega_o$.
+		\item $dE_i$ là độ rọi do ánh sáng tới từ hướng $\omega_i$ gây ra.
+	\end{itemize}
+	
+	Độ rọi vi phân có thể được viết dưới dạng:
+	\begin{equation}
+		dE_i = L_i(p, \omega_i) (\mathbf{N} \cdot \omega_i) \, d\omega_i
+	\end{equation}
+\end{frame}
+
+\subsection{Phân rã thành các thành phần cơ bản}
+\begin{frame}{Phân rã thành các thành phần cơ bản}
+	Trong phần lớn các mô hình chiếu sáng và kết xuất, BRDF được phân tách thành hai thành phần chính:
+	\begin{gather*}
+		f_r = R_d + R_s
+	\end{gather*}
+	Trong đó:
+	\begin{itemize}
+		\item \textbf{Thành phần khuếch tán $R_d$ (Diffuse):} Mô tả sự tán xạ ánh sáng gần như đồng đều theo mọi hướng. Thành phần này thường gắn với các vật liệu điện môi, ánh sáng xâm nhập vào vật liệu, tán xạ nội tại và thoát ra ngoài. Mô hình Lambert là ví dụ đơn giản nhất của $R_d$.
+		
+		\item \textbf{Thành phần gương $R_s$ (Specular):} Mô tả sự phản xạ tập trung quanh hướng phản xạ gương lý tưởng. Thành phần này chịu trách nhiệm cho các vùng lóe sáng và phụ thuộc mạnh vào góc nhìn cũng như độ nhám vi mô của bề mặt. Các mô hình vi bề mặt như Cook–Torrance là những biểu diễn vật lý cho $R_s$.
+	\end{itemize}
+\end{frame}
+
+\subsection{Mô hình Cook-Torrance}
+\begin{frame}{Mô hình Cook-Torrance}
+	\begin{equation}
+		I_r = I_{ia}R_a + \sum_{l} I_{il} (\mathbf{N} \cdot \mathbf{L}_l) d\omega_{il} (sR_s + dR_d)
+	\end{equation}
+
+	\begin{itemize}
+		\item $I_{ia}$ là cường độ ánh sáng môi trường, $I_{il}$ là cường độ của nguồn sáng thứ $l$.
+		\item $R_a, R_s, R_d$ lần lượt là hệ số phản xạ môi trường, hệ số phản xạ gương hai chiều, hệ số phản xạ khuếch tán hai chiều.
+		\item $\mathbf{N}$ là vector pháp tuyến bề mặt đơn vị,  $\mathbf{L}_l$ là vector hướng tới nguồn sáng đơn vị thứ $l$.
+		\item $d\omega_{il}$ là góc khối của nguồn sáng, được xác định bởi:
+		\begin{equation}
+			d\omega_{il} = \frac{A}{r^2}
+		\end{equation}
+		với $A$ là diện tích bề mặt phát sáng và $r$ là khoảng cách tới điểm đang xét.
+		\item $s$ và $d$ là trọng số của thành phần gương và khuếch tán, thỏa mãn $s + d = 1$.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Mô hình Cook-Torrance}
+	\begin{equation}\label{eq:specular}
+		R_s = \frac{F(\mathbf{V} \cdot \mathbf{H})}{\pi} \frac{D(\mathbf{H})\,G(\mathbf{N}, \mathbf{H}, \mathbf{V}, \mathbf{L})}{(\mathbf{N} \cdot \mathbf{L})(\mathbf{N} \cdot \mathbf{V})}
+	\end{equation}
+	
+	Trong đó:
+	
+	\begin{itemize}
+		\item $D(\mathbf{H})$ là hàm phân bố vi bề mặt (Facet slope distribution), biểu diễn xác suất tồn tại của các vi bề mặt có pháp tuyến cùng hướng với $\mathbf{H}$. Hàm này đặc trưng cho độ nhám bề mặt.
+		\item $F(\mathbf{V}, \mathbf{H})$ là hệ số Fresnel, mô tả tỉ lệ ánh sáng bị phản xạ tại bề mặt phân cách, phụ thuộc vào góc tới và chiết suất của vật liệu.
+		\item $G(\mathbf{N}, \mathbf{H}, \mathbf{V}, \mathbf{L})$ là hệ số che khuất và che bóng, mô tả hiện tượng các vi bề mặt tự che khuất hoặc che bóng lẫn nhau.
+		\item $(\mathbf{N} \cdot \mathbf{L})(\mathbf{N} \cdot \mathbf{V})$ đảm bảo tính bảo toàn năng lượng và chuẩn hóa BRDF.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Mô hình Cook-Torrance}
+	\begin{equation}
+	D(\mathbf{H}) = \frac{1}{m^2 \cos^4 \alpha} \exp^{[-(\frac{\tan \alpha}{m})^2]}
+	\end{equation}
+	
+	Trong đó:
+	\begin{itemize}
+	\item $m$ là độ dốc trung bình bình phương (root mean square slope), đại diện cho mức độ nhám vi mô của bề mặt. Giá trị $m$ nhỏ tương ứng với bề mặt bóng, tập trung nhiều vi bề mặt quanh pháp tuyến trung bình. Giá trị $m$ lớn biểu thị bề mặt thô, với các vi bề mặt phân bố rộng theo nhiều hướng khác nhau.
+	\item $\alpha$ là góc giữa pháp tuyến trung bình $\mathbf{N}$ của bề mặt và vector nửa góc $\mathbf{H}$, với $\cos \alpha = \mathbf{N} \cdot \mathbf{H}$.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Mô hình Cook-Torrance}
+	\begin{equation}
+		G = \min \left\{
+		1,\;
+		\frac{2(\mathbf{N} \cdot \mathbf{H})(\mathbf{N} \cdot \mathbf{V})}{\mathbf{V} \cdot \mathbf{H}},\;
+		\frac{2(\mathbf{N} \cdot \mathbf{H})(\mathbf{N} \cdot \mathbf{L})}{\mathbf{V} \cdot \mathbf{H}}
+		\right\}
+	\end{equation}
+	\begin{equation}\label{eq:fresnel}
+		F = \frac{1}{2}
+		\left[
+		\left( \frac{g - c}{g + c} \right)^2
+		\left(
+		1 +
+		\left(
+		\frac{c(g + c) - 1}{c(g - c) + 1}
+		\right)^2
+		\right)
+		\right]
+	\end{equation}
+	Trong đó:
+	\begin{itemize}
+		\item $c = \cos \theta = \mathbf{V} \cdot \mathbf{H}$.
+		\item $g^2 = n^2 + c^2 - 1$.
+	\end{itemize}
 \end{frame}
 
 \section{Ứng dụng}
@@ -951,7 +1075,7 @@
 	\begin{itemize}
 		\item OpenGL 3.3: Một hệ thống đặc tả dùng để lập trình 2D và 3D. OpenGL cung cấp tập các hàm chuẩn để giao tiếp với GPU, cho phép lập trình viên điều khiển pipeline đồ họa, viết shader, và quản lý tài nguyên như buffer, texture và framebuffer.
 		\item GLFW: Thư viện hỗ trợ tạo cửa sổ và xử lý tương tác cho các ứng dụng OpenGL. GLFW chịu trách nhiệm quản lý cửa sổ, ngữ cảnh OpenGL (OpenGL context), cũng như xử lý các sự kiện bàn phím, chuột và thời gian.
-		\item GLAD: Thư viện tải hàm OpenGL (OpenGL function loader). GLAD đảm bảo chương trình có thể sử dụng đúng các hàm OpenGL mà driver GPU hỗ trợ.
+		\item GLAD: Thư viện hỗ trợ nạp các con trỏ hàm OpenGL, giúp chương trình tương tác với driver của card đồ họa để sử dụng các tính năng OpenGL hiện đại.
 		\item GLM: Thư viện toán học cho đồ họa máy tính, được thiết kế theo chuẩn của GLSL. GLM cung cấp các kiểu dữ liệu và phép toán cho vector, ma trận và các phép biến đổi hình học thường dùng trong đồ họa 3D.
 	\end{itemize}
 \end{frame}
@@ -964,256 +1088,176 @@
 \end{frame}
 
 \begin{frame}{Cài đặt}
-	\begin{columns}[T]
-		
-		% --- LEFT COLUMN ---
-		\begin{column}{0.5\textwidth}
-			
-			% TOP-LEFT CELL
-			\begin{center}
-				\includegraphics[width=0.4\linewidth]{imagens/vertex_processing.png}
-			\end{center}
-			
-		\end{column}
-		
-		% --- RIGHT COLUMN ---
-		\begin{column}{0.5\textwidth}
-			
-			% TOP-RIGHT CELL
-			\begin{center}
-				\includegraphics[height=0.4\textheight]{imagens/coordinate_systems.png}
-			\end{center}
-			
-		\end{column}
-		
-	\end{columns}
+	\textbf{Các chức năng chính}
 	
-	\begin{center}
+	Hệ thống cung cấp một môi trường tương tác với các chức năng:
+	\begin{enumerate}
+		\item \textbf{Quản lý Vật thể:} Cho phép thêm và thao tác với các vật thể cơ bản (khối lập phương, cầu, kim tự tháp, khối trụ...) hoặc các mô hình phức tạp được tải từ bên ngoài.
 		
-	\end{center}
+		\item \textbf{Hệ thống Ánh sáng:} Hỗ trợ khởi tạo và tùy chỉnh ba loại nguồn sáng cơ bản:
+		\begin{itemize}
+			\item \textit{Directional Light:} Ánh sáng định hướng (mô phỏng mặt trời).
+			
+			\item \textit{Point Light:} Ánh sáng điểm (mô phỏng bóng đèn).
+			
+			\item \textit{Spot Light:} Ánh sáng chiếu điểm (mô phỏng đèn pin/đèn sân khấu).
+		\end{itemize}
+		
+		\item \textbf{Chuyển đổi Mô hình Chiếu sáng:} Tính năng cốt lõi cho phép chuyển đổi tức thời giữa các shader: Phong, Blinn-Phong, Gouraud và Cook-Torrance để so sánh trực quan.
+		
+		\item \textbf{Chế độ Hiển thị:} Hỗ trợ các chế độ render khác nhau như khung dây (wireframe), điểm (point) và tô đặc (surface/fill).
+	\end{enumerate}
 \end{frame}
 	
+\begin{frame}{Cài đặt}
+	\textbf{Kiến trúc Đối tượng}
+	
+	\begin{description}
+		\item[Camera:] Quản lý ma trận quan sát (View Matrix) và ma trận chiếu (Projection Matrix), cho phép người dùng tự do di chuyển góc nhìn trong không gian 3D.
+		\item[Light:] Lớp trừu tượng hóa các nguồn sáng, lưu trữ các thuộc tính như vị trí, hướng, màu sắc, và các hệ số suy giảm (attenuation).
+		\item[Mesh \& Model:] Wrapper bao quanh thư viện Assimp, chịu trách nhiệm tải dữ liệu đỉnh (vertices), pháp tuyến (normals), và tọa độ vân (texture coordinates) từ file `.obj` và khởi tạo các bộ đệm OpenGL (VAO, VBO, EBO).
+		\item[Object:] Quản lý các vật thể hình học cơ bản (Primitive shapes) như hình cầu, hình trụ. Lớp này chứa các phương thức vẽ (draw) và thiết lập thuộc tính vật liệu.
+		\item[Shader:] Quản lý việc biên dịch, liên kết các shader program và truyền tải dữ liệu (uniforms) từ CPU sang GPU để tính toán ánh sáng.
+	\end{description}
+\end{frame}
 
 \begin{frame}{Cài đặt}
-	\begin{columns}[T]
-		% --- LEFT COLUMN ---
-		\begin{column}{0.5\textwidth}
-			\begin{center}
-				Khởi tạo hệ thống
-				\begin{itemize}
-					\item initWindow()
-					\item gladLoadGLLoader()
-					\item glEnable(GL\_DEPTH\_TEST)
-					\item ImGui::CreateContext()
-				\end{itemize}
-			\end{center}
-		\end{column}
-		
-		% --- RIGHT COLUMN ---
-		\begin{column}{0.5\textwidth}
-			\begin{center}
-				Lưu trữ đối tượng
-				\begin{itemize}
-					\item glGenVertexArrays(), glGenBuffers(), Assimp::Importer.ReadFile()
-					\item glDrawArrays(), glDrawElements()
-					\item createObject()
-				\end{itemize}
-			\end{center}
-		\end{column}
-	\end{columns}
-	
+	\textbf{Kiến trúc Đối tượng}
+	\begin{description}
+		\item[Shader:] Quản lý việc biên dịch, liên kết các shader program và truyền tải dữ liệu (uniforms) từ CPU sang GPU để tính toán ánh sáng.
+		\item[ControlCollapse:] Lớp quản lý logic giao diện người dùng (UI Manager). Đây là cầu nối giữa ImGui và các đối tượng trong cảnh, giúp đơn giản hóa việc điều chỉnh vị trí, màu sắc, texture và các thông số vật lý (như độ nhám, chỉ số khúc xạ) thông qua các thanh trượt và menu.
+		\item[Axis:] Đối tượng tiện ích hỗ trợ vẽ trục tọa độ và lưới nền (grid), giúp định vị không gian dễ dàng hơn.
+	\end{description}
 \end{frame}
-%
+
 \begin{frame}{Cài đặt}
-	\begin{columns}[T]
-		\begin{column}{0.5\textwidth}
-			\begin{center}
-				Phép biến đổi ma trận
-				\begin{itemize}
-					\item glm::scale(), glm::rotate(), glm::translate()
-					\item glm::lookAt()
-				\end{itemize}
-			\end{center}
-		\end{column}
+	\textbf{Hệ thống Shader}
+	\begin{itemize}
+		\item \textbf{Lighting Shaders (Phong, BlinnPhong, Gouraud, CookTorrance):} Các shader chính thực hiện thuật toán tô bóng tương ứng. Riêng shader CookTorrance được cài đặt đầy đủ các công thức tính toán $D, F, G$ như đã trình bày ở phần lý thuyết.
 		
-		\begin{column}{0.5\textwidth}
-			\begin{center}
-				Lưu trữ Shader và Texture
-				\begin{itemize}
-					\item glGenTextures(), glBindTexture();
-					\item glCreateShader(), glShaderSource(), glCompileShader()
-				\end{itemize}
-			\end{center}
-		\end{column}
-	\end{columns}
+		\item \textbf{Depth Shader:} Shader đặc biệt dùng để render cảnh từ góc nhìn của nguồn sáng vào một bộ đệm độ sâu (depth buffer), phục vụ cho kỹ thuật tạo bóng đổ (Shadow Mapping).
+		
+		\item \textbf{Axis Shader:} Shader đơn giản để vẽ các đường trục và lưới hỗ trợ.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Cài đặt}
+	\textbf{Luồng hoạt động của Chương trình}
 	
+	\begin{itemize}
+		\item \textbf{Khởi tạo (Initialization):} 
+		Thiết lập ngữ cảnh OpenGL và ImGui. Cấu hình các trạng thái toàn cục (như kiểm tra độ sâu - depth test, loại bỏ mặt - cull face) giúp tối ưu hoá quá trình tính toán shader. Khởi tạo camera, ánh sáng mặc định, tải shader và các mô hình vật thể vào bộ nhớ.
+		
+		\item \textbf{Vòng lặp chính (Main Loop):}
+		\begin{itemize}
+			\item \textit{Xử lý Input:} Nhận tín hiệu từ chuột/bàn phím để di chuyển camera.
+			
+			\item \textit{Tạo giao diện ImGui:} Vẽ các menu điều khiển và cập nhật giá trị biến dựa trên tương tác người dùng.
+			
+			\item \textit{Cập nhật Uniforms:} Truyền các thông số mới (vị trí đèn, độ nhám vật liệu, ma trận biến đổi) vào shader.
+		\end{itemize}
+	\end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Cài đặt}
-Vòng lặp chính
-\begin{lstlisting}[language=C++]
-	while (!windowClosed) {
-		processInput();
+\begin{frame}{Cài đặt}
+	\textbf{Luồng hoạt động của Chương trình}
+	
+	\begin{itemize}
+		\begin{itemize}
+			\item \textit{Bước 1 - Shadow Pass:} Render cảnh từ vị trí nguồn sáng để tạo Shadow Map (bản đồ bóng).
+			
+			\item \textit{Bước 2 - Render Scene:} Render cảnh từ góc nhìn camera sử dụng shader ánh sáng được chọn, kết hợp với Shadow Map để tính toán bóng đổ.
+			
+			\item \textit{Swap Buffers:} Hiển thị khung hình mới lên màn hình.
+		\end{itemize}
 		
-		model = updateModel();
-		view  = updateView();
-		
-		shader.use();
-		object.draw();
-		
-		GUI.draw();
-		
-		glfwSwapBuffers(window);
-		glfwPollEvents();
-	}
-\end{lstlisting}
+		\item \textbf{Kết thúc (Termination):} Giải phóng tài nguyên bộ nhớ (VAO, VBO, textures) và hủy ngữ cảnh GLFW/ImGui.
+	\end{itemize}
 \end{frame}
 
-%\section{Conclusion}
-%
+\begin{frame}{Các hàm và đối tượng bộ đệm được sử dụng trong OpenGL}
+	\begin{itemize}
+		\item \textbf{VAO (Vertex Array Object):} Đối tượng bao đóng cấu hình. Nó không chứa dữ liệu thực mà lưu trữ trạng thái về cách OpenGL nên đọc dữ liệu từ VBO (ví dụ: 3 số đầu là vị trí, 3 số sau là pháp tuyến). Hàm liên quan: \texttt{glGenVertexArrays}, \texttt{glBindVertexArray}.
+		\item \textbf{VBO (Vertex Buffer Object):} Bộ đệm chứa dữ liệu thô (raw data) của các đỉnh (vertices). Dữ liệu vị trí, pháp tuyến, và tọa độ texture được gửi từ RAM sang VRAM thông qua đối tượng này. Hàm liên quan: \texttt{glGenBuffers}, \texttt{glBufferData}.
+		\item \textbf{EBO (Element Buffer Object):} Bộ đệm lưu trữ danh sách các chỉ số (indices). Nó cho phép OpenGL tái sử dụng các đỉnh trùng lặp (ví dụ: các đỉnh chung của hai tam giác kề nhau), giúp tiết kiệm bộ nhớ và tối ưu hóa hiệu năng.
+		\item \textbf{FBO (Framebuffer Object):} Bộ đệm khung hình tùy chỉnh. Thay vì vẽ trực tiếp lên màn hình, chương trình vẽ vào FBO để thực hiện các kỹ thuật xử lý hậu kỳ hoặc tính toán trung gian.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Các hàm và đối tượng bộ đệm được sử dụng trong OpenGL}
+	\begin{itemize}
+		\item \texttt{glGenTextures} và \texttt{glBindTexture}: Tạo ID và kích hoạt đối tượng texture hiện hành.
+		\item \texttt{glTexImage2D}: Chuyển dữ liệu điểm ảnh (pixel data) từ CPU sang GPU để tạo thành texture 2D.
+		\item \texttt{glTexParameteri}: Thiết lập các tham số hiển thị, ví dụ như chế độ lặp lại (GL\_REPEAT) hoặc bộ lọc tuyến tính (GL\_LINEAR) khi phóng to/thu nhỏ texture.
+		\item \texttt{glActiveTexture}: Kích hoạt các đơn vị texture (Texture Units -\\ GL\_TEXTURE0, GL\_TEXTURE1...) để shader có thể đọc nhiều texture cùng lúc (ví dụ: vừa đọc Albedo map, vừa đọc Shadow map).
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Các hàm và đối tượng bộ đệm được sử dụng trong OpenGL}
+	\begin{itemize}
+		\item \texttt{glUseProgram}: Kích hoạt Shader Program cần sử dụng (ví dụ: chuyển từ Shader Phong sang Shader Cook-Torrance).
+		\item \texttt{glGetUniformLocation}: Lấy địa chỉ ID của biến uniform trong mã nguồn shader.
+		\item \textbf{Các hàm truyền dữ liệu:}
+		\begin{itemize}
+			\item \texttt{glUniform1f / 1i}: Truyền một giá trị thực (float) hoặc nguyên (int). Dùng để chỉnh các tham số như độ nhám ($m$), hệ số phản xạ ($s, d$).
+			\item \texttt{glUniform3fv}: Truyền vector 3 thành phần. Dùng cho màu sắc ánh sáng ($I_i$), vị trí camera ($V$), vị trí đèn ($L$).
+			\item \texttt{glUniformMatrix4fv}: Truyền ma trận 4x4. Dùng để cập nhật các ma trận biến đổi Model-View-Projection, giúp định vị vật thể trong không gian 3D.
+		\end{itemize}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Các hàm và đối tượng bộ đệm được sử dụng trong OpenGL}
+	\begin{itemize}
+		\item \texttt{glDrawArrays}: Vẽ các đỉnh trực tiếp từ VBO theo thứ tự tuyến tính. Thường dùng cho các hình đơn giản hoặc khi không dùng chỉ số (indices).
+		\item \texttt{glDrawElements}: Vẽ các đỉnh dựa trên danh sách chỉ số từ EBO. Đây là phương pháp tối ưu hơn và được sử dụng cho hầu hết các Mesh phức tạp (được nạp từ Assimp) trong chương trình.
+	\end{itemize}
+\end{frame}
+
+\section{Conclusion}
+\begin{frame}{Kết luận}
+	\textbf{Về mặt lý thuyết}
+	
+	Mô hình Cook-Torrance (1982) đánh dấu bước chuyển mình quan trọng từ các mô hình thực nghiệm (như Phong, Blinn) sang các mô hình dựa trên vật lý (Physically Based Rendering - PBR).
+	\begin{itemize}
+		\item \textbf{Tính chính xác vật lý:} Mô hình đã giải thích thành công cơ chế tương tác ánh sáng dựa trên lý thuyết vi bề mặt (microfacet theory) và quang học hình học. Việc đưa vào phương trình Fresnel giúp tái hiện chính xác sự thay đổi màu sắc và cường độ phản xạ tại các góc nhìn nghiêng (grazing angles).
+		\item \textbf{Phân loại vật liệu:} Lý thuyết đã chỉ ra sự khác biệt căn bản giữa kim loại (conductor) và phi kim (dielectric) thông qua thành phần phản xạ gương và khuếch tán, giải quyết vấn đề "trông giống nhựa" của các mô hình cũ.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Kết luận}
+	\textbf{Về mặt ứng dụng}
+	
+	Mặc dù ra đời từ năm 1982, các nguyên lý của Cook-Torrance vẫn là xương sống của đồ họa máy tính hiện đại.
+	\begin{itemize}
+		\item \textbf{Tiêu chuẩn hóa quy trình:} Sự chuyển dịch từ các tham số vật lý phức tạp ($n, k, m$) sang quy trình \textit{Metalness/Roughness} đã giúp thu hẹp khoảng cách giữa lý thuyết quang học và quy trình sáng tạo nghệ thuật trong công nghiệp game và điện ảnh.
+		\item \textbf{Nền tảng của PBR:} Mô hình đóng vai trò là hàm $f_r$ cốt lõi trong phương trình kết xuất tổng quát, cho phép tích hợp với các kỹ thuật chiếu sáng toàn cục và chiếu sáng dựa trên hình ảnh (IBL).
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Kết luận}
+	\textbf{Về chương trình cài đặt}
+	
+	Chương trình mô phỏng được xây dựng bằng C++ và OpenGL đã chứng minh tính khả thi và hiệu quả của mô hình:
+	\begin{itemize}
+		\item Chương trình cho phép so sánh trực quan thời gian thực (real-time) giữa Cook-Torrance và các mô hình kinh điển (Phong, Gouraud).
+		\item Kết quả hiển thị cho thấy sự vượt trội của Cook-Torrance trong việc tái tạo chất liệu kim loại và sự phân bố ánh sáng trên bề mặt nhám, đúng như dự đoán của lý thuyết.
+		\item Kiến trúc chương trình với sự hỗ trợ của shader lập trình được (GLSL) và giao diện ImGui đã tạo ra một công cụ linh hoạt để kiểm chứng các tham số vật lý.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Kết luận}
+	Tổng hợp lại, nghiên cứu này khẳng định vai trò tiên phong của mô hình Cook-Torrance trong việc định hình kỷ nguyên Đồ họa máy tính dựa trên vật lý. Việc chuyển đổi thành công từ các công thức quang học trừu tượng sang một chương trình mô phỏng tương tác thời gian thực đã minh chứng cho sức mạnh của việc kết hợp toán học, vật lý và khoa học máy tính. Mặc dù công nghệ phần cứng và thuật toán không ngừng thay đổi, nguyên lý cốt lõi về sự bảo toàn năng lượng và tương tác vi bề mặt được trình bày trong bài báo năm 1982 vẫn giữ nguyên giá trị, đóng vai trò là kim chỉ nam cho các thế hệ công cụ kết xuất hình ảnh siêu thực (photorealistic rendering engines) ngày nay và trong tương lai.
+\end{frame}
+
 %\section{Discussion}
 
 %----------------------------------------------
 
-% \section{Plans}
-% \begin{frame}{5. Plans}
-%     \begin{itemize}
-%         \item Deep reading, summarize key ideas for the report (all members).
-%         \item Write core theory sections, start coding implementation.
-%         \begin{itemize}
-%             \item Implementing base models (An).
-%             \item \href{https://github.com/AnhKhoa585/hopfield-npHard}{\textbf{NP-hard solver}} (Khoa).
-%             \item Associative Memory for Image Reconstruction (An).
-%             \item \textbf{\href{https://github.com/sabertoaster/HopfieldWordle}{Hopfield Wordle}} (Huy).
 
-%         \end{itemize}
-%         \item Run experiments, collect results (all members).
-%         \item Complete the report (Hong).
-%         \item Prepare presentation slides (all members).
-%         \item Record and edit 10–15 mins presentation video (all members).
-%         \item Review formatting, references, and finalize all files (all members).
-%     \end{itemize}
-% \end{frame}
-\section{Tài liệu tham khảo}
-\begin{frame}[allowframebreaks]{References}
-    \bibliography{./references}
-\end{frame}
+%\section{Tài liệu tham khảo}
+%\begin{frame}[allowframebreaks]{References}
+%    \bibliography{./references}
+%\end{frame}
 
-
-% \section{Conteúdo}
-
-% \begin{frame}{Definições, Teoremas, Corolários e Exemplos}
-%     \begin{block}{Definição 2.1.1}
-%     Aqui temos uma nova definição.
-%     \end{block}
-    
-%     \begin{block}{Teorema 2.1.2}
-%     Aqui temos um novo teorema.
-%     \end{block}
-    
-%     \begin{block}{Exemplo 2.1.3}
-%     Aqui temos um novo exemplo.
-%     \end{block}
-    
-%     \begin{block}{Corolário 2.1.4}
-%     Aqui temos um novo corolário.
-%     \end{block}
-% \end{frame}
-
-% \begin{frame}{Citações das Referências}
-%     Livro de Análise Real~\cite{lima2004analise}
-% \end{frame}
-
-% \begin{frame}{Listas}
-%     Exemplo de lista com símbolos:
-
-%     \begin{itemize}
-%         \item Primeiro elemento
-%         \item Segundo elemento
-%     \end{itemize}
-    
-%     \bigskip
-    
-%     Exemplo de lista com itens enumerados:
-    
-%     \begin{enumerate}
-%         \item Primeiro elemento
-%         \item Segundo elemento
-%     \end{enumerate}
-% \end{frame}
-
-% \begin{frame}{Tabelas}
-%     A Tabela mostra um modelo de tabela.
-
-%     \begin{table}[htb]
-%         \caption{Exemplo de tabela}
-%         \label{tab:modelo_tabela}
-%         \centering
-%         \begin{tabular}{c|c|c|c}
-% 	        \hline
-% 	        \textbf{Pessoa} & \textbf{Idade} & \textbf{Peso} & \textbf{Altura} \\ \hline
-% 	        Marcos & 26    & 68   & 178    \\ \hline
-% 	        Ivone  & 22    & 57   & 162    \\ \hline
-% 	        Sueli  & 40    & 65   & 153    \\ \hline
-%         \end{tabular}
-        
-%         \medskip
-        
-%         Fonte: Produção do próprio autor.
-%     \end{table}
-% \end{frame}
-
-% \begin{frame}{Imagens}
-%     A Figura mostra a logomarca promocional da Universidade Federal do Espírito Santo (UFES).
-    
-%     \begin{figure}[htb]
-%         \caption{Logomarca Promocional UFES}
-%         \label{fig:logo_UFES}
-%         \centering
-%         \includegraphics[width=0.5\textwidth]{imagens/logomarca_UFES}
-        
-%         \medskip
-        
-%         Fonte: Produção do próprio autor.
-%     \end{figure}
-% \end{frame}
-
-% \begin{frame}{Conclusão}
-%     Texto referente à conclusão.
-% \end{frame}
-
-% \begin{frame}{Trabalhos futuros}
-%     \begin{itemize}
-%         \item Estudar $\ldots$
-        
-%         \medskip
-        
-%         \item Explorar $\ldots$
-        
-%         \medskip
-        
-%         \item Analisar $\ldots$
-%     \end{itemize}
-% \end{frame}
-
-% \section{Referências}
-% \begin{frame}[allowframebreaks]{Referências}
-%     \bibliography{referencias}
-% \end{frame}
-
-% \begin{frame}
-
-% \begin{center}
-%     Obrigado!
-    
-%     \email
-% \end{center}
-
-% \begin{figure}[htb]
-%     \centering
-%     \includegraphics[width=0.5\textwidth]{imagens/logomarca_UFES}
-% \end{figure}
-
-% \end{frame}
 
 \end{document}
