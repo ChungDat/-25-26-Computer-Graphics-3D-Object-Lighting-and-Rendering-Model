@@ -155,7 +155,7 @@ public:
 
 class DirectionalLight : public Light {
 protected:
-	float distance = 20.0f;
+	float distance;
 
 public:
 	DirectionalLight(unsigned int& depthMapFBO);
@@ -207,7 +207,6 @@ public:
 	// ==============
 
 	// direction
-	void setPosition(const glm::vec3 _pos) override;
 	void setDirection(const float _pitch, const float _yaw) override;
 	void setDirection(const glm::vec3 _direction) override;
 	void setYaw(const int _angle) override;
@@ -262,6 +261,10 @@ public:
 	// SETTER
 	// ==============
 
+	// position
+
+	void setPosition(const glm::vec3 _pos) override;
+
 	// direction
 
 	void setDirection(const float _pitch, const float _yaw) override;
@@ -277,7 +280,6 @@ public:
 	// direction
 
 	glm::vec3 getDirection() const override;
-
 
 	float getInnerCutOff() const;
 	float getOuterCutOff() const;

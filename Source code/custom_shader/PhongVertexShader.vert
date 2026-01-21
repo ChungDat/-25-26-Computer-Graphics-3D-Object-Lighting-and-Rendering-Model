@@ -7,7 +7,6 @@ layout (location = 2) in vec2 aTexCoord; // texture coordinates
 out vec2 texCoord;
 out vec3 fragNormal; // world-space normal
 out vec3 fragPos; // world-space position
-out vec4 fragPosLightSpace; // light-space position
 
 uniform mat4 model; // model -> world
 uniform mat4 view; // world -> view
@@ -16,15 +15,15 @@ uniform mat4 projection; // view -> clipping
 void main() {
 	// world-space position
 	vec4 worldPos = model * vec4(aPos, 1.0f);
-
 	fragPos = vec3(worldPos);
 
 	// world-space normal
-    // transform normal with normal matrix (handles non-uniform scale)
 	mat3 normalMatrix = mat3(transpose(inverse(model)));
 	fragNormal = normalize(normalMatrix * aNormal);
 	
+	// texture uv
 	texCoord = aTexCoord;
 
+	// clip-space vertex
 	gl_Position = projection * view * worldPos;
 }

@@ -12,10 +12,26 @@ Model::Model() : Object() {}
 Model::~Model() {}
 
 //void Model::draw(Shader& shader, const glm::mat4& view, const glm::mat4& projection, const glm::vec3& viewPos, const glm::mat4& horizontalRotate, const glm::mat4& verticalRotate) {
+void Model::drawFrom(Shader*& shader, std::vector<Mesh> meshes, bool isShadowMapping) {
+	if (!isEnabled()) return;
+
+	setModelMatrix();
+
+	shader->use();
+
+	shader->setMat4fv("model", model);
+	
+	for (unsigned int i = 0; i < meshes.size(); i++) {
+		meshes[i].Draw(*shader);
+	}
+}
+
 void Model::drawFrom(Shader*& shader, std::vector<Mesh> meshes) {
 	if (!isEnabled()) return;
 
 	setModelMatrix();
+
+	shader->use();
 
 	shader->setMat4fv("model", model);
 	
@@ -251,5 +267,9 @@ unsigned int Backpack::getVertexCount() const {
 }
 
 void Backpack::draw(Shader*& shader) {
+	drawFrom(shader, meshes);
+}
+
+void Backpack::draw(Shader*& shader, bool isShadowMapping) {
 	drawFrom(shader, meshes);
 }

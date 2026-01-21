@@ -193,3 +193,21 @@ protected:
 public:
     Cylinder();
 };
+
+class Surface : public Object {
+protected:
+    static unsigned int VAO, VBO, EBO;
+    static std::vector<float> vertices;
+    static std::vector<unsigned int> indices;
+    static bool initialized;
+
+    void initBuffers() override;
+    unsigned int getVAO() override;
+    unsigned int getVertexCount() const override;
+    std::string getType() const override;
+    static void generateCylinder(float radius, float height, unsigned int sectorCount,
+        std::vector<float>& vertices, std::vector<unsigned int>& indices);
+
+public:
+    Surface();
+};

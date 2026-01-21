@@ -22,7 +22,6 @@
 #include "custom_class/Object.h"
 #include "custom_class/Light.h"
 #include "custom_class/Axis.h"
-#include "custom_class/Plane.h"
 #include "custom_class/Container.h"
 #include "constants.h"
 
@@ -123,17 +122,29 @@ int main() {
 
 	// initial position for objects
 	// ----------------------------
+	//glm::vec3 initPositions[] = {
+	//	glm::vec3(0.0f,  0.0f,  0.0f),
+	//	glm::vec3(2.0f,  5.0f, -15.0f),
+	//	glm::vec3(-1.5f, -2.2f, -2.5f),
+	//	glm::vec3(-3.8f, -2.0f, -12.3f),
+	//	glm::vec3(2.4f, -0.4f, -3.5f),
+	//	glm::vec3(-1.7f,  3.0f, -7.5f),
+	//	glm::vec3(1.3f, -2.0f, -2.5f),
+	//	glm::vec3(1.5f,  2.0f, -2.5f),
+	//	glm::vec3(1.5f,  0.2f, -1.5f),
+	//	glm::vec3(-1.3f,  1.0f, -1.5f)
+	//};
 	glm::vec3 initPositions[] = {
 		glm::vec3(0.0f,  0.0f,  0.0f),
-		glm::vec3(2.0f,  5.0f, -15.0f),
-		glm::vec3(-1.5f, -2.2f, -2.5f),
-		glm::vec3(-3.8f, -2.0f, -12.3f),
-		glm::vec3(2.4f, -0.4f, -3.5f),
-		glm::vec3(-1.7f,  3.0f, -7.5f),
-		glm::vec3(1.3f, -2.0f, -2.5f),
-		glm::vec3(1.5f,  2.0f, -2.5f),
-		glm::vec3(1.5f,  0.2f, -1.5f),
-		glm::vec3(-1.3f,  1.0f, -1.5f)
+		glm::vec3(0.0f,  0.0f,  2.0f),
+		glm::vec3(0.0f,  0.0f,  4.0f),
+		glm::vec3(0.0f,  0.0f,  6.0f),
+		glm::vec3(0.0f,  0.0f,  8.0f),
+		glm::vec3(0.0f,  0.0f,  10.0f),
+		glm::vec3(0.0f,  0.0f,  12.0f),
+		glm::vec3(0.0f,  0.0f,  14.0f),
+		glm::vec3(0.0f,  0.0f,  16.0f),
+		glm::vec3(0.0f,  0.0f,  18.0f)
 	};
 
 	glm::vec3 lightPositions[] = {
@@ -163,12 +174,22 @@ int main() {
 
 	PhongShader.use();
 	PhongShader.setFloat("material.shininess", 32.0f); // Phong uses a lower shininess
+	PhongShader.setFloat("shadowSize", SHADOW_WIDTH);
+	PhongShader.setFloat("shadowBias", 0.005);
 
 	BlinnPhongShader.use();
 	BlinnPhongShader.setFloat("material.shininess", 128.0f); // Blinn-Phong needs a higher value
+	BlinnPhongShader.setFloat("shadowSize", SHADOW_WIDTH);
+	BlinnPhongShader.setFloat("shadowBias", 0.005);
 
 	GouraudShader.use();
 	GouraudShader.setFloat("material.shininess", 32.0f); // Gouraud uses similar shininess to Phong
+	GouraudShader.setFloat("shadowSize", SHADOW_WIDTH);
+	GouraudShader.setFloat("shadowBias", 0.005);
+
+	CookTorranceShader.use();
+	CookTorranceShader.setFloat("shadowSize", SHADOW_WIDTH);
+	CookTorranceShader.setFloat("shadowBias", 0.005);
 
 	Shader* objectShader = &PhongShader;
 
@@ -206,7 +227,7 @@ int main() {
 	std::vector<Light*> lightList = {
 		new DirectionalLight(depthMapFBO),// 2: Main directional light
 		new PointLight(depthMapFBO),      // 1: White orbiting light
-		new PointLight(depthMapFBO),      // 3: Orange point light
+		new SpotLight(depthMapFBO),      // 3: Orange point light
 		new PointLight(depthMapFBO),      // 4: Red point light
 		new PointLight(depthMapFBO),      // 5: Yellow point light
 		new PointLight(depthMapFBO),      // 6: Blue point light
@@ -214,10 +235,13 @@ int main() {
 
 	// create axis
 	Axis axis = Axis(axisShader);
-	Plane plane = Plane(axisShader);
+	Grid grid = Grid(axisShader);
 
 	// create box room
 	Cube boxRoom = Cube();
+
+	// create surface
+	Surface surface = Surface();
 
 	// set object positions
 	// --------------------
@@ -229,8 +253,12 @@ int main() {
 
 	backpackModel->setScale(glm::vec3(0.5, 0.5, 0.5));
 
-	boxRoom.setPosition(glm::vec3(0.0f));
-	boxRoom.setScale(glm::vec3(25.0f));
+	boxRoom.setScale(glm::vec3(30.0f));
+	boxRoom.setDiffuse(glm::vec3(0.5f));
+	boxRoom.setSpecular(glm::vec3(0.5f));
+	boxRoom.setAlbedo(glm::vec3(1.0f));
+
+	surface.setScale(glm::vec3(60.0f, 0.0f, 60.0f));
 	boxRoom.setDiffuse(glm::vec3(0.5f));
 	boxRoom.setSpecular(glm::vec3(0.5f));
 	boxRoom.setAlbedo(glm::vec3(1.0f));
@@ -259,7 +287,7 @@ int main() {
 	ObjectCollapse objectCollapse = ObjectCollapse("Add Object", objectList, numObjects);
 	ObjectProperties objectProperties = ObjectProperties("Object Properties", objectList, numObjects);
 	LightProperties lightProperties = LightProperties("Light Properties", lightList, numDirLights, numPointLights, numSpotLights);
-	Settings settings = Settings("Settings", flashLight, axis, boxRoom, objectShader, shaderModel, shaderList, currentRasterizationMode);
+	Settings settings = Settings("Settings", flashLight, axis, boxRoom, surface, objectShader, shaderModel, shaderList, currentRasterizationMode);
 
 	// render loop
 	// -----------
@@ -284,9 +312,9 @@ int main() {
 		
 		//presetScenesCollapse.show();
 		lightCollapse.show();
+		lightProperties.show();
 		objectCollapse.show();
 		objectProperties.show();
-		lightProperties.show();
 		settings.show();
 
 		ImGui::End();
@@ -329,54 +357,63 @@ int main() {
 		// -------------------
 		depthShader->use();
 
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_FRONT);
+		glEnable(GL_POLYGON_OFFSET_FILL);
+		glPolygonOffset(2.0f, 4.0f);
+
 		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 
 		for (int i = 0; i < lightList.size(); i++) {
-			if (!lightList[i]->isShadowCaster())
+			if (!lightList[i]->isShadowCaster() || !lightList[i]->isEnabled())
 				continue;
 
+			// attach this light's depth texture to the shared FBO
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, lightList[i]->getDepthMap(), 0);
 
+			// clear depth for this light
 			glClear(GL_DEPTH_BUFFER_BIT);
 
+			// update depth shader uniforms (view/projection for this light)
 			lightList[i]->updateDepthShader(depthShader);
 			
+			// render scene to depth
 			for (int j = 0; j < objectList.size(); j++) {
 				objectList[j]->draw(depthShader, true);
 			}
+			surface.draw(depthShader, true);
 		}
+
+		// render flashLight depth
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, flashLight->getDepthMap(), 0);
-
 		glClear(GL_DEPTH_BUFFER_BIT);
-
 		flashLight->updateDepthShader(depthShader);
-
 		for (int j = 0; j < objectList.size(); j++) {
 			objectList[j]->draw(depthShader, true);
 		}
+		surface.draw(depthShader, true);
+
+		// restore GL state
+		glDisable(GL_POLYGON_OFFSET_FILL);
+		glCullFace(GL_BACK);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
+		glViewport(0, 0, WIDTH, HEIGHT);
 
 		// 2. render scene
 		// ---------------
 
-		glViewport(0, 0, WIDTH, HEIGHT);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
 		glm::mat4 view = camera.GetViewMatrix();
 		glm::vec3 viewPos = camera.Position;
-		glm::mat4 lightSpace = lightList[0]->getLightMatrix();
 
 		objectShader->use();
 		objectShader->setMat4fv("view", view);
 		objectShader->setMat4fv("projection", projection);
 		objectShader->setVec3fv("viewPos", viewPos);
-		objectShader->setMat4fv("lightSpaceMatrix", lightSpace);
-
-		objectShader->setFloat("shadowBias", 0.005f);
 
 		lightShader.use();
 		lightShader.setMat4fv("view", view);
@@ -455,10 +492,11 @@ int main() {
 
 		glDisable(GL_CULL_FACE);
 		boxRoom.draw(objectShader);
+		surface.draw(objectShader);
 
 		if (axis.isEnabled()) {
 			axis.draw(view, projection);
-			plane.draw(view, projection);
+			grid.draw(view, projection);
 		}
 
 		// 3. debug depth map

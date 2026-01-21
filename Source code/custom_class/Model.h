@@ -54,6 +54,7 @@ protected:
 	unsigned int getVertexCount() const override = 0;
 
 	void drawFrom(Shader*&, std::vector<Mesh>);
+	void drawFrom(Shader*&, std::vector<Mesh>, bool);
 
 public:
 	Model();
@@ -81,4 +82,5 @@ public:
 	std::string getType() const override;
 
 	void draw(Shader*&);
+	void draw(Shader*&, bool);
 };

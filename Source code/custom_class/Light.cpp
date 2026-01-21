@@ -388,11 +388,12 @@ DirectionalLight::DirectionalLight(unsigned int& depthMapFBO) : Light(depthMapFB
 	castsShadow = true;
 	
 	// transformation
-	nearPlane = -20.0f;
-	farPlane = 80.0f;
-	float orthoSize = 25.0f;
+	nearPlane = 1.0f;
+	farPlane = 60.0f;
+	float orthoSize = 30.0f;
 	projection = glm::ortho(-orthoSize, orthoSize, -orthoSize, orthoSize, nearPlane, farPlane);
 	
+	distance = 30.0f;
 	position = glm::vec3(0.0f, 0.0f, 0.0f) - direction * distance;
 	view = glm::lookAt(position, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
@@ -484,12 +485,6 @@ PointLight::PointLight(unsigned int& depthMapFBO) : Light(depthMapFBO) {
 
 PointLight::~PointLight() {}
 
-void PointLight::setPosition(const glm::vec3 _pos) {
-	Light::setPosition(_pos);
-	view = glm::lookAt(position, position + glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f));
-	lightSpaceMatrix = projection * view;
-}
-
 void PointLight::setDirection(const float _pitch, const float _yaw) {};
 
 void PointLight::setDirection(const glm::vec3 _direction) {}
@@ -567,13 +562,19 @@ SpotLight::SpotLight(unsigned int& depthMapFBO) : PointLight(depthMapFBO){
 	view = glm::lookAt(position, position + direction, glm::vec3(0.0f, 1.0f, 0.0f));
 
 	nearPlane = 0.3f;
-	farPlane = 30.0f;
+	farPlane = 10.0f;
 	projection = glm::perspective(glm::radians(outerCutOff * 2), 1.0f, nearPlane, farPlane);
 
 	lightSpaceMatrix = projection * view;
 }
 
 SpotLight::~SpotLight() {}
+
+void SpotLight::setPosition(const glm::vec3 _pos) {
+	Light::setPosition(_pos);
+	view = glm::lookAt(position, position + direction, glm::vec3(0.0f, 1.0f, 0.0f));
+	lightSpaceMatrix = projection * view;
+}
 
 void SpotLight::setDirection(const float _pitch, const float _yaw) {
 	Light::setDirection(_pitch, _yaw);

@@ -103,6 +103,7 @@ protected:
 	Light* flashLight;
 	Axis& axis;
 	Cube& boxRoom;
+	Surface& surface;
 	Shader*& objectShader;
 
 	const std::vector<std::string>& shaderModel;
@@ -112,8 +113,10 @@ protected:
 
 	int currentLighting;
 
+	float shadowBias;
+
 public:
-	Settings(const char*, Light*, Axis&, Cube&, Shader*&, const std::vector<std::string>&, std::vector<Shader*>&, int&);
+	Settings(const char*, Light*, Axis&, Cube&, Surface&, Shader*&, const std::vector<std::string>&, std::vector<Shader*>&, int&);
 	virtual ~Settings() {};
 	void show();
 };

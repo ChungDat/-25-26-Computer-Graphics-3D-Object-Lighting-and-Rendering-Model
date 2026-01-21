@@ -24,3 +24,15 @@ public:
 	bool isEnabled();
 };
 
+class Grid : public Axis
+{
+protected:
+	int vertexCount = 0;
+	void initBuffers(float, int);
+public:
+	Grid(Shader& shader) : Axis(shader) {};
+	virtual ~Grid();
+	void draw(const glm::mat4& view, const glm::mat4& projection);
+
+	unsigned int getVAO();
+};

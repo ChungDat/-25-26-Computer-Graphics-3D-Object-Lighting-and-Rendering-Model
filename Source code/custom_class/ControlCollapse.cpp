@@ -129,7 +129,7 @@ void ObjectProperties::show() {
 
 			bool rotationChanged = false;
 			rotationChanged = ImGui::SliderFloat("Yaw##o", &yaw, 0.0f, 360.0f, "%.f") || rotationChanged;
-			rotationChanged = ImGui::SliderFloat("Pitch##o", &pitch, -90.0f, 90.0f, "%.f") || rotationChanged;
+			rotationChanged = ImGui::SliderFloat("Pitch##o", &pitch, -89.0f, 89.0f, "%.f") || rotationChanged;
 			rotationChanged = ImGui::SliderFloat("Roll##o", &roll, 0.0f, 360.0f, "%.f") || rotationChanged;
 			if (rotationChanged) {
 				object->setRotation(pitch, yaw, roll);
@@ -240,7 +240,7 @@ void LightProperties::show() {
 				float yaw = light->getYaw();
 
 				bool directionChanged = false;
-				directionChanged = ImGui::SliderFloat("pitch", &pitch, -90.0f, 90.0f, "%.f") || directionChanged;
+				directionChanged = ImGui::SliderFloat("pitch", &pitch, -89.0f, 89.0f, "%.f") || directionChanged;
 				directionChanged = ImGui::SliderFloat("yaw", &yaw, 0.0f, 360.0f, "%.f") || directionChanged;
 				if (directionChanged && !light->isOrbital()) {
 					light->setDirection(pitch, yaw);
@@ -330,8 +330,8 @@ void LightProperties::show() {
 	}
 }
 
-Settings::Settings(const char* _label, Light* _flashLight, Axis& _axis, Cube& _boxRoom, Shader*& _shader, const std::vector<std::string>& _shaderModel, std::vector<Shader*>& _shaderList, int& rasterizationMode) 
-	: ControlCollapse(_label), flashLight(_flashLight), axis(_axis), boxRoom(_boxRoom), objectShader(_shader), shaderModel(_shaderModel), shaderList(_shaderList), currentRasterizationMode(rasterizationMode), currentLighting(0) {}
+Settings::Settings(const char* _label, Light* _flashLight, Axis& _axis, Cube& _boxRoom, Surface& _surface, Shader*& _shader, const std::vector<std::string>& _shaderModel, std::vector<Shader*>& _shaderList, int& rasterizationMode) 
+	: ControlCollapse(_label), flashLight(_flashLight), axis(_axis), boxRoom(_boxRoom), surface(_surface), objectShader(_shader), shaderModel(_shaderModel), shaderList(_shaderList), currentRasterizationMode(rasterizationMode), currentLighting(0) {}
 
 void Settings::show() {
 	if (ImGui::CollapsingHeader(label ? label : "Settings")) {
@@ -367,10 +367,26 @@ void Settings::show() {
 				boxRoom.enable();
 		}
 
+		// surface
+		if (surface.isEnabled()) {
+			if (ImGui::Button("Hide Surface"))
+				surface.disable();
+		}
+		else {
+			if (ImGui::Button("Show Surface"))
+				surface.enable();
+		}
+
+
 		// rasterization mode
 		ImGui::RadioButton("Fill", &currentRasterizationMode, 0); ImGui::SameLine();
 		ImGui::RadioButton("Wireframe", &currentRasterizationMode, 1); ImGui::SameLine();
 		ImGui::RadioButton("Point", &currentRasterizationMode, 2);
+
+		// shadow bias
+		if (ImGui::SliderFloat("Shadow Bias", &shadowBias, 0.005, 1, "%.3f")) {
+			objectShader->setFloat("shadowBias", shadowBias);
+		}
 
 		// shader mode
 		for (int i = 0; i < shaderModel.size(); i++) {

@@ -29,6 +29,11 @@ std::vector<float> Cylinder::vertices = std::vector<float>();
 std::vector<unsigned int> Cylinder::indices = std::vector<unsigned int>();
 bool Cylinder::initialized = false;
 
+unsigned int Surface::VAO = 0;
+unsigned int Surface::VBO = 0;
+unsigned int Surface::EBO = 0;
+bool Surface::initialized = false;
+
 // abstract Object class
 // ---------------------
 
@@ -116,6 +121,7 @@ void Object::draw(Shader*& shader, bool isShadowMapping) {
 
 	glBindVertexArray(getVAO());
 	glDrawElements(getDrawMode(), getVertexCount(), GL_UNSIGNED_INT, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void Object::draw(Shader*& shader) {
@@ -805,4 +811,65 @@ void Cylinder::generateCylinder(float radius, float height, unsigned int sectorC
 			indices.push_back(baseIndex + i + 1);
 		}
 	}
+}
+
+Surface::Surface() : Object() {
+	initBuffers();
+}
+
+void Surface::initBuffers() {
+	if (initialized) return;
+
+	float vertices[] = {
+		// positions		// normal vectors		// texture coords
+		 -1.0f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,	0.0f, 0.0f,
+		  1.0f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,	1.0f, 0.0f,
+		  1.0f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,	1.0f, 1.0f,
+		 -1.0f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,	0.0f, 1.0f,
+	};
+
+	unsigned int indices[] = {
+		0, 1, 2,	2, 3, 0,
+	};
+
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
+	glGenBuffers(1, &EBO);
+
+	glBindVertexArray(VAO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+	// position attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+	// normal attribute
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+	// texture coordinate attribute
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
+	initialized = true;
+}
+
+unsigned int Surface::getVertexCount() const {
+	return 6; // 2 triangles * 3 vertices
+}
+
+std::string Surface::getType() const
+{
+	return "Surface";
+}
+
+unsigned int Surface::getVAO() {
+	initBuffers();
+	return VAO;
 }
