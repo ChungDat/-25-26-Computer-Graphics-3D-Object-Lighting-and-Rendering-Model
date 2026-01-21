@@ -31,38 +31,38 @@
 
 % Định nghĩa lại cách cite tài liệu tham khảo
 % Loại article
-\DeclareBibliographyDriver{article}{%
-	\usebibmacro{bibindex}%
-	\iffieldundef{doi}{%
-		\iffieldundef{url}{%
-			% --- No DOI or URL found: print without link ---
-			\printtext[brackets]{\printfield{year}}\addspace\printfield{title} % Prints [year] [title]
-		}{%
-			% --- URL found: create link ---
-			\href{\thefield{url}}{\printtext[brackets]{\printfield{year}}\addspace\printfield{title}}%
-		}%
-	}{%
-		% --- DOI found: create link (preferred) ---
-		\href{https://doi.org/\thefield{doi}}{\printtext[brackets]{\printfield{year}}\addspace\printfield{title}} % Prints [year] [title]
-	}%
-	\finentry}
-
-% Loại book
-\DeclareBibliographyDriver{book}{%
-	\usebibmacro{bibindex}%
-	\iffieldundef{doi}{%
-		\iffieldundef{url}{%
-			% --- No DOI or URL found: print without link ---
-			\printtext[brackets]{\printfield{year}}\addspace\printfield{title} % Prints [year] [title]
-		}{%
-			% --- URL found: create link ---
-			\href{\thefield{url}}{\printtext[brackets]{\printfield{year}}\addspace\printfield{title}}%
-		}%
-	}{%
-		% --- DOI found: create link (preferred) ---
-		\href{https://doi.org/\thefield{doi}}{\printtext[brackets]{\printfield{year}}\addspace\printfield{title}} % Prints [year] [title]
-	}%
-	\finentry}
+%\DeclareBibliographyDriver{article}{%
+%	\usebibmacro{bibindex}%
+%	\iffieldundef{doi}{%
+%		\iffieldundef{url}{%
+%			% --- No DOI or URL found: print without link ---
+%			\printtext[brackets]{\printfield{year}}\addspace\printfield{title} % Prints [year] [title]
+%		}{%
+%			% --- URL found: create link ---
+%			\href{\thefield{url}}{\printtext[brackets]{\printfield{year}}\addspace\printfield{title}}%
+%		}%
+%	}{%
+%		% --- DOI found: create link (preferred) ---
+%		\href{https://doi.org/\thefield{doi}}{\printtext[brackets]{\printfield{year}}\addspace\printfield{title}} % Prints [year] [title]
+%	}%
+%	\finentry}
+%
+%% Loại book
+%\DeclareBibliographyDriver{book}{%
+%	\usebibmacro{bibindex}%
+%	\iffieldundef{doi}{%
+%		\iffieldundef{url}{%
+%			% --- No DOI or URL found: print without link ---
+%			\printtext[brackets]{\printfield{year}}\addspace\printfield{title} % Prints [year] [title]
+%		}{%
+%			% --- URL found: create link ---
+%			\href{\thefield{url}}{\printtext[brackets]{\printfield{year}}\addspace\printfield{title}}%
+%		}%
+%	}{%
+%		% --- DOI found: create link (preferred) ---
+%		\href{https://doi.org/\thefield{doi}}{\printtext[brackets]{\printfield{year}}\addspace\printfield{title}} % Prints [year] [title]
+%	}%
+%	\finentry}
 
 \makeatletter
 \def\blx@maxline{77}
@@ -176,11 +176,11 @@ includefoot]{geometry}
 % ========================================================================================= %
 % CHÚ Ý: Thông tin chung về KLTN - sinh viên điền vào đây để tự động update các trang khác  %
 % ========================================================================================= %
-\newcommand{\tenSV}{Nguyễn~Văn~A~-~Hoàng~Minh~Trung} % Dấu ~ là khoảng trắng không được tách (các chữ nối với nhau bằng dấu ~ sẽ nằm cùng 1 dòng
-\newcommand{\mssv}{1234567}
-\newcommand{\tenKL}{Sử~dụng~LaTeX trong Khoá~luận~tốt~nghiệp} % Chú ý dấu ~ trong tên khóa luận
-\newcommand{\tenGVHD}{Tên~Giáo~Viên}
-\newcommand{\tenBM}{Công nghệ tri thức}
+%\newcommand{\tenSV}{Nguyễn~Văn~A~-~Hoàng~Minh~Trung} % Dấu ~ là khoảng trắng không được tách (các chữ nối với nhau bằng dấu ~ sẽ nằm cùng 1 dòng
+%\newcommand{\mssv}{1234567}
+%\newcommand{\tenKL}{Sử~dụng~LaTeX trong Khoá~luận~tốt~nghiệp} % Chú ý dấu ~ trong tên khóa luận
+%\newcommand{\tenGVHD}{Tên~Giáo~Viên}
+%\newcommand{\tenBM}{Công nghệ tri thức}
 
 \usepackage{listings}
 \usepackage{color}

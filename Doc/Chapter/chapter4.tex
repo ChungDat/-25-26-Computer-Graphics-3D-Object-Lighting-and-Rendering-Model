@@ -1,2 +1,206 @@
 \chapter{Cài đặt và thử nghiệm}
-%Tận dụng source code có sẵn và tự viết để minh họa giải pháp ở chương 3.
+
+Để kiểm chứng lý thuyết và so sánh trực quan sự khác biệt giữa mô hình Cook-Torrance với các mô hình kinh điển khác, một chương trình mô phỏng 3D tương tác thời gian thực đã được xây dựng. Chương trình cho phép người dùng thay đổi linh hoạt các thông số vật lý, ánh sáng và vật liệu để quan sát kết quả ngay lập tức.
+
+\section{Tổng quan về OpenGL (Overview of OpenGL)}
+
+\textbf{OpenGL (Open Graphics Library)} không phải là một ngôn ngữ lập trình, mà là một \textit{Đặc tả (Specification)} hoặc một bộ giao diện lập trình ứng dụng (API) đồ họa đa nền tảng. Nó định nghĩa một tập hợp các hàm mà phần cứng đồ họa (GPU) phải hỗ trợ để vẽ hình ảnh 2D và 3D.
+
+Đặc điểm cốt lõi của OpenGL trong ngữ cảnh của chương trình này bao gồm:
+
+\begin{enumerate}
+	\item \textbf{Máy trạng thái (State Machine):}
+	OpenGL hoạt động dựa trên các trạng thái. Chương trình không ra lệnh "Vẽ cái này màu đỏ", mà thực hiện theo trình tự: "Thiết lập màu hiện tại là đỏ" $\rightarrow$ "Sử dụng shader A" $\rightarrow$ "Vẽ hình tam giác". Trạng thái này (như màu sắc, shader đang dùng, texture đang gắn) sẽ được giữ nguyên cho đến khi có lệnh thay đổi tiếp theo.
+	
+	\item \textbf{Mô hình Client-Server:}
+	\begin{itemize}
+		\item \textit{Client (CPU):} Là chương trình C++, chịu trách nhiệm xử lý logic, tính toán vật lý, đọc file và gửi lệnh vẽ.
+		
+		\item \textit{Server (GPU):} Là card đồ họa, chịu trách nhiệm nhận dữ liệu đỉnh, chạy shader và hiển thị điểm ảnh lên màn hình.
+	\end{itemize}
+	
+	\item \textbf{Đường ống đồ họa lập trình được (Programmable Pipeline):}
+	OpenGL hiện đại (Modern OpenGL, từ phiên bản 3.3 trở lên) yêu cầu lập trình viên phải tự viết các đoạn chương trình nhỏ gọi là \textit{Shader} (sử dụng ngôn ngữ GLSL) để can thiệp vào quy trình dựng hình.
+	\begin{itemize}
+		\item \textit{Vertex Shader:} Xử lý vị trí các đỉnh (biến đổi từ không gian 3D sang màn hình 2D).
+		\item \textit{Fragment Shader:} Tính toán màu sắc cho từng điểm ảnh. Đây là nơi tính toán sự tương tác giữa ánh sáng và vật liệu tại từng điểm ảnh cụ thể.
+	\end{itemize}
+\end{enumerate}
+
+\section{Các thư viện và Công cụ sử dụng (Libraries and Tools)}
+
+Chương trình được phát triển dựa trên ngôn ngữ C++ kết hợp với các thư viện đồ họa chuẩn công nghiệp nhằm đảm bảo hiệu năng và khả năng mở rộng:
+
+\begin{itemize}
+	\item \textbf{GLFW (Graphics Library Framework):} Thư viện mã nguồn mở đa nền tảng dùng để khởi tạo cửa sổ ứng dụng, quản lý ngữ cảnh OpenGL (OpenGL context) và xử lý các sự kiện đầu vào từ bàn phím và chuột.
+	
+	\item \textbf{GLAD (Multi-Language GL/GLES/EGL/GLX/WGL Loader-Generator):} Thư viện hỗ trợ nạp các con trỏ hàm OpenGL, giúp chương trình tương tác với driver của card đồ họa để sử dụng các tính năng OpenGL hiện đại.
+	
+	\item \textbf{Assimp (Open Asset Import Library):} Thư viện mạnh mẽ dùng để nạp các mô hình 3D từ nhiều định dạng file khác nhau (như .obj, .fbx). Trong chương trình này, Assimp đóng vai trò chuyển đổi dữ liệu hình học từ file thành các đối tượng Mesh để render.
+	
+	\item \textbf{ImGui (Immediate Mode GUI):} Thư viện giao diện người dùng đồ họa, được sử dụng để tạo ra các bảng điều khiển (control panels) trực quan, cho phép người dùng điều chỉnh tham số shader ngay trong thời gian thực mà không cần biên dịch lại chương trình.
+\end{itemize}
+
+\section{Các chức năng chính (Key Features)}
+
+Hệ thống cung cấp một môi trường tương tác với các chức năng:
+\begin{enumerate}
+	\item \textbf{Quản lý Vật thể:} Cho phép thêm và thao tác với các vật thể cơ bản (khối lập phương, cầu, kim tự tháp, khối trụ...) hoặc các mô hình phức tạp được tải từ bên ngoài.
+	
+	\item \textbf{Hệ thống Ánh sáng:} Hỗ trợ khởi tạo và tùy chỉnh ba loại nguồn sáng cơ bản:
+	\begin{itemize}
+		\item \textit{Directional Light:} Ánh sáng định hướng (mô phỏng mặt trời).
+		
+		\item \textit{Point Light:} Ánh sáng điểm (mô phỏng bóng đèn).
+		
+		\item \textit{Spot Light:} Ánh sáng chiếu điểm (mô phỏng đèn pin/đèn sân khấu).
+	\end{itemize}
+	
+	\item \textbf{Chuyển đổi Mô hình Chiếu sáng:} Tính năng cốt lõi cho phép chuyển đổi tức thời giữa các shader: Phong, Blinn-Phong, Gouraud và Cook-Torrance để so sánh trực quan.
+	
+	\item \textbf{Chế độ Hiển thị:} Hỗ trợ các chế độ render khác nhau như khung dây (wireframe), điểm (point) và tô đặc (surface/fill).
+\end{enumerate}
+
+\section{Kiến trúc Đối tượng (Object Architecture)}
+
+Cấu trúc mã nguồn được tổ chức theo hướng đối tượng (OOP) để quản lý sự phức tạp của cảnh 3D:
+
+\begin{description}
+	\item[Camera:] Quản lý ma trận quan sát (View Matrix) và ma trận chiếu (Projection Matrix), cho phép người dùng tự do di chuyển góc nhìn trong không gian 3D.
+	\item[Light:] Lớp trừu tượng hóa các nguồn sáng, lưu trữ các thuộc tính như vị trí, hướng, màu sắc, và các hệ số suy giảm (attenuation).
+	\item[Mesh \& Model:] Wrapper bao quanh thư viện Assimp, chịu trách nhiệm tải dữ liệu đỉnh (vertices), pháp tuyến (normals), và tọa độ vân (texture coordinates) từ file `.obj` và khởi tạo các bộ đệm OpenGL (VAO, VBO, EBO).
+	\item[Object:] Quản lý các vật thể hình học cơ bản (Primitive shapes) như hình cầu, hình trụ. Lớp này chứa các phương thức vẽ (draw) và thiết lập thuộc tính vật liệu.
+	\item[Shader:] Quản lý việc biên dịch, liên kết các shader program và truyền tải dữ liệu (uniforms) từ CPU sang GPU để tính toán ánh sáng.
+	\item[ControlCollapse:] Lớp quản lý logic giao diện người dùng (UI Manager). Đây là cầu nối giữa ImGui và các đối tượng trong cảnh, giúp đơn giản hóa việc điều chỉnh vị trí, màu sắc, texture và các thông số vật lý (như độ nhám, chỉ số khúc xạ) thông qua các thanh trượt và menu.
+	\item[Axis:] Đối tượng tiện ích hỗ trợ vẽ trục tọa độ và lưới nền (grid), giúp định vị không gian dễ dàng hơn.
+\end{description}
+
+\section{Hệ thống Shader (Shader System)}
+
+Chương trình sử dụng các shader riêng biệt cho từng mục đích cụ thể:
+\begin{itemize}
+	\item \textbf{Lighting Shaders (Phong, BlinnPhong, Gouraud, CookTorrance):} Các shader chính thực hiện thuật toán tô bóng tương ứng. Riêng shader CookTorrance được cài đặt đầy đủ các công thức tính toán $D, F, G$ như đã trình bày ở phần lý thuyết.
+	
+	\item \textbf{Depth Shader:} Shader đặc biệt dùng để render cảnh từ góc nhìn của nguồn sáng vào một bộ đệm độ sâu (depth buffer), phục vụ cho kỹ thuật tạo bóng đổ (Shadow Mapping).
+	
+	\item \textbf{Axis Shader:} Shader đơn giản để vẽ các đường trục và lưới hỗ trợ.
+\end{itemize}
+
+\section{Luồng hoạt động của Chương trình (Program Workflow)}
+
+Quy trình thực thi của ứng dụng tuân theo vòng lặp sự kiện chuẩn của một ứng dụng đồ họa thời gian thực:
+
+\begin{enumerate}
+	\item \textbf{Khởi tạo (Initialization):} 
+	Thiết lập ngữ cảnh OpenGL và ImGui. Cấu hình các trạng thái toàn cục (như kiểm tra độ sâu - depth test, loại bỏ mặt - cull face) giúp tối ưu hoá quá trình tính toán shader. Khởi tạo camera, ánh sáng mặc định, tải shader và các mô hình vật thể vào bộ nhớ.
+	
+	\item \textbf{Vòng lặp chính (Main Loop):}
+	\begin{itemize}
+		\item \textit{Xử lý Input:} Nhận tín hiệu từ chuột/bàn phím để di chuyển camera.
+		
+		\item \textit{Tạo giao diện ImGui:} Vẽ các menu điều khiển và cập nhật giá trị biến dựa trên tương tác người dùng.
+		
+		\item \textit{Cập nhật Uniforms:} Truyền các thông số mới (vị trí đèn, độ nhám vật liệu, ma trận biến đổi) vào shader.
+		
+		\item \textit{Bước 1 - Shadow Pass:} Render cảnh từ vị trí nguồn sáng để tạo Shadow Map (bản đồ bóng).
+		
+		\item \textit{Bước 2 - Render Scene:} Render cảnh từ góc nhìn camera sử dụng shader ánh sáng được chọn, kết hợp với Shadow Map để tính toán bóng đổ.
+		
+		\item \textit{Swap Buffers:} Hiển thị khung hình mới lên màn hình.
+	\end{itemize}
+	
+	\item \textbf{Kết thúc (Termination):} Giải phóng tài nguyên bộ nhớ (VAO, VBO, textures) và hủy ngữ cảnh GLFW/ImGui.
+\end{enumerate}
+
+\section{Vai trò chi tiết của các Thư viện (Detailed Roles of Libraries)}
+
+Việc phát triển ứng dụng OpenGL thuần túy (Native OpenGL) thường gặp nhiều khó khăn do sự khác biệt giữa các hệ điều hành. Các thư viện sau đây giải quyết các vấn đề cụ thể:
+
+\begin{description}
+	\item[GLFW (Window \& Input Context):] OpenGL không tự quản lý cửa sổ hay sự kiện nhập liệu. GLFW cung cấp một lớp trừu tượng để tạo cửa sổ hiển thị, tạo OpenGL Context (ngữ cảnh lưu trữ trạng thái của OpenGL) và xử lý vòng lặp sự kiện (event loop) từ bàn phím/chuột một cách thống nhất trên Windows, Linux và macOS.
+	\item[GLAD (Function Loading):] Các hàm OpenGL không được liên kết tĩnh (static linking) mà được xác định tại thời điểm chạy (runtime) tùy thuộc vào driver của card đồ họa. GLAD quét và nạp địa chỉ của các con trỏ hàm này (ví dụ: \texttt{glUseProgram}, \texttt{glUniform1f}), giúp chương trình gọi được các hàm OpenGL hiện đại.
+	\item[Assimp (Asset Import):] Dữ liệu mô hình 3D thực tế rất phức tạp (bao gồm tọa độ đỉnh, pháp tuyến, tọa độ vân, cấu trúc xương...). Assimp phân tích cú pháp (parsing) các file định dạng như .obj hay .fbx và chuyển đổi chúng thành cấu trúc dữ liệu mảng mà C++ và OpenGL có thể xử lý.
+	\item[ImGui (GUI):] Trong lập trình đồ họa, việc gỡ lỗi (debug) bằng cách in ra console rất kém hiệu quả. ImGui vẽ giao diện đè lên khung hình OpenGL, cho phép chỉnh sửa trực tiếp các biến số thực (float/int) trong shader, giúp việc tinh chỉnh các tham số PBR (như \textit{Roughness, Metallic}) trở nên trực quan.
+\end{description}
+
+\section{Các đối tượng Bộ đệm OpenGL (OpenGL Buffer Objects)}
+
+Chương trình sử dụng các loại bộ đệm sau để lưu trữ và quản lý dữ liệu trên bộ nhớ GPU (VRAM):
+
+\begin{itemize}
+	\item \textbf{VAO (Vertex Array Object):} Đối tượng bao đóng cấu hình. Nó không chứa dữ liệu thực mà lưu trữ trạng thái về cách OpenGL nên đọc dữ liệu từ VBO (ví dụ: 3 số đầu là vị trí, 3 số sau là pháp tuyến). Hàm liên quan: \texttt{glGenVertexArrays}, \texttt{glBindVertexArray}.
+	\item \textbf{VBO (Vertex Buffer Object):} Bộ đệm chứa dữ liệu thô (raw data) của các đỉnh (vertices). Dữ liệu vị trí, pháp tuyến, và tọa độ texture được gửi từ RAM sang VRAM thông qua đối tượng này. Hàm liên quan: \texttt{glGenBuffers}, \texttt{glBufferData}.
+	\item \textbf{EBO (Element Buffer Object):} Bộ đệm lưu trữ danh sách các chỉ số (indices). Nó cho phép OpenGL tái sử dụng các đỉnh trùng lặp (ví dụ: các đỉnh chung của hai tam giác kề nhau), giúp tiết kiệm bộ nhớ và tối ưu hóa hiệu năng.
+	\item \textbf{FBO (Framebuffer Object):} Bộ đệm khung hình tùy chỉnh. Thay vì vẽ trực tiếp lên màn hình, chương trình vẽ vào FBO để thực hiện các kỹ thuật xử lý hậu kỳ hoặc tính toán trung gian.
+	\begin{itemize}
+		\item \textit{Ứng dụng trong chương trình:} FBO được dùng để chứa \textbf{Shadow Map}. Cảnh được vẽ từ góc nhìn của đèn vào FBO này, nhưng chỉ lưu lại giá trị độ sâu (depth) để tính toán bóng đổ sau này.
+	\end{itemize}
+\end{itemize}
+
+\section{Quản lý Vân bề mặt (Texture Management)}
+
+Để áp dụng các bản đồ vật liệu (Albedo, Normal, Roughness map) lên vật thể, các hàm xử lý texture sau được sử dụng:
+
+\begin{itemize}
+	\item \texttt{glGenTextures} và \texttt{glBindTexture}: Tạo ID và kích hoạt đối tượng texture hiện hành.
+	\item \texttt{glTexImage2D}: Chuyển dữ liệu điểm ảnh (pixel data) từ CPU sang GPU để tạo thành texture 2D.
+	\item \texttt{glTexParameteri}: Thiết lập các tham số hiển thị, ví dụ như chế độ lặp lại (GL\_REPEAT) hoặc bộ lọc tuyến tính (GL\_LINEAR) khi phóng to/thu nhỏ texture.
+	\item \texttt{glActiveTexture}: Kích hoạt các đơn vị texture (Texture Units -\\ GL\_TEXTURE0, GL\_TEXTURE1...) để shader có thể đọc nhiều texture cùng lúc (ví dụ: vừa đọc Albedo map, vừa đọc Shadow map).
+\end{itemize}
+
+\section{Truyền thông số vào Shader (Uniform Communication)}
+
+Shader là các chương trình chạy trên GPU, cần nhận dữ liệu từ ứng dụng chính (CPU). Cơ chế \textit{Uniform} được sử dụng thông qua các hàm:
+
+\begin{itemize}
+	\item \texttt{glUseProgram}: Kích hoạt Shader Program cần sử dụng (ví dụ: chuyển từ Shader Phong sang Shader Cook-Torrance).
+	\item \texttt{glGetUniformLocation}: Lấy địa chỉ ID của biến uniform trong mã nguồn shader.
+	\item \textbf{Các hàm truyền dữ liệu:}
+	\begin{itemize}
+		\item \texttt{glUniform1f / 1i}: Truyền một giá trị thực (float) hoặc nguyên (int). Dùng để chỉnh các tham số như độ nhám ($m$), hệ số phản xạ ($s, d$).
+		\item \texttt{glUniform3fv}: Truyền vector 3 thành phần. Dùng cho màu sắc ánh sáng ($I_i$), vị trí camera ($V$), vị trí đèn ($L$).
+		\item \texttt{glUniformMatrix4fv}: Truyền ma trận 4x4. Dùng để cập nhật các ma trận biến đổi Model-View-Projection, giúp định vị vật thể trong không gian 3D.
+	\end{itemize}
+\end{itemize}
+
+\section{Lệnh vẽ (Draw Calls)}
+
+Sau khi thiết lập dữ liệu và trạng thái, các hàm vẽ được gọi trong vòng lặp chính để rasterize (chuyển đổi vector thành điểm ảnh) các vật thể:
+
+\begin{itemize}
+	\item \texttt{glDrawArrays}: Vẽ các đỉnh trực tiếp từ VBO theo thứ tự tuyến tính. Thường dùng cho các hình đơn giản hoặc khi không dùng chỉ số (indices).
+	\item \texttt{glDrawElements}: Vẽ các đỉnh dựa trên danh sách chỉ số từ EBO. Đây là phương pháp tối ưu hơn và được sử dụng cho hầu hết các Mesh phức tạp (được nạp từ Assimp) trong chương trình.
+\end{itemize}
+
+\section{Cấu trúc dữ liệu của Assimp (Assimp Data Structure)}
+
+\textbf{Assimp (Open Asset Import Library)} là một thư viện portable giúp thống nhất quy trình đọc các định dạng mô hình 3D khác nhau (như .obj, .fbx, .dae, .blend) về một cấu trúc dữ liệu chung duy nhất trên bộ nhớ CPU. Điều này giúp chương trình không cần viết bộ phân tích cú pháp (parser) riêng cho từng loại file.
+
+Khi Assimp tải một mô hình, nó tạo ra một đối tượng gốc gọi là \texttt{aiScene}. Cấu trúc phân cấp bên trong \texttt{aiScene} được tổ chức như sau:
+
+\begin{enumerate}
+	\item \textbf{aiScene (Gốc):}
+	Đây là đối tượng chứa toàn bộ dữ liệu của mô hình đã được tải. Nó nắm giữ tham chiếu đến nút gốc (\texttt{Root Node}) của cấu trúc phân cấp, cũng như chứa các mảng dữ liệu toàn cục như danh sách tất cả các lưới (meshes), vật liệu (materials), và texture có trong file.
+	
+	\item \textbf{aiNode (Nút):}
+	Dữ liệu 3D trong Assimp được tổ chức dưới dạng cây (Scene Graph). Mỗi \texttt{aiNode} đại diện cho một mắt xích trong cây này. 
+	\begin{itemize}
+		\item Mỗi nút chứa một ma trận biến đổi (Transformation Matrix) mô tả vị trí, phép quay và tỷ lệ của nút đó so với nút cha.
+		\item Nút không chứa dữ liệu hình học trực tiếp mà chứa danh sách các chỉ số (indices) trỏ đến các đối tượng \texttt{aiMesh} nằm trong mảng của \texttt{aiScene}. Điều này cho phép một dữ liệu hình học (ví dụ: một chiếc bánh xe) được tái sử dụng bởi nhiều nút (ví dụ: 4 bánh xe của ô tô) ở các vị trí khác nhau.
+	\end{itemize}
+	
+	\item \textbf{aiMesh (Lưới):}
+	Đây là nơi chứa dữ liệu hình học thực sự cần thiết để dựng hình. Một \texttt{aiMesh} bao gồm:
+	\begin{itemize}
+		\item \textbf{Vertices:} Mảng các vị trí đỉnh trong không gian 3D.
+		\item \textbf{Normals:} Mảng các vectơ pháp tuyến tại mỗi đỉnh.
+		\item \textbf{Texture Coordinates:} Mảng tọa độ vân bề mặt (UV mapping).
+		\item \textbf{Faces:} Danh sách các mặt (thường là tam giác), chứa chỉ số đỉnh để tạo nên mặt đó (dùng cho EBO).
+		\item \textbf{Material Index:} Chỉ số trỏ đến vật liệu tương ứng cho lưới này.
+	\end{itemize}
+	
+	\item \textbf{aiMaterial (Vật liệu):}
+	Chứa các thuộc tính bề mặt như màu sắc (Ambient, Diffuse, Specular), độ bóng (Shininess), và đường dẫn đến các file ảnh texture. Trong chương trình, các thông số này được đọc và chuyển đổi thành tham số đầu vào cho shader.
+\end{enumerate}
+
+Quy trình xử lý của chương trình là đệ quy: Bắt đầu từ \texttt{Root Node}, duyệt qua các nút con, lấy chỉ số mesh, truy xuất dữ liệu từ \texttt{aiMesh}, và cuối cùng chuyển dữ liệu đó sang các bộ đệm OpenGL (VAO, VBO).

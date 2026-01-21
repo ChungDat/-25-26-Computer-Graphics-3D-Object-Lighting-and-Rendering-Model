@@ -1,1 +1,50 @@
 \chapter{Kết luận và hướng phát triển}
+
+Báo cáo này đã trình bày một cái nhìn toàn diện về mô hình phản xạ Cook-Torrance, từ cơ sở vật lý quang học, phương pháp xây dựng hàm phân bố phản xạ hai chiều (BRDF), cho đến việc cài đặt thực nghiệm trên máy tính. Dưới đây là những tổng kết chính và đề xuất hướng phát triển cho nghiên cứu.
+
+\section{Kết luận (Conclusion)}
+
+\subsection{Về mặt Lý thuyết (Theoretical Aspect)}
+Mô hình Cook-Torrance (1982) đánh dấu bước chuyển mình quan trọng từ các mô hình thực nghiệm (như Phong, Blinn) sang các mô hình dựa trên vật lý (Physically Based Rendering - PBR).
+\begin{itemize}
+	\item \textbf{Tính chính xác vật lý:} Mô hình đã giải thích thành công cơ chế tương tác ánh sáng dựa trên lý thuyết vi bề mặt (microfacet theory) và quang học hình học. Việc đưa vào phương trình Fresnel giúp tái hiện chính xác sự thay đổi màu sắc và cường độ phản xạ tại các góc nhìn nghiêng (grazing angles).
+	\item \textbf{Phân loại vật liệu:} Lý thuyết đã chỉ ra sự khác biệt căn bản giữa kim loại (conductor) và phi kim (dielectric) thông qua thành phần phản xạ gương và khuếch tán, giải quyết vấn đề "trông giống nhựa" của các mô hình cũ.
+\end{itemize}
+
+\subsection{Về mặt Ứng dụng (Application Aspect)}
+Mặc dù ra đời từ năm 1982, các nguyên lý của Cook-Torrance vẫn là xương sống của đồ họa máy tính hiện đại.
+\begin{itemize}
+	\item \textbf{Tiêu chuẩn hóa quy trình:} Sự chuyển dịch từ các tham số vật lý phức tạp ($n, k, m$) sang quy trình \textit{Metalness/Roughness} đã giúp thu hẹp khoảng cách giữa lý thuyết quang học và quy trình sáng tạo nghệ thuật trong công nghiệp game và điện ảnh.
+	\item \textbf{Nền tảng của PBR:} Mô hình đóng vai trò là hàm $f_r$ cốt lõi trong phương trình kết xuất tổng quát, cho phép tích hợp với các kỹ thuật chiếu sáng toàn cục và chiếu sáng dựa trên hình ảnh (IBL).
+\end{itemize}
+
+\subsection{Về chương trình cài đặt (Implementation Aspect)}
+Chương trình mô phỏng được xây dựng bằng C++ và OpenGL đã chứng minh tính khả thi và hiệu quả của mô hình:
+\begin{itemize}
+	\item Chương trình cho phép so sánh trực quan thời gian thực (real-time) giữa Cook-Torrance và các mô hình kinh điển (Phong, Gouraud).
+	\item Kết quả hiển thị cho thấy sự vượt trội của Cook-Torrance trong việc tái tạo chất liệu kim loại và sự phân bố ánh sáng trên bề mặt nhám, đúng như dự đoán của lý thuyết.
+	\item Kiến trúc chương trình với sự hỗ trợ của shader lập trình được (GLSL) và giao diện ImGui đã tạo ra một công cụ linh hoạt để kiểm chứng các tham số vật lý.
+\end{itemize}
+
+\section{Hướng phát triển (Future Work)}
+
+\subsection{Cải tiến Lý thuyết (Theoretical Improvements)}
+\begin{itemize}
+	\item \textbf{Hàm phân bố GGX (Trowbridge-Reitz):} Thay thế hàm phân bố Beckmann (1982) bằng hàm GGX. GGX có phần "đuôi" (tail) dài hơn, giúp vùng chuyển tiếp ánh sáng (highlight falloff) trông tự nhiên hơn và đang là tiêu chuẩn của các engine hiện đại.
+	\item \textbf{Đa tán xạ (Multiple Scattering):} Mô hình Cook-Torrance hiện tại giả định ánh sáng chỉ phản xạ một lần trên vi bề mặt, dẫn đến việc mất năng lượng (bề mặt bị tối đi) khi độ nhám cao. Cần nghiên cứu tích hợp tính toán tán xạ nhiều lần giữa các vi bề mặt để bảo toàn năng lượng tốt hơn.
+\end{itemize}
+
+\subsection{Mở rộng Ứng dụng (Application Expansion)}
+\begin{itemize}
+	\item \textbf{Image-Based Lighting (IBL):} Tích hợp kỹ thuật chiếu sáng dựa trên hình ảnh sử dụng \textit{Split Sum Approximation}. Điều này sẽ cho phép vật thể phản chiếu môi trường xung quanh thay vì chỉ phản chiếu các nguồn sáng điểm, làm tăng đáng kể độ chân thực cho kim loại.
+	\item \textbf{Global Illumination (GI):} Kết hợp mô hình phản xạ cục bộ này với các kỹ thuật chiếu sáng toàn cục như \textit{Screen Space Reflections (SSR)} hoặc \textit{Ray Tracing} thời gian thực để mô phỏng sự tương tác ánh sáng giữa các vật thể.
+\end{itemize}
+
+\subsection{Nâng cấp Chương trình (Implementation Upgrades)}
+\begin{itemize}
+	\item \textbf{Hỗ trợ Texture PBR đầy đủ:} Nâng cấp lớp \texttt{Mesh} để nạp đầy đủ bộ bản đồ vật liệu PBR (Albedo, Normal, Metallic, Roughness, AO maps) từ file thay vì chỉ chỉnh màu đơn sắc.
+	\item \textbf{Quy trình xử lý hậu kỳ (Post-processing):} Bổ sung các bước xử lý hình ảnh như \textit{Gamma Correction}, \textit{Tone Mapping} (để xử lý HDR), và hiệu ứng \textit{Bloom} (để làm nổi bật các điểm phản xạ chói sáng đặc trưng của PBR).
+	\item \textbf{Deferred Shading:} Chuyển đổi từ Forward Rendering sang Deferred Rendering để tối ưu hóa hiệu năng khi render cảnh có hàng trăm nguồn sáng phức tạp.
+\end{itemize}
+
+Tổng hợp lại, nghiên cứu này khẳng định vai trò tiên phong của mô hình Cook-Torrance trong việc định hình kỷ nguyên Đồ họa máy tính dựa trên vật lý. Việc chuyển đổi thành công từ các công thức quang học trừu tượng sang một chương trình mô phỏng tương tác thời gian thực đã minh chứng cho sức mạnh của việc kết hợp toán học, vật lý và khoa học máy tính. Mặc dù công nghệ phần cứng và thuật toán không ngừng thay đổi, nguyên lý cốt lõi về sự bảo toàn năng lượng và tương tác vi bề mặt được trình bày trong bài báo năm 1982 vẫn giữ nguyên giá trị, đóng vai trò là kim chỉ nam cho các thế hệ công cụ kết xuất hình ảnh siêu thực (photorealistic rendering engines) ngày nay và trong tương lai.

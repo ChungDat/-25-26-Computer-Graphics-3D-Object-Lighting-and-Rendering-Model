@@ -159,7 +159,7 @@ Mặc dù hàm phân bố Beckmann có nền tảng vật lý vững chắc và 
 
 Lý do chính cho sự thay thế này xuất phát từ quan sát thực nghiệm: nhiều vật liệu trong thế giới thực, đặc biệt là kim loại và bề mặt được đánh bóng không hoàn hảo, thể hiện vùng lóe sáng gương có phần đuôi kéo dài (long tail) rõ rệt hơn so với dự đoán của phân bố Gaussian. Hàm Beckmann suy giảm quá nhanh khi góc lệch lớn, dẫn đến vùng highlight bị cắt gọn và trông kém tự nhiên ở các góc nhìn xiên.
 
-Hàm phân bố GGX được thiết kế để giải quyết vấn đề này bằng cách sử dụng phân bố có đuôi nặng hơn, cho phép nhiều vi bề mặt có độ lệch lớn vẫn đóng góp vào phản xạ gương. Dạng phổ biến của hàm GGX được viết như sau:
+Hàm phân bố GGX \cite{pbr_ggx_2007} được thiết kế để giải quyết vấn đề này bằng cách sử dụng phân bố có đuôi nặng hơn, cho phép nhiều vi bề mặt có độ lệch lớn vẫn đóng góp vào phản xạ gương. Dạng phổ biến của hàm GGX được viết như sau:
 \begin{equation}
 	D_{\text{GGX}}(\mathbf{H}) =
 	\frac{\alpha^2}
