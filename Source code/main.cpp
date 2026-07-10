@@ -163,20 +163,44 @@ int main() {
 	PhongShader.setFloat("material.shininess", 32.0f); // Phong uses a lower shininess
 	PhongShader.setFloat("shadowSize", SHADOW_WIDTH);
 	PhongShader.setFloat("shadowBias", 0.005);
+	PhongShader.setInt("diffuseMap", 0);
+	PhongShader.setInt("specularMap", 1);
+	PhongShader.setInt("emissionMap", 2);
+	PhongShader.setInt("albedoMap", 3);
+	PhongShader.setInt("metallicMap", 4);
+	PhongShader.setInt("roughnessMap", 5);
 
 	BlinnPhongShader.use();
 	BlinnPhongShader.setFloat("material.shininess", 128.0f); // Blinn-Phong needs a higher value
 	BlinnPhongShader.setFloat("shadowSize", SHADOW_WIDTH);
 	BlinnPhongShader.setFloat("shadowBias", 0.005);
+	BlinnPhongShader.setInt("diffuseMap", 0);
+	BlinnPhongShader.setInt("specularMap", 1);
+	BlinnPhongShader.setInt("emissionMap", 2);
+	BlinnPhongShader.setInt("albedoMap", 3);
+	BlinnPhongShader.setInt("metallicMap", 4);
+	BlinnPhongShader.setInt("roughnessMap", 5);
 
 	GouraudShader.use();
 	GouraudShader.setFloat("material.shininess", 32.0f); // Gouraud uses similar shininess to Phong
 	GouraudShader.setFloat("shadowSize", SHADOW_WIDTH);
 	GouraudShader.setFloat("shadowBias", 0.005);
+	GouraudShader.setInt("diffuseMap", 0);
+	GouraudShader.setInt("specularMap", 1);
+	GouraudShader.setInt("emissionMap", 2);
+	GouraudShader.setInt("albedoMap", 3);
+	GouraudShader.setInt("metallicMap", 4);
+	GouraudShader.setInt("roughnessMap", 5);
 
 	CookTorranceShader.use();
 	CookTorranceShader.setFloat("shadowSize", SHADOW_WIDTH);
 	CookTorranceShader.setFloat("shadowBias", 0.005);
+	CookTorranceShader.setInt("diffuseMap", 0);
+	CookTorranceShader.setInt("specularMap", 1);
+	CookTorranceShader.setInt("emissionMap", 2);
+	CookTorranceShader.setInt("albedoMap", 3);
+	CookTorranceShader.setInt("metallicMap", 4);
+	CookTorranceShader.setInt("roughnessMap", 5);
 
 	Shader* objectShader = &PhongShader;
 

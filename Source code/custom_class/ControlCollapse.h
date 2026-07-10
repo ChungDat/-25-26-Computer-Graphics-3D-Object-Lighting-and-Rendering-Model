@@ -55,7 +55,7 @@ public:
 
 class ObjectCollapse : public ControlCollapse {
 protected:
-	std::vector<const char*> object = { "Cube", "Sphere", "Pyramid", "Cylinder", "Backpack" };
+	std::vector<const char*> object = { "Cube", "Sphere", "Pyramid", "Cylinder", "Backpack"};
 	std::vector<Object*>& objectList;
 
 	int& numObjects;
